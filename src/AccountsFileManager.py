@@ -85,12 +85,13 @@ class AccountsFileManager:
         except Exception as e:
             raise ValueError(f"Decryption failed: {e}")
 
+    # Update the _encryptFile method in AccountsFileManager.py to use toJSON
     def _encryptFile(self, fileDestinationPath, encryptionKey, account):
         """Encrypt file and write to file"""
         
         # Generate a random salt for this encryption
         salt = os.urandom(16)
-    
+
         # Derive key using PBKDF2 with SHA-256
         kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
@@ -99,29 +100,24 @@ class AccountsFileManager:
             iterations=100000,
         )
         key = kdf.derive(encryptionKey)
-    
+
         # Generate a random nonce for AES-GCM
         nonce = os.urandom(12)
-    
-        # Serialize account data to JSON
-        account_data = {
-            "accountName": account.getAccountName(),
-            "secretKey": account.getSecretKey(),
-            "contacts": account.getContacts()
-        }
-        plaintext = json.dumps(account_data).encode('utf-8')
-    
+
+        # Get account data as JSON string and encode
+        plaintext = account.toJSON().encode('utf-8')
+
         # Encrypt with AES-GCM
         aesgcm = AESGCM(key)
         ciphertext = aesgcm.encrypt(nonce, plaintext, None)
-    
+
         # Combine salt, nonce, and ciphertext for storage
         encrypted_data = {
             "salt": salt.hex(),
             "nonce": nonce.hex(),
             "ciphertext": ciphertext.hex()
         }
-    
+
         # Write to file using account name as filename
         file_path = os.path.join(fileDestinationPath, f"{account.getAccountName()}.enc")
         with open(file_path, "w") as f:
