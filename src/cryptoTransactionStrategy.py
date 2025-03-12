@@ -78,44 +78,121 @@ class RealTransaction(CryptoTransactionStrategy):
         
         
         
-    async def buyCrypto(self, wallet, cryptoName: str, amount: float):
-        price = await self.exchange_socket.get_crypto_price(cryptoName)
+    # async def buyCrypto(self, wallet, cryptoName: str, amount: float):
+    #     try:
+    #         price = await self.exchange_socket.get_crypto_price(cryptoName)
+    #     except Exception as e:
+    #         print(f"Error getting price for {cryptoName}: {e}")
+    #         return None
         
-        wallet.balance += amount
-        
-        print(f"Buying {amount} of {cryptoName} at {price}")
-        user_input = input("Confirm transaction? (y/n): ")
-        
-        if user_input.lower() != "y":
-            print("Transaction cancelled.")
-            return
+    #     cost = price * amount
         
         
+    #     print(f"Buying {amount} of {cryptoName} at {price}")
+    #     user_input = input("Confirm transaction? (y/n): ")
         
-        if wallet.watch:
-            wallet.watch.addCrypto(cryptoName)
+    #     if user_input.lower() != "y":
+    #         print("Transaction cancelled.")
+    #         return
+        
+        
+        
+        # if wallet.watch:
+        #     wallet.watch.addCrypto(cryptoName)
             
         
         
+        # self.updateCryptoFile(cryptoName, amount)
+        
+
+    async def prepare_buy_transaction(self, wallet, cryptoName: str, amount: float):
+        """Prepare the transaction details without executing it"""
+        try:
+            price = await self.exchange_socket.get_crypto_price(cryptoName)
+            cost = price * amount
+            
+            # Return transaction details for confirmation
+            return {
+                "type": "buy",
+                "crypto_name": cryptoName,
+                "amount": amount,
+                "price": price,
+                "cost": cost,
+                "wallet": wallet
+            }
+        except Exception as e:
+            print(f"Error getting price for {cryptoName}: {e}")
+            return None
+
+    async def execute_buy_transaction(self, transaction_details):
+        """Execute a pre-prepared buy transaction after confirmation"""
+        if not transaction_details:
+            return False
+            
+        cryptoName = transaction_details["crypto_name"]
+        amount = transaction_details["amount"]
+        wallet = transaction_details["wallet"]
+        
+        # Update watchlist if needed
+        if wallet.watch:
+            wallet.watch.addCrypto(cryptoName)
+        
+        # Execute the transaction
         self.updateCryptoFile(cryptoName, amount)
+        return True
+
+
+    async def prepare_sell_transaction(self, wallet, cryptoName: str, amount: float):
+        """Prepare the sell transaction details without executing it"""
+        try:
+            price = await self.exchange_socket.get_crypto_price(cryptoName)
+            proceeds = price * amount
+            
+            # Return transaction details for confirmation
+            return {
+                "type": "sell",
+                "crypto_name": cryptoName,
+                "amount": amount,
+                "price": price,
+                "proceeds": proceeds,
+                "wallet": wallet
+            }
+        except Exception as e:
+            print(f"Error getting price for {cryptoName}: {e}")
+            return None
+
+    async def execute_sell_transaction(self, transaction_details):
+        """Execute a pre-prepared sell transaction after confirmation"""
+        if not transaction_details:
+            return False
+            
+        cryptoName = transaction_details["crypto_name"]
+        amount = transaction_details["amount"]
+        wallet = transaction_details["wallet"]
         
-        
-        
-    async def sellCrypto(self, wallet, cryptoName: str, amount: float):
-        price = await self.exchange_socket.get_crypto_price(cryptoName)
-        
-        
-        print(f"Selling {amount} of {cryptoName} at {price}")
-        user_input = input("Confirm transaction? (y/n): ")
-        
-        if user_input.lower() != "y":
-            print("Transaction cancelled.")
-            return
-        
-        
-        
-        
+        # Update wallet balance
         wallet.balance -= amount
         
+        # Execute the transaction
         self.updateCryptoFile(cryptoName, -amount)
+        return True
+    
+        
+    # async def sellCrypto(self, wallet, cryptoName: str, amount: float):
+    #     price = await self.exchange_socket.get_crypto_price(cryptoName)
+        
+        
+    #     print(f"Selling {amount} of {cryptoName} at {price}")
+    #     user_input = input("Confirm transaction? (y/n): ")
+        
+    #     if user_input.lower() != "y":
+    #         print("Transaction cancelled.")
+    #         return
+        
+        
+        
+        
+    #     wallet.balance -= amount
+        
+    #     self.updateCryptoFile(cryptoName, -amount)
     

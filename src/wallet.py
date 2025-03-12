@@ -16,3 +16,4 @@ class Wallet:
             watch.wallets.append(self)
             
             
+            

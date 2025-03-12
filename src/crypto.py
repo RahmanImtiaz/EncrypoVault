@@ -12,3 +12,5 @@ class Crypto:
         self.last_updated = datetime.datetime.now()
     
         
+        
+        
