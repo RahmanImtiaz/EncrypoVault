@@ -1,6 +1,6 @@
-from exchangeSocket import ExchangeSocket
-from crypto import Crypto
-from src.wallet import Wallet
+from ExchangeSocket import ExchangeSocket
+from Crypto import Crypto
+from src.Wallet import Wallet
 
 
 class CryptoWatch:
