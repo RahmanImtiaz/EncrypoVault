@@ -1,4 +1,3 @@
-from CryptoWatch import CryptoWatch
 
 class Wallet:
     def __init__(self, name: str):

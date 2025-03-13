@@ -26,3 +26,6 @@ class AuditLog:
             'status': status
         }
 
+    def get_entries_in_range(self, start_time, end_time):
+        return {time: entry for time, entry in self._entries.items() if start_time <= time <= end_time}
+
