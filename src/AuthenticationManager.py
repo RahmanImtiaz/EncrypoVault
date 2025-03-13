@@ -1,4 +1,4 @@
-import os
+import sys
 class AuthenticationManager:
     """Singleton class for authentication of accounts"""
     _AuthenticationManager = None
@@ -31,3 +31,17 @@ class AuthenticationManager:
         # For testing purposes, we'll generate a random key
         # In a real implementation, this would combine password + biometric
         return os.urandom(32)  # 32 bytes for AES-256
+
+    def ensure_secure_boot(self):
+        if sys.platform == 'win32':
+            import wmi
+            w = wmi.WMI()
+
+            # noinspection SqlNoDataSourceInspection
+            result = w.query("SELECT SecureBootEnabled FROM Win32_BIOS")
+
+            return len(result) > 0 and result[0].SecureBootEnabled
+        elif sys.platform == 'darwin':
+            # for mac we can always assume secure boot
+            return True
+        return False
