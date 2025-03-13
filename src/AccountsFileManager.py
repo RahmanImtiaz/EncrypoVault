@@ -107,7 +107,7 @@ class AccountsFileManager:
         nonce = os.urandom(12)
 
         # Get account data as JSON string and encode
-        plaintext = account.toJSON().encode('utf-8')
+        plaintext = account.to_json().encode('utf-8')
 
         # Encrypt with AES-GCM
         aesgcm = AESGCM(key)
@@ -121,7 +121,7 @@ class AccountsFileManager:
         }
 
         # Write to file using account name as filename
-        file_path = os.path.join(file_destination_path, f"{account.getAccountName()}.enc")
+        file_path = os.path.join(file_destination_path, f"{account.get_account_name()}.enc")
         with open(file_path, "w") as f:
             json.dump(encrypted_data, f)
 

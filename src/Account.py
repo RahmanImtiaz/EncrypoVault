@@ -2,12 +2,12 @@ import json
 from AccountType import AccountType, Beginner, Advanced, Tester
 
 class Account:
-    def __init__(self, saveData=None, accountType=None):
+    def __init__(self, save_data=None, account_type=None):
         """Initialize account
         
         Args:
-            saveData (str, optional): JSON string with account data. Defaults to None.
-            accountType (AccountType, optional): Type of account. Defaults to None.
+            save_data (str, optional): JSON string with account data. Defaults to None.
+            account_type (AccountType, optional): Type of account. Defaults to None.
         """
         # Initialize basic properties
         self._accountName = ""
@@ -15,11 +15,11 @@ class Account:
         self._contacts = {}
         
         # Set default account type if none is provided
-        self._accountType = accountType if accountType is not None else Beginner()
+        self._accountType = account_type if account_type is not None else Beginner()
         
         # If saveData is provided, deserialize and load data
-        if saveData is not None:
-            data = json.loads(saveData)
+        if save_data is not None:
+            data = json.loads(save_data)
             self._accountName = data["accountName"]
             self._secretKey = data["secretKey"] 
             self._contacts = data["contacts"]
@@ -34,45 +34,45 @@ class Account:
                 elif account_type_name == "Tester":
                     self._accountType = Tester()
        
-    def getAccountName(self):
+    def get_account_name(self):
         """Get account name"""
         return self._accountName
     
-    def getSecretKey(self):
+    def get_secret_key(self):
         """Get secret key"""
         return self._secretKey
     
-    def getContacts(self):
+    def get_contacts(self):
         """Get contacts"""
         return self._contacts
         
-    def getAccountType(self):
+    def get_account_type(self):
         """Get the account type"""
         return self._accountType
     
-    def setAccountType(self, accountType):
+    def set_account_type(self, account_type):
         """Set the account type
         
         Args:
-            accountType (AccountType): The new account type
+            account_type (AccountType): The new account type
         """
-        if not isinstance(accountType, AccountType):
+        if not isinstance(account_type, AccountType):
             raise TypeError("accountType must be an instance of AccountType")
-        self._accountType = accountType
+        self._accountType = account_type
         
-    def setAccountName(self, name):
+    def set_account_name(self, name):
         """Set account name"""
         self._accountName = name
         
-    def setSecretKey(self, key):
+    def set_secret_key(self, key):
         """Set secret key"""
         self._secretKey = key
         
-    def addContact(self, name, address):
+    def add_contact(self, name, address):
         """Add a contact"""
         self._contacts[name] = address
         
-    def toJSON(self):
+    def to_json(self):
         """Convert account to JSON string for saving
         
         Returns:
