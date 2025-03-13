@@ -560,7 +560,7 @@ async def run_tests():
     if tests_failed == 0:
         print(f"\n{Fore.GREEN}All tests passed!{Style.RESET_ALL}")
     else:
-        print(f"\n{Fore.RED}Some tests failed. Please review the output.{Style.RESET_ALL}")
+        print(f"\n{Fore.RED}Some tests failed!!! Please review the output.{Style.RESET_ALL}")
     
     # Clean up test directory
     if os.path.exists(test_dir):
