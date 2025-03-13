@@ -47,7 +47,7 @@ class AccountsFileManager:
         if not self._verify_file_integrity(self.current_directory):
             return False
         # TODO: discuss this
-        encryptionKey = AuthenticationManager.getInstance()._generateKey()
+        encryptionKey = AuthenticationManager.get_instance()._generate_key()
         self._encrypt_file(self.current_directory, encryptionKey, account)
         return True
         

@@ -22,7 +22,7 @@ class AccountType(ABC):
 class Advanced(AccountType):
     """Advanced account type with full features"""
 
-    def switchToBeginner(self):
+    def switch_to_beginner(self):
         return Beginner()
     
     def get_type_name(self):
@@ -45,10 +45,10 @@ class Beginner(AccountType):
     def get_transaction_limit(self):
         return 1000.0  # Limited to $1000 per day
     
-    def showTutorials(self):
+    def show_tutorials(self):
         pass
 
-    def switchToAdvanced(self):
+    def switch_to_advanced(self):
         return Advanced()
     
     def uses_real_funds(self):

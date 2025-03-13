@@ -1,50 +1,53 @@
-from abc import ABC, abstractmethod
-import os
 import csv
-from transaction import Transaction
+import os
+from abc import ABC, abstractmethod
+
 
 class CryptoTransactionStrategy(ABC):
     
     @abstractmethod
-    def buyCrypto(self, cryptoName: str, amount: float):
+    def buy_crypto(self, crypto_name: str, amount: float):
         pass
     
     @abstractmethod
-    def sellCrypto(self, cryptoName: str, amount: float):
+    def sell_crypto(self, crypto_name: str, amount: float):
         pass
     
     @abstractmethod
-    def sendCrypto(self, sendTo: str, amount: float):
+    def send_crypto(self, send_to: str, amount: float):
         pass
     
     @abstractmethod
-    def recieveCrypto(self, walletAddress: str):
+    def receive_crypto(self, wallet_address: str):
         pass
     
     
     @abstractmethod
-    def generateQRCode(self, walletAddress: str):
+    def generate_qr_code(self, wallet_address: str):
         pass
     
     @abstractmethod
-    def loadCryptoFile(filename = "cryptoFile.txt") -> dict:
+    def load_crypto_file(self, filename ="cryptoFile.txt") -> dict:
         pass
     
     @abstractmethod
-    def saveCryptoFile(self, holdings: dict, filename = "cryptoFile.txt"):
+    def save_crypto_file(self, holdings: dict, filename ="cryptoFile.txt"):
         pass
     
     @abstractmethod
-    def updateCryptoFile(self, crypto_name: str, amount: float, filename = "cryptoFile.txt"):
+    def update_crypto_file(self, crypto_name: str, amount: float, filename ="cryptoFile.txt"):
         pass
     
 class RealTransaction(CryptoTransactionStrategy):
     
+    def buy_crypto(self, crypto_name: str, amount: float):
+        pass
+
     def __init__(self, exchange_socket):
         self.exchange_socket = exchange_socket
         
         
-    def loadCryptoFile(filename="cryptoFile.txt"):
+    def load_crypto_file(self, filename="cryptoFile.txt"):
                
         holdings = {}
         if os.path.exists(filename):
@@ -58,15 +61,15 @@ class RealTransaction(CryptoTransactionStrategy):
     
     
     
-    def saveCryptoFile(self, holdings, filename="cryptoFile.txt"):
+    def save_crypto_file(self, holdings, filename="cryptoFile.txt"):
         with open(filename, mode="w", newline="") as f:
             writer = csv.writer(f)
             for name, amt in holdings.items():
                 writer.writerow([name, amt])
                 
                 
-    def updateCryptoFile(self, crypto_name, amount, filename="cryptoFile.txt"):
-        holdings = self.loadCryptoFile(filename)
+    def update_crypto_file(self, crypto_name, amount, filename="cryptoFile.txt"):
+        holdings = self.load_crypto_file(filename)
         old = holdings.get(crypto_name, 0.0)
         new = old + amount
         
@@ -74,7 +77,7 @@ class RealTransaction(CryptoTransactionStrategy):
             holdings.pop(crypto_name, None)
         else:
             holdings[crypto_name] = new
-        self.saveCryptoFile(holdings, filename)
+        self.save_crypto_file(holdings, filename)
         
         
         
@@ -135,10 +138,10 @@ class RealTransaction(CryptoTransactionStrategy):
         
         # Update watchlist if needed
         if wallet.watch:
-            wallet.watch.addCrypto(cryptoName)
+            wallet.watch.add_crypto(cryptoName)
         
         # Execute the transaction
-        self.updateCryptoFile(cryptoName, amount)
+        self.update_crypto_file(cryptoName, amount)
         return True
 
 
@@ -174,7 +177,7 @@ class RealTransaction(CryptoTransactionStrategy):
         wallet.balance -= amount
         
         # Execute the transaction
-        self.updateCryptoFile(cryptoName, -amount)
+        self.update_crypto_file(cryptoName, -amount)
         return True
     
         

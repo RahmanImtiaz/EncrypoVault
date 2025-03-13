@@ -16,17 +16,17 @@ class AuthenticationManager:
         self._initialized = True
 
     @staticmethod
-    def getInstance():
+    def get_instance():
         """Get the singleton instance of AuthenticationManager"""
         if AuthenticationManager._AuthenticationManager is None:
             AuthenticationManager()
         return AuthenticationManager._AuthenticationManager
     
-    def authenticateAccount(self, accountName):
+    def authenticate_account(self, account_name):
         """Authenticate account using account name (string)"""
         pass
 
-    def _generateKey(self):
+    def _generate_key(self):
         """Generate a key using password and biometric data"""
         # For testing purposes, we'll generate a random key
         # In a real implementation, this would combine password + biometric

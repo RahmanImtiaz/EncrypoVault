@@ -1,5 +1,6 @@
 from exchangeSocket import ExchangeSocket
 from crypto import Crypto
+from src.wallet import Wallet
 
 
 class CryptoWatch:
@@ -9,30 +10,30 @@ class CryptoWatch:
         self.wallets = []         
         self.watchedCryptos = []  
 
-    def addWallet(self, wallet: Wallet):
+    def add_wallet(self, wallet: Wallet):
         if wallet not in self.wallets:
             self.wallets.append(wallet)
             wallet.cryptowatch = self
 
-    def removeWallet(self, wallet: Wallet):
+    def remove_wallet(self, wallet: Wallet):
         if wallet in self.wallets:
             self.wallets.remove(wallet)
             wallet.cryptowatch = None
 
-    def addCrypto(self, crypto_name: str):
+    def add_crypto(self, crypto_name: str):
         if not any(c.name == crypto_name for c in self.watchedCryptos):
             self.watchedCryptos.append(Crypto(crypto_name))
 
-    def removeCrypto(self, crypto_name: str):
+    def remove_crypto(self, crypto_name: str):
         self.watchedCryptos = [
             c for c in self.watchedCryptos if c.name != crypto_name
         ]
 
-    def notifyObservers(self):
+    def notify_observers(self):
         #unsure about this method and what its role is
         print("Notifying observers...")
 
-    async def updateAllPrices(self):
+    async def update_all_prices(self):
         for crypto_obj in self.watchedCryptos:
             price = await self.exchange_socket.get_crypto_price(crypto_obj.name)
             crypto_obj.update_price(price)
