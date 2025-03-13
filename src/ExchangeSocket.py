@@ -1,7 +1,8 @@
 import json
 
 
-class ExchangeSocket:
+
+class ExchangeSocket():
     def __init__(self):
         self.websocket_url = "wss://ws-feed.exchange.coinbase.com"
         self._connection = None

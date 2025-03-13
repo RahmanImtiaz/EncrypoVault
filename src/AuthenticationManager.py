@@ -2,6 +2,7 @@ import sys
 import os
 from AuditLog import AuditLog
 from datetime import datetime, timedelta
+from cryptography.hazmat.primitives import hashes
 from AccountsFileManager import AccountsFileManager
 class AuthenticationManager:
     """Singleton class for authentication of accounts"""
@@ -52,11 +53,13 @@ class AuthenticationManager:
     def prompt_for_biometrics(self):
         pass
 
-    def _generate_key(self):
+    def _generate_key(self, password, biometrics):
         """Generate a key using password and biometric data"""
-        # For testing purposes, we'll generate a random key
-        # In a real implementation, this would combine password + biometric
-        return os.urandom(32)  # 32 bytes for AES-256
+        digest = hashes.Hash(hashes.SHA256())
+        digest.update(password)
+        digest.update(biometrics)
+        out = digest.finalize()
+        return out
 
     def ensure_secure_boot(self):
         if sys.platform == 'win32':

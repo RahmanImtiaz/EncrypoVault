@@ -3,6 +3,11 @@ from Crypto import Crypto
 from Wallet import Wallet
 
 
+
+# Crypto watch needs to be abstract
+
+
+
 class CryptoWatch:
 
     def __init__(self, name: str, exchange_socket: ExchangeSocket):

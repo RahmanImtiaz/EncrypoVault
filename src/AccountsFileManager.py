@@ -46,8 +46,8 @@ class AccountsFileManager:
         """Save account object to file"""
         if not self._verify_file_integrity(self.current_directory):
             return False
-        # TODO: discuss this
-        encryptionKey = AuthenticationManager.get_instance()._generate_key()
+        # TODO: make this read from the account object
+        encryptionKey = account.encryption_key
         self._encrypt_file(self.current_directory, encryptionKey, account)
         return True
         
