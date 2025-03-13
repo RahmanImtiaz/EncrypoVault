@@ -28,33 +28,34 @@ class AccountsFileManager:
         self._initialized = True
     
     @staticmethod
-    def getInstance():
+    def get_instance():
         """Get the singleton instance of AccountsFileManager"""
         if AccountsFileManager._AccountsFileManager is None:
             AccountsFileManager()
         return AccountsFileManager._AccountsFileManager
     
-    def loadAccount(self, decryption_key, account_name):
+    def load_account(self, decryption_key, account_name):
         """Load account from file"""
-        if self._verifyFileIntegrity(self.current_directory) == False:
+        if not self._verify_file_integrity(self.current_directory):
             return None
-        fileData = self._decryptFile(self.current_directory, decryption_key, account_name)
+        fileData = self._decrypt_file(self.current_directory, decryption_key, account_name)
         account = Account(fileData)
         return account
 
-    def saveAccount(self, account):
+    def save_account(self, account):
         """Save account object to file"""
-        if self._verifyFileIntegrity(self.current_directory) == False:
+        if not self._verify_file_integrity(self.current_directory):
             return False
-        
+        # TODO: discuss this
         encryptionKey = AuthenticationManager.getInstance()._generateKey()
-        self._encryptFile(self.current_directory, encryptionKey, account)
+        self._encrypt_file(self.current_directory, encryptionKey, account)
         return True
         
 
-    def _decryptFile(self, filePath, decryptionKey, account_name):
+    @staticmethod
+    def _decrypt_file(file_path, decryption_key, account_name):
         """Decrypt file"""
-        file_path = os.path.join(filePath, f"{account_name}.enc")
+        file_path = os.path.join(file_path, f"{account_name}.enc")
     
         # Check if file exists
         if not os.path.exists(file_path):
@@ -75,7 +76,7 @@ class AccountsFileManager:
             salt=salt,
             iterations=100000,
         )
-        key = kdf.derive(decryptionKey)
+        key = kdf.derive(decryption_key)
     
         # Decrypt with AES-GCM
         aesgcm = AESGCM(key)
@@ -86,7 +87,8 @@ class AccountsFileManager:
             raise ValueError(f"Decryption failed: {e}")
 
     # Update the _encryptFile method in AccountsFileManager.py to use toJSON
-    def _encryptFile(self, fileDestinationPath, encryptionKey, account):
+    @staticmethod
+    def _encrypt_file(file_destination_path, encryption_key, account):
         """Encrypt file and write to file"""
         
         # Generate a random salt for this encryption
@@ -99,7 +101,7 @@ class AccountsFileManager:
             salt=salt,
             iterations=100000,
         )
-        key = kdf.derive(encryptionKey)
+        key = kdf.derive(encryption_key)
 
         # Generate a random nonce for AES-GCM
         nonce = os.urandom(12)
@@ -119,32 +121,33 @@ class AccountsFileManager:
         }
 
         # Write to file using account name as filename
-        file_path = os.path.join(fileDestinationPath, f"{account.getAccountName()}.enc")
+        file_path = os.path.join(file_destination_path, f"{account.getAccountName()}.enc")
         with open(file_path, "w") as f:
             json.dump(encrypted_data, f)
 
         
 
-    def _verifyFileIntegrity(self, filePath):
+    @staticmethod
+    def _verify_file_integrity(file_path):
         """Verify file integrity"""
         # Check if directory exists
-        if not os.path.exists(filePath):
+        if not os.path.exists(file_path):
             try:
-                os.makedirs(filePath)
-            except Exception:
+                os.makedirs(file_path)
+            except OSError:
                 return False
     
         # Directory exists, so it's valid for our purposes
-        return os.path.isdir(filePath) and os.access(filePath, os.R_OK | os.W_OK)
+        return os.path.isdir(file_path) and os.access(file_path, os.R_OK | os.W_OK)
 
-    def exportAccount(self, account, filePath):
+    def export_account(self, account, file_path):
         """Export the account to a file"""
         pass
 
-    def importAccount(self, filePath):
+    def import_account(self, file_path):
         """Import account from a file"""
         pass
 
-    def importAccountFromPhrase(self, recoveryPhrase):
+    def import_account_from_phrase(self, recovery_phrase):
         """Import account using recovery phrase (list of strings)"""
         pass
