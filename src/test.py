@@ -12,7 +12,7 @@ from AccountType import Beginner, Advanced, Tester
 from AuthenticationManager import AuthenticationManager
 from AccountsFileManager import AccountsFileManager
 from Wallet import Wallet
-from CryptoWatch import CryptoWatch
+from CryptoObserver import CryptoObserver
 from ExchangeSocket import ExchangeSocket
 from CryptoTransactionStrategy import RealTransaction
 from Transaction import Transaction
@@ -341,7 +341,7 @@ async def run_tests():
         """Test linking wallets with CryptoWatch"""
         # Create wallets and crypto watch
         wallet = Wallet("Watch Test Wallet")
-        watch = CryptoWatch("Test Watch", exchange_socket)
+        watch = CryptoObserver("Test Watch", exchange_socket)
         
         # Link wallet to watch
         wallet.link_to_watch(watch)
@@ -503,7 +503,7 @@ async def run_tests():
         print(f"{TestResult.INFO} Created wallet with 2.0 BTC")
         
         # 4. Set up crypto watch
-        watch = CryptoWatch("Integration Watch", exchange_socket)
+        watch = CryptoObserver("Integration Watch", exchange_socket)
         wallet.link_to_watch(watch)
         watch.add_crypto("BTC-USD")
         watch.add_crypto("ETH-USD")

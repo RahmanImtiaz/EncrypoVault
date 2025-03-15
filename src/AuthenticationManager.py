@@ -39,7 +39,7 @@ class AuthenticationManager:
         biometrics = self.prompt_for_biometrics()
 
         key = self._generate_key(password, biometrics)
-        account = AccountsFileManager.get_instance().load_account(account_name, key)
+        account = AccountsFileManager.get_instance().load_account(key, account_name)
         if account is None:
             AuditLog.get_instance().add_entry(account_name, datetime.now(), "FAILED")
             raise Exception("Invalid credentials (or account does not exist)")

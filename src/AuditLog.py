@@ -15,6 +15,8 @@ class AuditLog:
 
     @staticmethod
     def get_instance():
+        if AuditLog._AuditLog is None:
+            AuditLog()
         return AuditLog._AuditLog
 
     def get_entries(self):
