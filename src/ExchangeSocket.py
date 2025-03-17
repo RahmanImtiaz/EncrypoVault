@@ -67,8 +67,11 @@ class ExchangeSocket(CryptoWatch):
             async for message in websocket:
                 data = json.loads(message)
                 if data.get("type") == "ticker":
-                    product_id = data.get("product_id")
-                    price = float(data.get("price"))
+                    product_id = data.get("product_id")                        
+                    price = (data.get("price"))
+                    if not price:
+                        return
+                    price = float(price)
                     if price and product_id:
                         print("Received " + product_id + " price: " + str(price))
                         self.notifyObservers(product_id, price)
