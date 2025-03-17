@@ -24,7 +24,11 @@ class Account:
             self._accountName = data["accountName"]
             self._secretKey = data["secretKey"] 
             self._contacts = data["contacts"]
-            self._encryption_key = data["encryptionKey"]
+            # Convert encryption key from hex string back to bytes if it's a string
+            if isinstance(data["encryptionKey"], str):
+                self._encryption_key = bytes.fromhex(data["encryptionKey"])
+            else:
+                self._encryption_key = data["encryptionKey"]
             
             # If account type is in the saved data, instantiate the appropriate type
             if "accountType" in data:
@@ -88,11 +92,13 @@ class Account:
         Returns:
             str: JSON string representation of account
         """
+        encryption_key_str = self._encryption_key.hex() if isinstance(self._encryption_key, bytes) else self._encryption_key
+
         data = {
             "accountName": self._accountName,
             "secretKey": self._secretKey,
             "contacts": self._contacts,
             "accountType": self._accountType.get_type_name(),
-            "encryptionKey": self._encryption_key
+            "encryptionKey": encryption_key_str
         }
         return json.dumps(data)

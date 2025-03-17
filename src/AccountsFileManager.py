@@ -55,14 +55,14 @@ class AccountsFileManager:
     def _decrypt_file(file_path, decryption_key, account_name):
         """Decrypt file"""
         file_path = os.path.join(file_path, f"{account_name}.enc")
-    
+
         # Check if file exists
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"Account file for {account_name} not found")
-    
+
         with open(file_path, "r") as f:
             encrypted_data = json.load(f)
-    
+
         # Extract components
         salt = bytes.fromhex(encrypted_data["salt"])
         nonce = bytes.fromhex(encrypted_data["nonce"])
@@ -76,13 +76,16 @@ class AccountsFileManager:
             iterations=100000,
         )
         key = kdf.derive(decryption_key)
-    
+
         # Decrypt with AES-GCM
         aesgcm = AESGCM(key)
         try:
             plaintext = aesgcm.decrypt(nonce, ciphertext, None)
             return plaintext.decode('utf-8')
         except Exception as e:
+            # Print more information for debugging
+            print(f"Decryption failed with key length: {len(key)} bytes")
+            print(f"Salt: {salt.hex()[:10]}..., Nonce: {nonce.hex()[:10]}...")
             raise ValueError(f"Decryption failed: {e}")
 
     @staticmethod
