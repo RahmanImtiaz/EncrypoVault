@@ -29,5 +29,12 @@ class AuditLog:
         }
 
     def get_entries_in_range(self, start_time, end_time):
-        return {time: entry for time, entry in self._entries.items() if start_time <= time <= end_time}
-
+        result = {time: entry for time, entry in self._entries.items() if start_time <= time <= end_time}
+        
+        # Create a CountedEntries class that extends dict and adds a count method <- this is bcs we were using .count for a dictionary
+        class CountedEntries(dict):
+            def count(self):
+                return sum(1 for entry in self.values() if entry['status'] == 'FAILED')
+                
+        # Return a CountedEntries instance instead of a plain dict <- now we can use .count() on this 
+        return CountedEntries(result)
