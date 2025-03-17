@@ -76,7 +76,7 @@ class Account:
     
     def set_encryption_key(self, key):
         """Set the encryption key"""
-        self._encryption_key
+        self._encryption_key = key
         
     def add_contact(self, name, address):
         """Add a contact"""
