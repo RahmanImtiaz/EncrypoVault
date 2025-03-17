@@ -46,7 +46,7 @@ class AccountsFileManager:
         if not self._verify_file_integrity(self.current_directory):
             return False
         # TODO: make this read from the account object
-        encryptionKey = account.encryption_key
+        encryptionKey = account.get_encryption_key()
         self._encrypt_file(self.current_directory, encryptionKey, account)
         return True
         
@@ -85,7 +85,6 @@ class AccountsFileManager:
         except Exception as e:
             raise ValueError(f"Decryption failed: {e}")
 
-    # Update the _encryptFile method in AccountsFileManager.py to use toJSON
     @staticmethod
     def _encrypt_file(file_destination_path, encryption_key, account):
         """Encrypt file and write to file"""

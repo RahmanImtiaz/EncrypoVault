@@ -13,6 +13,7 @@ class Account:
         self._accountName = ""
         self._secretKey = ""
         self._contacts = {}
+        self._encryption_key = ""
         
         # Set default account type if none is provided
         self._accountType = account_type if account_type is not None else Beginner()
@@ -23,6 +24,7 @@ class Account:
             self._accountName = data["accountName"]
             self._secretKey = data["secretKey"] 
             self._contacts = data["contacts"]
+            self._encryption_key = data["encryptionKey"]
             
             # If account type is in the saved data, instantiate the appropriate type
             if "accountType" in data:
@@ -50,6 +52,10 @@ class Account:
         """Get the account type"""
         return self._accountType
     
+    def get_encryption_key(self):
+        """Get the encryption key"""
+        return self._encryption_key
+    
     def set_account_type(self, account_type):
         """Set the account type
         
@@ -67,6 +73,10 @@ class Account:
     def set_secret_key(self, key):
         """Set secret key"""
         self._secretKey = key
+    
+    def set_encryption_key(self, key):
+        """Set the encryption key"""
+        self._encryption_key
         
     def add_contact(self, name, address):
         """Add a contact"""
@@ -82,6 +92,7 @@ class Account:
             "accountName": self._accountName,
             "secretKey": self._secretKey,
             "contacts": self._contacts,
-            "accountType": self._accountType.get_type_name()
+            "accountType": self._accountType.get_type_name(),
+            "encryptionKey": self._encryption_key
         }
         return json.dumps(data)
