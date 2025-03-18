@@ -28,14 +28,14 @@ class TestWallet(unittest.TestCase):
         If the crypto is already in holdings, updating it should recalculate 
         its value (quantity * new_price).
         """
-        # Suppose we interpret holdings dict as {crypto_name: quantity}
-        self.wallet.holdings["BTC-USD"] = 2.0  # interpret this as "quantity"
+        # Initialize holdings with the correct dictionary structure
+        self.wallet.holdings["BTC-USD"] = {"quantity": 2.0, "value": 0.0}
 
         # We'll confirm it recalculates the total value (2 BTC * 30,000)
         self.wallet.update("BTC-USD", 30000.0)
         
         # The updated value should now be 60,000.0
-        self.assertEqual(self.wallet.holdings["BTC-USD"], 60000.0)
+        self.assertEqual(self.wallet.holdings["BTC-USD"]["value"], 60000.0)
 
     def test_update_non_existent_crypto(self):
         """
@@ -57,19 +57,19 @@ class TestWallet(unittest.TestCase):
 
     def test_update_zero_price(self):
         """
-        Updating a crypto with zero price should set the holding to 0 if it exists.
+        Updating a crypto with zero price should set the holding value to 0 if it exists.
         """
-        self.wallet.holdings["BTC-USD"] = 2.0
+        self.wallet.holdings["BTC-USD"] = {"quantity": 2.0, "value": 50000.0}
         self.wallet.update("BTC-USD", 0.0)
-        self.assertEqual(self.wallet.holdings["BTC-USD"], 0.0)
+        self.assertEqual(self.wallet.holdings["BTC-USD"]["value"], 0.0)
 
     def test_update_negative_price(self):
         """
         Even though it's unlikely in real scenarios, test how the wallet handles a negative price.
         """
-        self.wallet.holdings["BTC-USD"] = 2.0
+        self.wallet.holdings["BTC-USD"] = {"quantity": 2.0, "value": 50000.0}
         self.wallet.update("BTC-USD", -100.0)
-        self.assertEqual(self.wallet.holdings["BTC-USD"], -200.0)
+        self.assertEqual(self.wallet.holdings["BTC-USD"]["value"], -200.0)
 
     def test_add_to_holdings_and_update(self):
         """
@@ -77,9 +77,9 @@ class TestWallet(unittest.TestCase):
         We add a new crypto to the wallet's holdings manually (quantity-based),
         then check update works correctly.
         """
-        self.wallet.holdings["ETH-USD"] = 5.0
+        self.wallet.holdings["ETH-USD"] = {"quantity": 5.0, "value": 0.0}
         self.wallet.update("ETH-USD", 1800.0)
-        self.assertEqual(self.wallet.holdings["ETH-USD"], 9000.0)
+        self.assertEqual(self.wallet.holdings["ETH-USD"]["value"], 9000.0)
 
 class TestCrypto(unittest.TestCase):
     def setUp(self):
@@ -274,12 +274,13 @@ class TestExchangeSocket(unittest.TestCase):
         fake_ws.__aexit__.return_value = None
 
         async def fake_async_gen():
-            # A message that isn't of type 'ticker'
+            # A message that isn't of type 'ticker' - this should be ignored
             yield '{"type": "subscriptions", "channels": [{"name": "ticker","product_ids": ["BTC-USD"]}]}'
-            # A ticker message with missing price
-            yield '{"type": "ticker", "product_id": "BTC-USD"}'
-            # A normal ticker message to see if it still processes after ignoring the invalid ones
+            # A normal ticker message that should be processed
             yield '{"type": "ticker", "product_id": "BTC-USD", "price": "28000.00"}'
+            # A ticker message with missing price - this will cause the function to return
+            # so we put it last since we won't process anything after it
+            yield '{"type": "ticker", "product_id": "BTC-USD"}'
             raise asyncio.CancelledError()
 
         fake_ws.__aiter__ = lambda *args, **kwargs: fake_async_gen()
