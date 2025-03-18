@@ -1,8 +1,7 @@
-# Description: This file contains the unit tests for the Wallet, Crypto, and ExchangeSocket classes.
-
 import unittest
 import asyncio
 import datetime
+import json
 from unittest.mock import patch, MagicMock, AsyncMock
 import io
 from contextlib import redirect_stdout
@@ -10,6 +9,8 @@ from contextlib import redirect_stdout
 from Wallet import Wallet
 from Crypto import Crypto
 from ExchangeSocket import ExchangeSocket
+from Portfolio import Portfolio  # new import for Portfolio tests
+
 
 class TestWallet(unittest.TestCase):
     def setUp(self):
@@ -31,28 +32,25 @@ class TestWallet(unittest.TestCase):
         # Initialize holdings with the correct dictionary structure
         self.wallet.holdings["BTC-USD"] = {"quantity": 2.0, "value": 0.0}
 
-        # We'll confirm it recalculates the total value (2 BTC * 30,000)
-        self.wallet.update("BTC-USD", 30000.0)
-        
-        # The updated value should now be 60,000.0
+        # Update with a new price; expecting value = 2 * 30000
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            self.wallet.update("BTC-USD", 30000.0)
+        output = buf.getvalue()
+        self.assertIn("Updated BTC-USD value to 60000.0", output)
         self.assertEqual(self.wallet.holdings["BTC-USD"]["value"], 60000.0)
 
     def test_update_non_existent_crypto(self):
         """
         If the crypto is not in holdings, the wallet should print an error message.
         """
-        # Ensure the wallet has no BTC-USD in its holdings
         if "BTC-USD" in self.wallet.holdings:
             del self.wallet.holdings["BTC-USD"]
 
-        # Capture print output
         buf = io.StringIO()
         with redirect_stdout(buf):
             self.wallet.update("BTC-USD", 30000.0)
-
         output = buf.getvalue()
-
-        # Check that the output contains the expected text
         self.assertIn("Could not update BTC-USD value", output)
 
     def test_update_zero_price(self):
@@ -73,13 +71,12 @@ class TestWallet(unittest.TestCase):
 
     def test_add_to_holdings_and_update(self):
         """
-        A scenario not in the code, but we can simulate:
-        We add a new crypto to the wallet's holdings manually (quantity-based),
-        then check update works correctly.
+        Add a new crypto to the wallet's holdings and check that update works correctly.
         """
         self.wallet.holdings["ETH-USD"] = {"quantity": 5.0, "value": 0.0}
         self.wallet.update("ETH-USD", 1800.0)
         self.assertEqual(self.wallet.holdings["ETH-USD"]["value"], 9000.0)
+
 
 class TestCrypto(unittest.TestCase):
     def setUp(self):
@@ -95,20 +92,14 @@ class TestCrypto(unittest.TestCase):
     def test_update_correct_crypto(self):
         """
         If the updated crypto name matches self.crypto.name,
-        last_updated should be set and the correct message should be printed.
+        last_updated should be set and the correct message printed.
         """
-        # Make sure our test Crypto object is named "BTC-USD".
         self.crypto.name = "BTC-USD"
-
-        # Capture print output
         buf = io.StringIO()
         with redirect_stdout(buf):
             self.crypto.update("BTC-USD", 25000.0)
-
         output = buf.getvalue()
-        # Check that the output contains the expected text
         self.assertIn("Updated BTC-USD price to 25000.0", output)
-        # Check that last_updated was actually set
         self.assertIsNotNone(self.crypto.last_updated)
 
     def test_update_incorrect_crypto(self):
@@ -128,15 +119,14 @@ class TestCrypto(unittest.TestCase):
         first_update_time = self.crypto.last_updated
         self.assertIsNotNone(first_update_time)
 
-        # Force a slight delay to ensure the time changes
+        # Ensure a slight delay so the timestamp changes
         import time
         time.sleep(0.001)
 
         self.crypto.update("BTC-USD", 21000.0)
         second_update_time = self.crypto.last_updated
-
-        # The second update time should be strictly after the first
         self.assertGreater(second_update_time, first_update_time)
+
 
 class TestExchangeSocket(unittest.TestCase):
     def setUp(self):
@@ -155,21 +145,17 @@ class TestExchangeSocket(unittest.TestCase):
 
     def test_add_remove_crypto(self):
         """Test adding and removing CryptoObserver objects from the watch list."""
-        # Create mock observer
         mock_observer = MagicMock()
         mock_observer.name = "MockObserver"
-
         self.exchange.add_crypto(mock_observer)
         self.assertIn(mock_observer, self.exchange.watchedCrypto)
-
         self.exchange.remove_crypto(mock_observer)
         self.assertNotIn(mock_observer, self.exchange.watchedCrypto)
 
     def test_add_duplicate_crypto(self):
-        """Test that adding the same observer twice does not duplicate entries."""
+        """Ensure that adding the same observer twice does not duplicate entries."""
         mock_observer = MagicMock()
         mock_observer.name = "MockObserver"
-
         self.exchange.add_crypto(mock_observer)
         self.exchange.add_crypto(mock_observer)
         self.assertEqual(self.exchange.watchedCrypto.count(mock_observer), 1)
@@ -178,24 +164,18 @@ class TestExchangeSocket(unittest.TestCase):
         """Removing a crypto observer that isn't in the list should do nothing."""
         mock_observer = MagicMock()
         mock_observer.name = "MockObserver"
-
-        # Attempt removing it without adding first
         self.exchange.remove_crypto(mock_observer)
         self.assertNotIn(mock_observer, self.exchange.watchedCrypto)
 
     def test_notify_observers(self):
         """Test that notifyObservers calls update on all watchers."""
-        # Create multiple mock observers
         mock_observer1 = MagicMock()
         mock_observer1.name = "MockObserver1"
         mock_observer2 = MagicMock()
         mock_observer2.name = "MockObserver2"
-
         self.exchange.add_crypto(mock_observer1)
         self.exchange.add_crypto(mock_observer2)
-
         self.exchange.notifyObservers("BTC-USD", 30000.0)
-
         mock_observer1.update.assert_called_with("BTC-USD", 30000.0)
         mock_observer2.update.assert_called_with("BTC-USD", 30000.0)
 
@@ -228,7 +208,6 @@ class TestExchangeSocket(unittest.TestCase):
                 pass
 
         asyncio.run(run_test())
-
         mock_observer.update.assert_any_call("BTC-USD", 28000.0)
         mock_observer.update.assert_any_call("ETH-USD", 1800.0)
 
@@ -244,7 +223,6 @@ class TestExchangeSocket(unittest.TestCase):
 
         async def fake_async_gen():
             yield '{"type": "ticker", "product_id": "BTC-USD", "price": "29000.00"}'
-            # Yield indefinitely to simulate an open connection until cancelled.
             while True:
                 await asyncio.sleep(0.1)
 
@@ -253,7 +231,7 @@ class TestExchangeSocket(unittest.TestCase):
 
         async def run_test():
             task = asyncio.create_task(self.exchange.connectToExchangeSocket())
-            await asyncio.sleep(0.1)  # Allow the connection to start
+            await asyncio.sleep(0.1)  # Allow connection to establish
             await self.exchange.disconnectFromExchangeSocket()
             try:
                 await task
@@ -261,25 +239,20 @@ class TestExchangeSocket(unittest.TestCase):
                 pass
 
         asyncio.run(run_test())
-        self.assertIsNone(self.exchange.coinbase_task,
-                          "coinbase_task should be None after disconnect.")
+        self.assertIsNone(self.exchange.coinbase_task, "coinbase_task should be None after disconnect.")
 
     @patch('websockets.connect')
     def test_non_ticker_messages_ignored(self, mock_connect):
         """
-        Test that messages which are not 'ticker' type do not cause notifyObservers to be called.
+        Test that messages not of type 'ticker' do not trigger notifyObservers.
         """
         fake_ws = AsyncMock()
         fake_ws.__aenter__.return_value = fake_ws
         fake_ws.__aexit__.return_value = None
 
         async def fake_async_gen():
-            # A message that isn't of type 'ticker' - this should be ignored
             yield '{"type": "subscriptions", "channels": [{"name": "ticker","product_ids": ["BTC-USD"]}]}'
-            # A normal ticker message that should be processed
             yield '{"type": "ticker", "product_id": "BTC-USD", "price": "28000.00"}'
-            # A ticker message with missing price - this will cause the function to return
-            # so we put it last since we won't process anything after it
             yield '{"type": "ticker", "product_id": "BTC-USD"}'
             raise asyncio.CancelledError()
 
@@ -297,9 +270,66 @@ class TestExchangeSocket(unittest.TestCase):
                 pass
 
         asyncio.run(run_test())
-
-        # We only expect 1 update call, for the valid ticker message
+        # Only one valid ticker message should trigger an update
         mock_observer.update.assert_called_once_with("BTC-USD", 28000.0)
+
+
+class TestPortfolio(unittest.TestCase):
+    def setUp(self):
+        """Create a new Portfolio instance for each test."""
+        self.portfolio = Portfolio(name="MyPortfolio")
+
+    def test_initial_state(self):
+        """Test that the portfolio initializes with correct default values."""
+        self.assertEqual(self.portfolio.name, "MyPortfolio")
+        self.assertEqual(self.portfolio.wallets, [])
+        self.assertEqual(self.portfolio.total_balance, 0.0)
+        self.assertEqual(self.portfolio.get_total_balance(), 0.0)
+
+    def test_add_wallet(self):
+        """Test that a wallet is added to the portfolio."""
+        wallet = Wallet(name="Wallet1")
+        wallet.balance = 150.0
+        self.portfolio.add_wallet(wallet)
+        self.assertIn(wallet, self.portfolio.wallets)
+
+    def test_remove_wallet(self):
+        """Test that a wallet is removed from the portfolio."""
+        wallet = Wallet(name="Wallet1")
+        self.portfolio.add_wallet(wallet)
+        self.portfolio.remove_wallet(wallet)
+        self.assertNotIn(wallet, self.portfolio.wallets)
+
+    def test_update_total_balance(self):
+        """
+        Test that update_total_balance sums up the balance of all wallets.
+        With the updated implementation, repeated calls do not accumulate.
+        """
+        wallet1 = Wallet(name="Wallet1")
+        wallet1.balance = 100.0
+        wallet2 = Wallet(name="Wallet2")
+        wallet2.balance = 200.0
+        self.portfolio.add_wallet(wallet1)
+        self.portfolio.add_wallet(wallet2)
+        
+        # After one update, total_balance should be 300.0
+        self.portfolio.update_total_balance()
+        self.assertEqual(self.portfolio.get_total_balance(), 300.0)
+
+    def test_update_total_balance_multiple_calls(self):
+        """
+        Test that multiple calls to update_total_balance yield the same result,
+        because the method resets the total_balance before summing.
+        """
+        wallet = Wallet(name="Wallet1")
+        wallet.balance = 50.0
+        self.portfolio.add_wallet(wallet)
+        self.portfolio.update_total_balance()  # total_balance becomes 50.0
+        first_total = self.portfolio.get_total_balance()
+        self.assertEqual(first_total, 50.0)
+        
+        self.portfolio.update_total_balance()  # Should still be 50.0 after reset
+        self.assertEqual(self.portfolio.get_total_balance(), 50.0)
 
 
 if __name__ == '__main__':
