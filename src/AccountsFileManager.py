@@ -126,6 +126,26 @@ class AccountsFileManager:
         with open(file_path, "w") as f:
             json.dump(encrypted_data, f)
 
+    def get_accounts(self):
+        """ Select an account from available accounts """
+
+        available_accounts = []
+
+        try:
+            for file in os.listdir(self.current_directory):
+                if file.endswith(".enc"):
+                    account_name = os.path.splitext(file)[0]
+                    available_accounts.append(account_name)
+        except Exception as e:
+            print(f"Error listing accounts: {str(e)}")
+            return ""
+
+        if not available_accounts:
+            print("No accounts available")
+            return ""
+
+        # In a real implementation, this would show a UI for selection and For now is just returns the first account (if any)
+        return available_accounts
         
 
     @staticmethod

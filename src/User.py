@@ -114,29 +114,7 @@ class User:
             }
         ]
     
-    def _select_account(self) -> str:
-        """ Select an account from available accounts """
-        # In a real implementation, this would display UI for account selection and For now, its just to list available accounts and simulate selection
-        file_manager = AccountsFileManager.get_instance()
-        available_accounts = []
-        
-        try:
-            for file in os.listdir(file_manager.current_directory):
-                if file.endswith(".enc"):
-                    account_name = os.path.splitext(file)[0]
-                    available_accounts.append(account_name)
-        except Exception as e:
-            print(f"Error listing accounts: {str(e)}")
-            return ""
-            
-        if not available_accounts:
-            print("No accounts available")
-            return ""
-            
-        # In a real implementation, this would show a UI for selection and For now is just returns the first account (if any)
-        if available_accounts:
-            return available_accounts[0]
-        return ""
+
     
     def _select_account_type(self) -> AccountType:
         """ Select an account type """

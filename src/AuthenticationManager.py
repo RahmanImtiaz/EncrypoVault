@@ -27,7 +27,7 @@ class AuthenticationManager:
             AuthenticationManager()
         return AuthenticationManager._AuthenticationManager
     
-    def authenticate_account(self, account_name):
+    def authenticate_account(self, account_name, password):
         """Authenticate account using account name (string)"""
         if not self.ensure_secure_boot():
             raise Exception("Secure boot is not enabled. Cannot authenticate account as biometrics cannot be trusted.")
