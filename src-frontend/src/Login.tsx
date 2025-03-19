@@ -7,55 +7,64 @@ interface LoginProps {
 }
 
 export function Login({ onLogin }: LoginProps) {
-  const [email, setEmail] = useState("");
+  const [selectedAccount, setSelectedAccount] = useState("demo_account");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [isPasswordVerified, setIsPasswordVerified] = useState(false);
-
-  const validateEmail = (email: string) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(String(email).toLowerCase());
-  };
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateEmail(email)) {
-      setError("Invalid email format");
+    setLoading(true);
+    setError("");
+
+    // Demo account verification
+    const DEMO_PASSWORD = "demo123";
+    if (selectedAccount === "demo_account" && password !== DEMO_PASSWORD) {
+      setError("Invalid password for demo account (use: demo123)");
+      setLoading(false);
       return;
     }
-    
-    // Verify password first
-    try {
-      // Here you would typically verify the password with your backend
-      // For demo purposes, we're just setting it to true
-      setIsPasswordVerified(true);
-      setError("");
-    } catch (err) {
-      setError("Password verification failed");
-    }
+
+    // Password verified, move to biometric step
+    setIsPasswordVerified(true);
+    setLoading(false);
   };
 
   const handleBiometricAuth = async () => {
+    setLoading(true);
+    setError("");
+
     try {
-      // For demonstration purposes, we'll simulate a successful authentication
-      // In a real application, this would communicate with your backend
-      const isSupported = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+      // Check if device supports biometric auth
+      const supported = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
       
-      if (!isSupported) {
-        setError("Your device doesn't support biometric authentication");
-        return;
+      if (!supported) {
+        throw new Error("Your device doesn't support biometric authentication");
       }
 
-      // Simulate authentication delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Simulate successful authentication
+      // Create authentication challenge
+      const authData = {
+        challenge: Uint8Array.from("DEMO_CHALLENGE", c => c.charCodeAt(0)),
+        timeout: 60000,
+        rpId: window.location.hostname || "localhost",
+        allowCredentials: [{
+          id: Uint8Array.from("DEMO_CREDENTIAL", c => c.charCodeAt(0)),
+          type: 'public-key' as const,
+          transports: ['internal'] as const
+        }],
+        userVerification: 'required' as const
+      };
+
+      // Start biometric authentication
+      await startAuthentication(authData);
       onLogin();
       
     } catch (err) {
       setError("Biometric authentication failed. Please try again.");
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,68 +88,58 @@ export function Login({ onLogin }: LoginProps) {
               />
               <div>EncryptoVault</div>
             </div>
+            
             {!isPasswordVerified ? (
+              // Step 1: Password Authentication
               <form onSubmit={handlePasswordSubmit}>
-                <label htmlFor="email" className="login-label">
-                  Email
+                <label htmlFor="account" className="login-label">
+                  Select Account
                 </label>
-                <input
-                  type="email"
-                  id="email"
+                <select
+                  id="account"
                   className="login-input"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={selectedAccount}
+                  onChange={(e) => setSelectedAccount(e.target.value)}
                   required
-                  aria-label="Email input"
-                />
-
-                <label
-                  htmlFor="password"
-                  className="login-label login-password-label"
                 >
+                  <option value="demo_account">Demo Account</option>
+                </select>
+
+                <label htmlFor="password" className="login-label">
                   Password
                 </label>
                 <input
                   type="password"
                   id="password"
-                  className="login-input login-password-input"
+                  className="login-input"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  aria-label="Password input"
                 />
-
-                <div className="login-options">
-                  <div className="login-remember">
-                    <input
-                      type="checkbox"
-                      id="remember"
-                      className="login-checkbox"
-                      checked={rememberMe}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                      aria-label="Remember me checkbox"
-                    />
-                    <label htmlFor="remember">Save Email and Password</label>
-                  </div>
-                  <div>
-                    <span className="login-signup">Don't have an account?</span>
-                  </div>
-                </div>
 
                 {error && <p className="error-message">{error}</p>}
 
-                <button type="submit" className="login-button">
-                  Continue
+                <button 
+                  type="submit" 
+                  className="login-button"
+                  disabled={loading}
+                >
+                  {loading ? "Verifying..." : "Continue"}
                 </button>
               </form>
             ) : (
+              // Step 2: Biometric Authentication
               <div className="biometric-auth-container">
                 <h2 className="biometric-title">Biometric Authentication</h2>
                 <p className="biometric-text">
                   Please verify your identity using biometrics
                 </p>
-                <button onClick={handleBiometricAuth} className="login-button">
-                  Start Biometric Authentication
+                <button 
+                  onClick={handleBiometricAuth} 
+                  className="login-button"
+                  disabled={loading}
+                >
+                  {loading ? "Verifying..." : "Start Biometric Authentication"}
                 </button>
                 {error && <p className="error-message">{error}</p>}
               </div>

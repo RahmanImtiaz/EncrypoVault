@@ -6,28 +6,32 @@ interface RegisterProps {
 }
 
 export function Register({ onRegister }: RegisterProps) {
-  const [email, setEmail] = useState("");
+  const [accountName, setAccountName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateEmail(email)) {
-      setError("Invalid email format");
+    
+    if (!accountName.trim()) {
+      setError("Account name is required");
       return;
     }
+    
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-    // Handle registration logic here
-    onRegister();
-  };
 
-  const validateEmail = (email: string) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(String(email).toLowerCase());
+    try {
+      // Here you would call your backend to register the account
+      // const response = await window.pywebview.api.AccountsFileManager.save_account(...)
+      onRegister();
+    } catch (err) {
+      setError("Registration failed. Please try again.");
+      console.error(err);
+    }
   };
 
   return (
@@ -51,19 +55,18 @@ export function Register({ onRegister }: RegisterProps) {
               <div>EncryptoVault</div>
             </div>
             <form onSubmit={handleSubmit}>
-              <label htmlFor="email" className="login-label">
-                Email
+              <label htmlFor="accountName" className="login-label">
+                Account Name
               </label>
               <input
-                type="email"
-                id="email"
+                type="text"
+                id="accountName"
                 className="login-input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={accountName}
+                onChange={(e) => setAccountName(e.target.value)}
                 required
-                aria-label="Email input"
+                aria-label="Account name input"
               />
-              {error && <p className="error-message">{error}</p>}
 
               <label
                 htmlFor="password"
@@ -96,6 +99,8 @@ export function Register({ onRegister }: RegisterProps) {
                 required
                 aria-label="Confirm Password input"
               />
+
+              {error && <p className="error-message">{error}</p>}
 
               <button type="submit" className="login-button">
                 Register

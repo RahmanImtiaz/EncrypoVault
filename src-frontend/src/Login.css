@@ -167,9 +167,10 @@
 }
 
 .error-message {
-  color: red;
+  color: #ff4444;
   font-size: 14px;
   margin-top: 10px;
+  text-align: center;
 }
 
 .toggle-button {
@@ -180,6 +181,51 @@
   cursor: pointer;
   font-size: 14px;
   text-decoration: underline;
+}
+
+.no-accounts {
+  color: #898ca9;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+select.login-input {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+  padding-right: 2.5em;
+}
+
+select.login-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.biometric-auth-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.biometric-title {
+  color: #fff;
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.biometric-text {
+  color: #898ca9;
+  font-size: 16px;
+  margin-bottom: 30px;
 }
 
 @media (max-width: 991px) {

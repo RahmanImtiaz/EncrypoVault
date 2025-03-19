@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import Login from './Login';
 import Register from './Register';
 import Portfolio from './Portfolio';
 import './Portfolio.css';
 
-function App() {
+export function App() {
   const [isLogin, setIsLogin] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [balance, setBalance] = useState(1000);
@@ -49,6 +49,23 @@ function App() {
       transactions: []
     }
   ]);
+  const [registeredAccount, setRegisteredAccount] = useState<string | null>(null);
+
+  useEffect(() => {
+    const checkForAccounts = async () => {
+      try {
+        const accounts = await window.pywebview.api.AccountsFileManager.get_accounts();
+        if (!accounts || accounts.length === 0) {
+          setIsLogin(false); // Switch to registration if no accounts exist
+        }
+      } catch (err) {
+        console.error('Error checking accounts:', err);
+        setIsLogin(false); // Switch to registration on error
+      }
+    };
+
+    checkForAccounts();
+  }, []);
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
@@ -58,15 +75,16 @@ function App() {
     setIsAuthenticated(true);
   };
 
-  const handleRegister = () => {
+  const handleRegister = (accountName: string) => {
+    setRegisteredAccount(accountName);
     setIsLogin(true);
   };
 
   return (
-    <div className="App">
+    <div className="app">
       {!isAuthenticated ? (
         isLogin ? (
-          <Login onLogin={handleLogin} />
+          <Login onLogin={handleLogin} registeredAccount={registeredAccount} />
         ) : (
           <Register onRegister={handleRegister} />
         )
@@ -75,7 +93,7 @@ function App() {
       )}
       {!isAuthenticated && (
         <button onClick={toggleForm} className="toggle-button">
-          {isLogin ? "Don't have an account? Register" : "Already have an account? Login"}
+          {isLogin ? "Need to Register?" : "Already have an account?"}
         </button>
       )}
     </div>
