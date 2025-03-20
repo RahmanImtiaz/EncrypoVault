@@ -2,6 +2,7 @@ from Account import Account
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
+from typing import List
 import os
 import json
 
@@ -40,6 +41,14 @@ class AccountsFileManager:
         fileData = self._decrypt_file(self.current_directory, decryption_key, account_name)
         account = Account(fileData)
         return account
+
+    def create_account(self, account_name, account_type, account_password):
+        if account_name in self.get_accounts():
+            raise Exception('Account already exists')
+        else:
+
+            account = Account(save_data=json.dumps({"accountName": account_name, "encryptionKey": "00 00", "secretKey": "123", "contacts": [], "accountType": account_type}), account_type=account_type)
+            self.save_account(account)
 
     def save_account(self, account):
         """Save account object to file"""
@@ -126,7 +135,7 @@ class AccountsFileManager:
         with open(file_path, "w") as f:
             json.dump(encrypted_data, f)
 
-    def get_accounts(self):
+    def get_accounts(self) -> List[str] :
         """ Select an account from available accounts """
 
         available_accounts = []

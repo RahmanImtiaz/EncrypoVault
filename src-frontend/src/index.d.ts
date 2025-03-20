@@ -14,6 +14,7 @@ export interface WalletType {
 interface PyWebView {
   api: {
     get_accounts(): Promise<string[]>
+    create_account(account_name: string, account_password: string, account_type: string): Promise<string>
   }
 }
 declare global {

@@ -22,7 +22,8 @@ export function Register() {
 
     try {
       // Here you would call your backend to register the account
-      // const response = await window.pywebview.api.AccountsFileManager.save_account(...)
+      const response = await window.pywebview.api.create_account(accountName, password, "BEGINNER")
+      console.log(response)
       // onRegister();
     } catch (err) {
       setError("Registration failed. Please try again.");
