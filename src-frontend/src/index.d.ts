@@ -13,7 +13,7 @@ export interface WalletType {
 
 interface PyWebView {
   api: {
-    get_accounts(): string[]
+    get_accounts(): Promise<string[]>
   }
 }
 declare global {

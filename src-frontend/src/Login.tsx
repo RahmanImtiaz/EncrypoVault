@@ -29,8 +29,14 @@ export function Login({ onLogin }: LoginProps) {
     };
 
     function fetchAccounts() {
-      const fetchedAccounts = window.pywebview.api.get_accounts()
-      setAccounts(fetchedAccounts)
+      window.addEventListener("pywebviewready", async () => {
+        if(window.pywebview) {
+          const fetchedAccounts = await window.pywebview.api.get_accounts()
+          setAccounts(fetchedAccounts)
+        } else {
+          console.log("window.pywebview not set!")
+        }
+      })
     }
 
     checkBiometricSupport();
