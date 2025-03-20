@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import "./Login.css";
 
-interface RegisterProps {
-  onRegister: () => void;
-}
-
-export function Register({ onRegister }: RegisterProps) {
+export function Register() {
   const [accountName, setAccountName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -27,7 +23,7 @@ export function Register({ onRegister }: RegisterProps) {
     try {
       // Here you would call your backend to register the account
       // const response = await window.pywebview.api.AccountsFileManager.save_account(...)
-      onRegister();
+      // onRegister();
     } catch (err) {
       setError("Registration failed. Please try again.");
       console.error(err);

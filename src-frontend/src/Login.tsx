@@ -13,7 +13,8 @@ export function Login({ onLogin }: LoginProps) {
   const [loading, setLoading] = useState(false);
   const [isPasswordVerified, setIsPasswordVerified] = useState(false);
   const [useFallbackAuth, setUseFallbackAuth] = useState(false);
-  const [isBiometricsSupported, setIsBiometricsSupported] = useState<boolean | null>(null);
+  const [accounts, setAccounts] = useState<string[]>([])
+  const [_isBiometricsSupported, setIsBiometricsSupported] = useState<boolean | null>(null);
 
   // Check biometric support when component mounts
   useEffect(() => {
@@ -27,7 +28,13 @@ export function Login({ onLogin }: LoginProps) {
       }
     };
 
+    function fetchAccounts() {
+      const fetchedAccounts = window.pywebview.api.get_accounts()
+      setAccounts(fetchedAccounts)
+    }
+
     checkBiometricSupport();
+    fetchAccounts()
   }, []);
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
@@ -85,7 +92,10 @@ export function Login({ onLogin }: LoginProps) {
           type: 'public-key' as const,
           transports: ['internal'] as const
         }],
-        userVerification: 'required' as const
+        userVerification: 'required' as const,
+        optionsJSON: {
+          challenge: "aGFsbG8K",
+        }
       };
 
       await startAuthentication(authData);
@@ -157,7 +167,9 @@ export function Login({ onLogin }: LoginProps) {
                   onChange={(e) => setSelectedAccount(e.target.value)}
                   required
                 >
-                  <option value="demo_account">Demo Account</option>
+                  {accounts.map(account => (
+                      <option value={account}>{account}</option>
+                  ))}
                 </select>
 
                 <label htmlFor="password" className="login-label">

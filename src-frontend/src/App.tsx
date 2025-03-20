@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import {useEffect, useState} from 'react';
 import './App.css';
 import Login from './Login';
 import Register from './Register';
 import Portfolio from './Portfolio';
 import './Portfolio.css';
+import {WalletType} from "./index";
 
 export function App() {
   const [isLogin, setIsLogin] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [balance, setBalance] = useState(1000);
-  const [wallets, setWallets] = useState([
-    {
+  const [balance, _setBalance] = useState(1000);
+  const [wallets, setWallets] = useState<WalletType[]>([]);
+
+  useEffect(() => {
+    let dummyWallets: WalletType[] = [{
       name: 'Bitcoin',
       balance: 0.5,
       address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
@@ -47,25 +50,25 @@ export function App() {
       balance: 15,
       address: 'DRpbCBMxVnDpQpC9b3HGDp3wNe3zXabDrhvB2BCqBsRF',
       transactions: []
-    }
-  ]);
-  const [registeredAccount, setRegisteredAccount] = useState<string | null>(null);
+    }]
 
-  useEffect(() => {
-    const checkForAccounts = async () => {
-      try {
-        const accounts = await window.pywebview.api.AccountsFileManager.get_accounts();
-        if (!accounts || accounts.length === 0) {
-          setIsLogin(false); // Switch to registration if no accounts exist
-        }
-      } catch (err) {
-        console.error('Error checking accounts:', err);
-        setIsLogin(false); // Switch to registration on error
-      }
-    };
-
-    checkForAccounts();
+    setWallets(dummyWallets)
   }, []);
+  // useEffect(() => {
+  //   const checkForAccounts = async () => {
+  //     try {
+  //       const accounts = await window.pywebview.api.AccountsFileManager.get_accounts();
+  //       if (!accounts || accounts.length === 0) {
+  //         setIsLogin(false); // Switch to registration if no accounts exist
+  //       }
+  //     } catch (err) {
+  //       console.error('Error checking accounts:', err);
+  //       setIsLogin(false); // Switch to registration on error
+  //     }
+  //   };
+  //
+  //   checkForAccounts();
+  // }, []);
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
@@ -75,18 +78,15 @@ export function App() {
     setIsAuthenticated(true);
   };
 
-  const handleRegister = (accountName: string) => {
-    setRegisteredAccount(accountName);
-    setIsLogin(true);
-  };
+
 
   return (
     <div className="app">
       {!isAuthenticated ? (
         isLogin ? (
-          <Login onLogin={handleLogin} registeredAccount={registeredAccount} />
+          <Login onLogin={handleLogin} />
         ) : (
-          <Register onRegister={handleRegister} />
+          <Register />
         )
       ) : (
         <Portfolio balance={balance} wallets={wallets} />

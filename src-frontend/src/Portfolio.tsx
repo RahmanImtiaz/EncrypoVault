@@ -1,18 +1,9 @@
 import React, { useState } from 'react';
 import './Portfolio.css';
 import Wallet from './Wallet';
+import {WalletType} from "./index";
 
-interface WalletType {
-  name: string;
-  balance: number;
-  address?: string;
-  transactions?: Array<{
-    date: string;
-    type: 'send' | 'receive' | 'trade';
-    amount: number;
-    status: 'completed' | 'pending' | 'failed';
-  }>;
-}
+
 
 interface PortfolioProps {
   balance: number;
