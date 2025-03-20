@@ -29,14 +29,36 @@ export function Login({ onLogin }: LoginProps) {
     };
 
     function fetchAccounts() {
-      window.addEventListener("pywebviewready", async () => {
-        if(window.pywebview) {
-          const fetchedAccounts = await window.pywebview.api.get_accounts()
-          setAccounts(fetchedAccounts)
-        } else {
-          console.log("window.pywebview not set!")
-        }
-      })
+      // If pywebview is already available, use it immediately
+      if (window.pywebview && window.pywebview.api) {
+        window.pywebview.api.get_accounts()
+          .then(fetchedAccounts => {
+            console.log("Accounts fetched:", fetchedAccounts);
+            setAccounts(fetchedAccounts);
+          })
+          .catch(err => {
+            console.error("Error fetching accounts:", err);
+          });
+      } else {
+        // Otherwise wait for the pywebviewready event
+        const readyHandler = async () => {
+          try {
+            if (window.pywebview && window.pywebview.api) {
+              const fetchedAccounts = await window.pywebview.api.get_accounts();
+              console.log("Accounts fetched after ready event:", fetchedAccounts);
+              setAccounts(fetchedAccounts);
+            }
+          } catch (err) {
+            console.error("Error fetching accounts after ready event:", err);
+          }
+        };
+
+        window.addEventListener("pywebviewready", readyHandler);
+        
+        return () => {
+          window.removeEventListener("pywebviewready", readyHandler);
+        };
+      }
     }
 
     checkBiometricSupport();
