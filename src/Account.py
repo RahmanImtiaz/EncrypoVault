@@ -32,12 +32,13 @@ class Account:
             
             # If account type is in the saved data, instantiate the appropriate type
             if "accountType" in data:
-                account_type_name = data["accountType"]
-                if account_type_name == "Advanced":
+                account_type_name = data["accountType"].lower()
+                print(f"account type: {account_type_name}")
+                if account_type_name == "advanced":
                     self._accountType = Advanced()
-                elif account_type_name == "Beginner":
+                elif account_type_name == "beginner":
                     self._accountType = Beginner()
-                elif account_type_name == "Tester":
+                elif account_type_name == "tester":
                     self._accountType = Tester()
        
     def get_account_name(self):
@@ -102,3 +103,6 @@ class Account:
             "encryptionKey": encryption_key_str
         }
         return json.dumps(data)
+
+    def toJSON(self):
+        return self.to_json()
