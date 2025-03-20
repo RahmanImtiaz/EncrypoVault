@@ -9,6 +9,8 @@ export interface WalletType {
     status: 'completed' | 'pending' | 'failed';
   }>;
 }
+
+
 interface PyWebView {
   api: {
     get_accounts(): string[]

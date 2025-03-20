@@ -1,12 +1,11 @@
-from src.AccountsFileManager import AccountsFileManager
-from src.AuthenticationManager import AuthenticationManager
+from AccountsFileManager import AccountsFileManager
+from AuthenticationManager import AuthenticationManager
 
 
 class WebviewAPI:
     def __init__(self):
-
-    def authenticate_account(self, account_name, password, biometrics):
-        AuthenticationManager.authenticate_account(account_name, password, biometrics)
+        self.authentication_manager = AuthenticationManager().get_instance()
+        self.accounts_manager = AccountsFileManager().get_instance()
 
     def get_accounts(self):
-        return AccountsFileManager.get_accounts()
+        return self.accounts_manager.get_accounts()

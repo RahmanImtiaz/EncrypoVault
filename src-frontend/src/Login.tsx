@@ -167,9 +167,12 @@ export function Login({ onLogin }: LoginProps) {
                   onChange={(e) => setSelectedAccount(e.target.value)}
                   required
                 >
-                  {accounts.map(account => (
+                  {accounts.length > 0 && accounts.map(account => (
                       <option value={account}>{account}</option>
                   ))}
+                  {accounts.length === 0 && (
+                      <option value={"No accounts available!"}>No accounts available!</option>
+                  )}
                 </select>
 
                 <label htmlFor="password" className="login-label">
