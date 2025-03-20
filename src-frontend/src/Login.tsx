@@ -72,13 +72,23 @@ export function Login({ onLogin }: LoginProps) {
 
     try {
       // Here you would verify with your backend
-      const DEMO_PASSWORD = "demo123";
-      if (selectedAccount === "demo_account" && password !== DEMO_PASSWORD) {
-        throw new Error("Invalid password for demo account (use: demo123)");
+      //new changes from here. Remove the comments in the next three lines and remove everything else, make sure there is no space before }
+      //const DEMO_PASSWORD = "demo123";
+      //if (selectedAccount === "demo_account" && password !== DEMO_PASSWORD) {
+      //  throw new Error("Invalid password for demo account (use: demo123)");
+      //}
+      const account = await window.pywebview.api.authenticate_account(selectedAccount, password);
+      console.log('Account verified:', account);
+      
+      if (account) {
+        setIsPasswordVerified(true);
+        onLogin();
       }
-
-      setIsPasswordVerified(true);
-      setLoading(false);
+      else {
+        throw new Error("Invalid credentials");
+      }
+      //setIsPasswordVerified(true);
+      //setLoading(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Password verification failed");
       setLoading(false);
