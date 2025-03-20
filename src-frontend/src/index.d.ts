@@ -10,12 +10,42 @@ export interface WalletType {
   }>;
 }
 
+interface Contact {
+  name: string,
+  address: string,
+  crypto: string,
+  description: string
+}
 
+enum AccountType {
+  BEGINNER,
+  ADVANCED,
+  TESTER
+}
+
+interface Account {
+  accountName: string,
+  secretKey: string,
+  contacts: Contact[],
+  accountType: AccountType,
+  encryptionKey: string
+}
+/*
+data = {
+            "accountName": self._accountName,
+            "secretKey": self._secretKey,
+            "contacts": self._contacts,
+            "accountType": self._accountType.get_type_name(),
+            "encryptionKey": encryption_key_str
+        }
+ */
 interface PyWebView {
   api: {
     get_accounts(): Promise<string[]>
+    get_loaded_account(): Account,
     create_account(account_name: string, account_password: string, account_type: string): Promise<string>
-    authenticate_account(account_name: string, password: string): Promise<any>
+    authenticate_account(account_name: string, password: string): Promise<Account>
+    create_bitcoin_wallet(wallet_name: string): WalletType
   }
 }
 declare global {

@@ -20,7 +20,7 @@ class AccountsFileManager:
     def __init__(self):
         if getattr(self, '_initialized', False):
             return
-        
+        self.loaded_account = None
         self.default_directory = os.path.expanduser("~/.EncryptoVault")
         self.current_directory = self.default_directory
         if not os.path.exists(self.default_directory):
@@ -28,7 +28,7 @@ class AccountsFileManager:
         self._initialized = True
     
     @staticmethod
-    def get_instance():
+    def get_instance() -> AccountsFileManager:
         """Get the singleton instance of AccountsFileManager"""
         if AccountsFileManager._AccountsFileManager is None:
             AccountsFileManager()
@@ -40,7 +40,11 @@ class AccountsFileManager:
             return None
         fileData = self._decrypt_file(self.current_directory, decryption_key, account_name)
         account = Account(fileData)
+        self.loaded_account = account
         return account
+
+    def get_loaded_account(self) -> Account:
+        return self.loaded_account
 
     def create_account(self, account_name, account_type, account_password):
         if account_name in self.get_accounts():
