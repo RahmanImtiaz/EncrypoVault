@@ -10,7 +10,9 @@ class WebviewAPI:
         self.accounts_manager = AccountsFileManager().get_instance()
 
     def get_accounts(self):
-        return self.accounts_manager.get_accounts()
+        accounts = self.accounts_manager.get_accounts()
+        print(f"Returning accounts: {accounts}")
+        return accounts
 
     def create_account(self, account_name, account_password, account_type):
         return self.accounts_manager.create_account(account_name, account_type, account_password)
