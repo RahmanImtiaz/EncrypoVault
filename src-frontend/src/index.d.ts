@@ -49,6 +49,7 @@ interface PyWebView {
     authenticate_account(account_name: string, password: string, biometrics: Blob): Promise<Account>
     create_bitcoin_wallet(wallet_name: string): WalletType
     create_webauthn_auth_options():  Promise<string>
+    create_webauthn_reg_options(): Promise<string>
     authenticate_account(account_name, password, biometrics): Promise<Account | null>
   }
 }

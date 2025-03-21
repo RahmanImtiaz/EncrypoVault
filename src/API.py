@@ -33,3 +33,6 @@ class WebviewAPI:
 
     def create_webauthn_auth_options(self) -> str:
         return options_to_json(webauthn.generate_authentication_options(challenge=bytes.fromhex("c99a420cd739ff56632d3262582df92c43d50bd64e045374422ca3ed68826e5e"), rp_id="localhost", user_verification=UserVerificationRequirement.REQUIRED))
+
+    def create_webauthn_reg_options(self, account_name) -> str:
+        return options_to_json(webauthn.generate_registration_options(challenge=bytes.fromhex("c99a420cd739ff56632d3262582df92c43d50bd64e045374422ca3ed68826e5e"), rp_id="localhost", rp_name=account_name, user_name=account_name))
