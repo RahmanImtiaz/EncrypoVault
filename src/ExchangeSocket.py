@@ -3,6 +3,7 @@ from abc import abstractmethod
 import asyncio
 import aiohttp
 from Crypto import Crypto
+from Wallet import Wallet
 import websockets
 from CryptoObserver import CryptoObserver
 
@@ -34,13 +35,21 @@ class ExchangeSocket(CryptoWatch):
         
     def add_crypto(self, observer: CryptoObserver):
         if observer not in self.watchedCrypto:
-            self.watchedCrypto.append(observer)
-            print("Added " + observer.name + " to the watchlist")
+            if isinstance(observer, Wallet):
+                self.watchedCrypto.append(observer)
+                print("Added " + observer.name + " to the watch list")
+            elif isinstance(observer, Crypto):
+                self.watchedCrypto.append(observer)
+                print("Added " + observer.crypto_id + " to the watch list")
     
     def remove_crypto(self, observer: CryptoObserver):
         if observer in self.watchedCrypto:
-            self.watchedCrypto.remove(observer)
-            print("Removed " + observer.name + " from the watch list")
+            if isinstance(observer, Wallet):
+                self.watchedCrypto.remove(observer)
+                print("Removed " + observer.name + " from the watch list")
+            elif isinstance(observer, Crypto):
+                self.watchedCrypto.remove(observer)
+                print("Removed " + observer.crypto_id + " from the watch list")
     
     def notifyObservers(self, crypto_id: str, crypto_data: dict):
         for observer in self.watchedCrypto:
@@ -56,7 +65,7 @@ class ExchangeSocket(CryptoWatch):
                         crypto_id = crypto_data.get("id")
                         if crypto_id:
                             self.notifyObservers(crypto_id, crypto_data)
-                            print("Received " + crypto_id + " data")
+                            # print("Received " + crypto_id + " data")
                 else:
                     print("Failed to fetch data")
                     

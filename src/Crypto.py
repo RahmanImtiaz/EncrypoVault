@@ -32,7 +32,7 @@ class Crypto(CryptoObserver):
     
     
     def update(self, crypto_id: str, crypto_data: dict):
-        if self.id == crypto_id:
+        if self.crypto_id == crypto_id:
             self.name = crypto_data.get("name")
             self.symbol = crypto_data.get("symbol")
             self.image = crypto_data.get("image")
