@@ -1,5 +1,5 @@
 from webauthn import options_to_json
-from webauthn.helpers.structs import PublicKeyCredentialRequestOptions
+from webauthn.helpers.structs import PublicKeyCredentialRequestOptions, UserVerificationRequirement
 
 from AccountsFileManager import AccountsFileManager
 from AuthenticationManager import AuthenticationManager
@@ -32,4 +32,4 @@ class WebviewAPI:
         return btc_wallet.toJSON()
 
     def create_webauthn_auth_options(self) -> str:
-        return options_to_json(webauthn.generate_authentication_options(challenge=bytes.fromhex("c99a420cd739ff56632d3262582df92c43d50bd64e045374422ca3ed68826e5e"), rp_id="localhost"))
+        return options_to_json(webauthn.generate_authentication_options(challenge=bytes.fromhex("c99a420cd739ff56632d3262582df92c43d50bd64e045374422ca3ed68826e5e"), rp_id="localhost", user_verification=UserVerificationRequirement.REQUIRED))

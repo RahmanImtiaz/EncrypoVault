@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { startAuthentication } from '@simplewebauthn/browser';
+import {PublicKeyCredentialRequestOptionsJSON, startAuthentication} from '@simplewebauthn/browser';
 
 import "./Login.css";
 
@@ -72,11 +72,11 @@ export function Login({ onLogin }: LoginProps) {
 
     try {
       // This will trigger the system's biometric prompt (fingerprint, Face ID, etc.)
-      const authData = await window.pywebview.api.create_webauthn_auth_options()
-      const authData = {"challenge": "yZpCDNc5_1ZjLTJiWC35LEPVC9ZOBFN0Qiyj7WiCbl4", "timeout": 60000, "rpId": "localhost", "allowCredentials": [], "userVerification": "preferred"}
+      const authData: PublicKeyCredentialRequestOptionsJSON = JSON.parse(await window.pywebview.api.create_webauthn_auth_options())
+      //const authData2 = {"challenge": "yZpCDNc5_1ZjLTJiWC35LEPVC9ZOBFN0Qiyj7WiCbl4", "timeout": 60000, "rpId": "localhost", "allowCredentials": [], "userVerification": "preferred"}
       console.log("Before")
+      console.log(`authdata:`)
       console.log(authData)
-
       const webauthnResponse = await startAuthentication({optionsJSON: authData})
       console.log("After")
       await window.pywebview.api.authenticate_account(selectedAccount, password, webauthnResponse.response.authenticatorData)

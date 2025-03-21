@@ -7,6 +7,7 @@ import threading
 from API import WebviewAPI
 
 app = Flask(__name__)
+live_mode = True
 port = 9209
 
 server_running = True
@@ -27,16 +28,20 @@ def close_server():
     os.kill(os.getpid(), signal.SIGINT)
 
 
-def on_close(ww_window: webview.Window):
+def on_close(window: webview.Window):
     close_server()
-    ww_window.destroy()
+    window.destroy()
 
 
 thread = threading.Thread(target=run_server)
 thread.start()
 
 webview_api = WebviewAPI()
-window = webview.create_window("Hallo", f"http://localhost:{port}/index.html", js_api=webview_api)
+url = f"http://localhost:{port}/index.html"
+if live_mode:
+    url = f"http://localhost:3928/index.html"
+
+window = webview.create_window("Hallo", url, js_api=webview_api)
 
 window.events.closed += on_close
 
