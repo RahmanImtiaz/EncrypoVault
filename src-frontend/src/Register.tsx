@@ -3,6 +3,7 @@ import "./Login.css";
 
 export function Register() {
   const [accountName, setAccountName] = useState("");
+  const [accountType, setAccountType] = useState("Beginner");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -21,9 +22,17 @@ export function Register() {
     }
 
     try {
+      // Check if the account already exists
+      const accounts = await window.pywebview.api.get_accounts();
+      if (accounts.includes(accountName)) {
+          setError("Account already exists. Please choose a different account name.");
+          return;
+      }
       // Here you would call your backend to register the account
-      const response = await window.pywebview.api.create_account(accountName, password, "Beginner")
+      const response = await window.pywebview.api.create_account(accountName, password, accountType)
       console.log(response)
+      console.log("Account created successfully");
+      setError("Account created successfully");
       // onRegister();
     } catch (err) {
       setError("Registration failed. Please try again.");
@@ -64,6 +73,20 @@ export function Register() {
                 required
                 aria-label="Account name input"
               />
+
+                <label htmlFor="accountType" className="login-label">
+                  Select Account Type
+                </label>
+                <select
+                  id="accountType"
+                  className="login-input"
+                  value={accountType}
+                  onChange={(e) => setAccountType(e.target.value)}
+                  required
+                >
+                  <option value="Beginner">Beginner</option>
+                  <option value="Advanced">Advanced</option>
+                </select>
 
               <label
                 htmlFor="password"
