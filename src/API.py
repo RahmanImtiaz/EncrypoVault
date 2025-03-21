@@ -1,7 +1,10 @@
+from webauthn import options_to_json
+from webauthn.helpers.structs import PublicKeyCredentialRequestOptions
+
 from AccountsFileManager import AccountsFileManager
 from AuthenticationManager import AuthenticationManager
-from src.crypto_impl.BitcoinWallet import BitcoinWallet
-
+from crypto_impl.BitcoinWallet import BitcoinWallet
+import webauthn
 
 class WebviewAPI:
     authentication_manager: AuthenticationManager
@@ -16,7 +19,10 @@ class WebviewAPI:
         return accounts
 
     def get_loaded_account(self):
-        return self.accounts_manager.get_loaded_account().toJSON()
+        return self.accounts_manager.get_loaded_account()
+
+    def authenticate_account(self, account_name, password, biometrics):
+        self.authentication_manager.authenticate_account(account_name, password, biometrics)
 
     def create_account(self, account_name, account_password, account_type):
         return self.accounts_manager.create_account(account_name, account_type, account_password)
@@ -24,3 +30,6 @@ class WebviewAPI:
     def create_bitcoin_wallet(self, wallet_name):
         btc_wallet = BitcoinWallet.create_wallet(wallet_name)
         return btc_wallet.toJSON()
+
+    def create_webauthn_auth_options(self) -> str:
+        return options_to_json(webauthn.generate_authentication_options(challenge=bytes.fromhex("c99a420cd739ff56632d3262582df92c43d50bd64e045374422ca3ed68826e5e"), rp_id="localhost"))

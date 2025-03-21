@@ -2,8 +2,8 @@ import json
 
 import bitcoinlib
 
-from src.AccountsFileManager import AccountsFileManager
-from src.Wallet import Wallet
+from AccountsFileManager import AccountsFileManager
+from Wallet import Wallet
 
 
 class BitcoinWallet(Wallet):

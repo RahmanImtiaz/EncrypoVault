@@ -27,7 +27,7 @@ class AuthenticationManager:
             AuthenticationManager()
         return AuthenticationManager._AuthenticationManager
     
-    def authenticate_account(self, account_name, password):
+    def authenticate_account(self, account_name, password, biometrics):
         """Authenticate account using account name (string)"""
         if not self.ensure_secure_boot():
             raise Exception("Secure boot is not enabled. Cannot authenticate account as biometrics cannot be trusted.")
@@ -35,8 +35,6 @@ class AuthenticationManager:
             raise Exception("Too many failed attempts. Account locked.")
         print(f"Authenticating account {account_name}...")
         AuditLog.get_instance().add_entry(account_name, datetime.now(), "ATTEMPTING")
-        password = self.prompt_for_password()
-        biometrics = self.prompt_for_biometrics()
 
         key = self._generate_key(password, biometrics)
         account = AccountsFileManager.get_instance().load_account(key, account_name)

@@ -28,7 +28,7 @@ class AccountsFileManager:
         self._initialized = True
     
     @staticmethod
-    def get_instance() -> AccountsFileManager:
+    def get_instance() -> 'AccountsFileManager':
         """Get the singleton instance of AccountsFileManager"""
         if AccountsFileManager._AccountsFileManager is None:
             AccountsFileManager()

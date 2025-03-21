@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { startAuthentication } from '@simplewebauthn/browser';
+
 import "./Login.css";
 
 interface LoginProps {
@@ -11,7 +12,7 @@ export function Login({ onLogin }: LoginProps) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isPasswordVerified, setIsPasswordVerified] = useState(false);
+  const [isPasswordVerified, _setIsPasswordVerified] = useState(false);
   const [useFallbackAuth, setUseFallbackAuth] = useState(false);
   const [accounts, setAccounts] = useState<string[]>([])
   const [_isBiometricsSupported, setIsBiometricsSupported] = useState<boolean | null>(null);
@@ -65,6 +66,30 @@ export function Login({ onLogin }: LoginProps) {
     fetchAccounts()
   }, []);
 
+  const handleBiometricAuth = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      // This will trigger the system's biometric prompt (fingerprint, Face ID, etc.)
+      const authData = await window.pywebview.api.create_webauthn_auth_options()
+      const authData = {"challenge": "yZpCDNc5_1ZjLTJiWC35LEPVC9ZOBFN0Qiyj7WiCbl4", "timeout": 60000, "rpId": "localhost", "allowCredentials": [], "userVerification": "preferred"}
+      console.log("Before")
+      console.log(authData)
+
+      const webauthnResponse = await startAuthentication({optionsJSON: authData})
+      console.log("After")
+      await window.pywebview.api.authenticate_account(selectedAccount, password, webauthnResponse.response.authenticatorData)
+
+    } catch (err) {
+      console.error('Biometric auth error:', err);
+      setUseFallbackAuth(true);
+      setError("Biometric verification failed. Please use desktop password.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -76,19 +101,20 @@ export function Login({ onLogin }: LoginProps) {
       //const DEMO_PASSWORD = "demo123";
       //if (selectedAccount === "demo_account" && password !== DEMO_PASSWORD) {
       //  throw new Error("Invalid password for demo account (use: demo123)");
-      //}
-      const account = await window.pywebview.api.authenticate_account(selectedAccount, password);
-      console.log('Account verified:', account);
-      
-      if (account) {
-        setIsPasswordVerified(true);
-        onLogin();
-      }
-      else {
-        throw new Error("Invalid credentials");
-      }
+      // //}
+      // const account = await window.pywebview.api.authenticate_account(selectedAccount, password);
+      // console.log('Account verified:', account);
+      //
+      // if (account) {
+      //   setIsPasswordVerified(true);
+      //   onLogin();
+      // }
+      // else {
+      //   throw new Error("Invalid credentials");
+      // }
       //setIsPasswordVerified(true);
       //setLoading(false);
+      await handleBiometricAuth()
     } catch (err) {
       setError(err instanceof Error ? err.message : "Password verification failed");
       setLoading(false);
@@ -115,38 +141,7 @@ export function Login({ onLogin }: LoginProps) {
     }
   };
 
-  const handleBiometricAuth = async () => {
-    setLoading(true);
-    setError("");
 
-    try {
-      // This will trigger the system's biometric prompt (fingerprint, Face ID, etc.)
-      const authData = {
-        challenge: Uint8Array.from("DEMO_CHALLENGE", c => c.charCodeAt(0)),
-        timeout: 60000,
-        rpId: window.location.hostname || "localhost",
-        allowCredentials: [{
-          id: Uint8Array.from("DEMO_CREDENTIAL", c => c.charCodeAt(0)),
-          type: 'public-key' as const,
-          transports: ['internal'] as const
-        }],
-        userVerification: 'required' as const,
-        optionsJSON: {
-          challenge: "aGFsbG8K",
-        }
-      };
-
-      await startAuthentication(authData);
-      onLogin();
-      
-    } catch (err) {
-      console.error('Biometric auth error:', err);
-      setUseFallbackAuth(true);
-      setError("Biometric verification failed. Please use desktop password.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Render biometric authentication screen
   const renderBiometricScreen = () => (

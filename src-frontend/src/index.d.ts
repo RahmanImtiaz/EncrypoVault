@@ -1,3 +1,5 @@
+import {  PublicKeyCredentialRequestOptionsJSON } from "@simplewebauthn/browser";
+
 export interface WalletType {
   name: string;
   balance: number;
@@ -44,8 +46,10 @@ interface PyWebView {
     get_accounts(): Promise<string[]>
     get_loaded_account(): Account,
     create_account(account_name: string, account_password: string, account_type: string): Promise<string>
-    authenticate_account(account_name: string, password: string): Promise<Account>
+    authenticate_account(account_name: string, password: string, biometrics: Blob): Promise<Account>
     create_bitcoin_wallet(wallet_name: string): WalletType
+    create_webauthn_auth_options():  Promise<PublicKeyCredentialRequestOptionsJSON>
+    authenticate_account(account_name, password, biometrics): Promise<Account | null>
   }
 }
 declare global {
