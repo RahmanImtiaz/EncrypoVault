@@ -19,10 +19,23 @@ class Wallet(CryptoObserver, ABC):
     def toJSON(self):
         pass
 
-    def update(self, crypto_name: str, new_price: float):
-        if crypto_name in self.holdings:
-            holding = self.holdings[crypto_name]
+    def update(self, crypto_id: str, crypto_data: dict):
+        if crypto_id in self.holdings:
+            holding = self.holding[crypto_id]
+            new_price = crypto_data["current_price"]
             holding["value"] = holding["quantity"] * new_price
-            print("Updated " + crypto_name + " value to " + str(holding["value"]))
+            print("Updated " [crypto_id] + " value to " + str(holding["value"]))
+            self._calcualte_total_balance()
         else:
-            print("Could not update " + crypto_name + " value")
+            print("Could not update " [crypto_id] + " value")
+            
+            
+    def _calcualte_total_balance(self):
+        self.balance = 0.0
+        for holding in self.holdings.values():
+            self.balance += holding["value"]
+            
+            
+    def get_total_balance(self):
+        return self.balance
+

@@ -1,6 +1,7 @@
 import abc, json
 from abc import abstractmethod
 import asyncio
+import aiohttp
 from Crypto import Crypto
 import websockets
 from CryptoObserver import CryptoObserver
@@ -23,20 +24,13 @@ class CryptoWatch(abc.ABC):
         pass
 
 
-
-
-
 class ExchangeSocket(CryptoWatch):
     
-    coinbase_URL = "wss://ws-feed.exchange.coinbase.com"
-    def __init__(self, product_ids = None, hosts = "localhost", port = 8765):
+    COINGECKO_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=gbp"
+    def __init__(self, product_ids):
         super().__init__()
-        self._connection = None
-        self.host = hosts
-        self.port = port
-        self.product_ids = product_ids
-        self.server = None
-        self.coinbase_task = None
+        self.product_ids = product_ids 
+        # this product_ids is used for testing the code
         
     def add_crypto(self, observer: CryptoObserver):
         if observer not in self.watchedCrypto:
@@ -48,44 +42,26 @@ class ExchangeSocket(CryptoWatch):
             self.watchedCrypto.remove(observer)
             print("Removed " + observer.name + " from the watch list")
     
-    def notifyObservers(self, crypto_name: str, new_price: float):
+    def notifyObservers(self, crypto_id: str, crypto_data: dict):
         for observer in self.watchedCrypto:
-            observer.update(crypto_name, new_price)
+            observer.update(crypto_id, crypto_data)
 
-    
-    async def connect_to_coinbase(self):
-        async with websockets.connect(self.coinbase_URL) as websocket:
-            subscribe_message = {
-                "type": "subscribe",
-                "product_ids": self.product_ids,
-                "channels": ["ticker"]
-            }
-            await websocket.send(json.dumps(subscribe_message))
-            
-            print("Subscribed to " + str(self.product_ids))
-            
-            async for message in websocket:
-                data = json.loads(message)
-                if data.get("type") == "ticker":
-                    product_id = data.get("product_id")                        
-                    price = (data.get("price"))
-                    if not price:
-                        return
-                    price = float(price)
-                    if price and product_id:
-                        print("Received " + product_id + " price: " + str(price))
-                        self.notifyObservers(product_id, price)
-    
-    async def connectToExchangeSocket(self):
-        self.coinbase_task = asyncio.create_task(self.connect_to_coinbase())
-        await self.coinbase_task
-    
-    async def disconnectFromExchangeSocket(self):
-        if self.coinbase_task:
-            self.coinbase_task.cancel()
-            try:
-                await self.coinbase_task
-            except asyncio.CancelledError:
-                print("Task was cancelled")
-            self.coinbase_task = None
-            print("Disconnected from the exchange")
+    async def connect_to_exchange(self):
+        async with aiohttp.ClientSession() as session:
+            async with session.get(self.COINGECKO_URL) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    
+                    for crypto_data in data:
+                        crypto_id = crypto_data.get("id")
+                        if crypto_id:
+                            self.notifyObservers(crypto_id, crypto_data)
+                            print("Received " + crypto_id + " data")
+                else:
+                    print("Failed to fetch data")
+                    
+        await self.disconnect_from_exchange()
+                    
+
+    async def disconnect_from_exchange(self):
+        print("Disconnected from the exchange")
