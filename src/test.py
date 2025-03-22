@@ -1,30 +1,23 @@
-import asyncio
-from Crypto import Crypto
-from ExchangeSocket import ExchangeSocket
+import requests
 
-# Main function to test the connection and observer updates
-async def main():
-    # Create the ExchangeSocket instance and add product IDs (for testing)
-    exchange_socket = ExchangeSocket(product_ids=['bitcoin', 'ethereum', 'dogecoin'])
+# url = 'https://api.coingecko.com/api/v3/coins/bitcoin/ohlc?vs_currency=gbp&days=30'
 
-    # Create some Crypto observers for different cryptocurrencies
-    bitcoin_observer = Crypto('bitcoin')
-    ethereum_observer = Crypto('ethereum')
-    dogecoin_observer = Crypto('dogecoin')
+url = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=gbp&days=30"
+response = requests.get(url)
 
-    # Add the observers to the ExchangeSocket's watchlist
-    exchange_socket.add_crypto(bitcoin_observer)
-    exchange_socket.add_crypto(ethereum_observer)
-    exchange_socket.add_crypto(dogecoin_observer)
-
-    # Simulate connecting to the exchange and updating observers
-    await exchange_socket.connect_to_exchange()
+if response.status_code == 200:
+    data = response.json()
+    # Process the data as needed
     
-    for observer in exchange_socket.watchedCrypto:
-        print(f"{observer.crypto_id} data:")
-        print(observer.__dict__)
-        # print()
+    print(data)
+else:
+    print(f'Error: {response.status_code}')
 
-# Run the main function
-if __name__ == "__main__":
-    asyncio.run(main())
+
+
+# URL = "  https://api.coingecko.com/api/v3/coins/{id}/market_chart?vs_currency={vs_currency}&days={days} "
+
+
+
+# URL2 = " https://api.coingecko.com/api/v3/coins/{id}/ohlc?vs_currency={vs_currency}&days={days}"
+
