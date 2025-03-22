@@ -3,7 +3,7 @@
 /* Styles for the Navbar */
 .navbar {
     background-color: #222227;;
-    padding: 10px 20px;
+    padding: 13px 20px;
     position: fixed;
     top: 0;
     left: 0;
@@ -34,4 +34,22 @@
   
   .navLink:hover {
     color: #3498db; /* Add hover effect */
+  }
+
+  .navButton {
+    background-color: #5F5C7D;
+    width: 1em;
+    height: 1em;  
+    display: flex; /* Enables flexbox */
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    border-radius: 0.2em;
+    padding: 0.5em; /* Ensures spacing inside */
+  }
+
+  .navButton img{
+    width: 1.5em;
+    height: 1.5em;
+    justify-content: center;
+    align-items: center;
   }

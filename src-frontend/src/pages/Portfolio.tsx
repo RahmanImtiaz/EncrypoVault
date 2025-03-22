@@ -32,6 +32,19 @@ const Portfolio: React.FC<PortfolioProps> = ({ balance, wallets }) => {
     console.log(`Trade from wallet ${wallets[walletIndex].name}`);
   };
 
+  return(
+    <div className="portfolioContainer">
+      <div className="balanceContainer">
+        <h2 className="balanceHeading">Balance</h2>
+        <p className="total">£1503.56</p>
+      </div>
+      <div className="tableContainer">
+        some information
+      </div>
+    </div>
+  );
+
+  /*
   return (
     <div className="portfolio-container">
       <h1 className="portfolio-title">Portfolio</h1>
@@ -72,6 +85,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ balance, wallets }) => {
       </div>
     </div>
   );
+  */
 };
 
 export default Portfolio;

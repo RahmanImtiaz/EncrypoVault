@@ -1,3 +1,44 @@
 body{
-    background: linear-gradient(142deg, #2E2D44 37.09%, #26273F 57.87%, #1B1E37 86.72%);;
+    background: linear-gradient(142deg, #2E2D44 37.09%, #26273F 57.87%, #1B1E37 86.72%);
 }
+
+/* Wallets.css */
+.walletContainter {
+    background-color: pink;
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    justify-content: center; /* Vertically center the container */
+    align-items: center; /* Horizontally center the container */
+    min-height: 100vh; /* Take full viewport height */
+    padding: 20px; /* Padding around the container */
+  }
+  
+  .walletHeading {
+    background-color: orange;
+    display: flex; /* Align items horizontally */
+    justify-content: space-between; /* Space between h1 and button */
+    width: 100%; /* Make the walletHeading take full width */
+    max-width: 600px; /* Optional: Set a max width for the heading */
+    margin-bottom: 20px; /* Space below walletHeading */
+  }
+  
+  .walletHeading h1 {
+    margin: 0; /* Remove default margin */
+  }
+  
+  .walletList {
+    background-color: lightblue;
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    gap: 10px; /* Space between wallet items */
+    width: 100%;
+    max-width: 600px; /* Optional: Set a max width for the list */
+  }
+  
+  .walletList div {
+    background-color: red;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+  }
+  

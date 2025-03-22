@@ -8,27 +8,37 @@ const Navbar: React.FC = () => {
         <ul className="navList">
           <li className="navItem">
             <Link to="/" className="navLink">
-              Portfolio
+              <div className="navButton">
+                <img src="/icons8-home-48-white.png" alt="home"/>
+              </div>
             </Link>
           </li>
           <li className="navItem">
             <Link to="/wallets" className="navLink">
-              Wallets
+              <div className="navButton">
+                <img src="/icons8-wallet-48-white.png" alt="wallets"/>
+              </div>
             </Link>
           </li>
           <li className="navItem">
             <Link to="/contacts" className="navLink">
-              Contacts
+              <div className="navButton">
+                <img src="/icons8-contacts-48-white.png" alt="contacts"/>
+              </div>
             </Link>
           </li>
           <li className="navItem">
             <Link to="/market" className="navLink">
-              Market
+              <div className="navButton">
+                <img src="/graph-white-48.png" alt="market"/>
+              </div>
             </Link>
           </li>
           <li className="navItem">
             <Link to="/settings" className="navLink">
-              Settings
+              <div className="navButton">
+                <img src="/icons8-settings-48-white.png" alt="settings"/>
+              </div>
             </Link>
           </li>
         </ul>
