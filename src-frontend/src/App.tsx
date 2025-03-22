@@ -1,8 +1,9 @@
-import {useEffect, useState} from 'react';
+//import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import './App.css';
 import Login from './Login';
 import Register from './Register';
-import {WalletType} from "./index";
+//import {WalletType} from "./index";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Contacts from './pages/Contacts';
@@ -15,9 +16,10 @@ import './styles/Portfolio.css';
 export function App() {
   const [isLogin, setIsLogin] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [balance, _setBalance] = useState(1000);
-  const [wallets, setWallets] = useState<WalletType[]>([]);
+  /*const [balance, _setBalance] = useState(1000);
+  const [wallets, setWallets] = useState<WalletType[]>([]);*/
 
+  /*
   useEffect(() => {
     let dummyWallets: WalletType[] = [{
       name: 'Bitcoin',
@@ -59,7 +61,7 @@ export function App() {
     }]
 
     setWallets(dummyWallets)
-  }, []);
+  }, []);*/
   // useEffect(() => {
   //   const checkForAccounts = async () => {
   //     try {
@@ -101,11 +103,10 @@ export function App() {
           <Navbar />
           {/* Routes for different pages */}
           <Routes>
-            <Route
-              path="/"
-              element={<Portfolio balance={balance} wallets={wallets} />}
-            />
-            <Route path="/portfolio" element={<Portfolio balance={balance} wallets={wallets} />}/>
+            <Route path="/" element={<Portfolio/>}/>
+            {/*<Route path="/" element={<Portfolio/>}/>*/}
+            {/*<Route path="/portfolio" element={<Portfolio balance={balance} wallets={wallets} />}/>*/}
+            <Route path="/portfolio" element={<Portfolio/>}/>
             <Route path="/wallets" element={<Wallets />} />
             <Route path="/contacts" element={<Contacts />} />
             <Route path="/market" element={<Market />} />

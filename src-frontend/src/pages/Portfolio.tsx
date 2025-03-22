@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+//import React, { useState } from 'react';
+import React from 'react';
 import '../styles/Portfolio.css';
-import Wallet from '../Wallet';
-import {WalletType} from "../index";
+//import Wallet from '../Wallet';
+//import {WalletType} from "../index";
 
 
-
+/*
 interface PortfolioProps {
   balance: number;
   wallets: WalletType[];
-}
+}*/
 
-const Portfolio: React.FC<PortfolioProps> = ({ balance, wallets }) => {
+//const Portfolio: React.FC<PortfolioProps> = ({ balance, wallets }) => {
+const Portfolio: React.FC = () => {
+  /*
   const [selectedWallet, setSelectedWallet] = useState<number | null>(null);
 
   const handleWalletClick = (index: number) => {
@@ -30,7 +33,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ balance, wallets }) => {
   const handleTrade = (walletIndex: number) => {
     // Implement trade functionality
     console.log(`Trade from wallet ${wallets[walletIndex].name}`);
-  };
+  };*/
 
   return(
     <div className="portfolioContainer">
