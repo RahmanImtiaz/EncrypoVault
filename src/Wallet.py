@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from CryptoObserver import CryptoObserver
-
+from Crypto import Crypto
 
 class Wallet(CryptoObserver, ABC):
     def __init__(self, name: str):
@@ -9,6 +9,8 @@ class Wallet(CryptoObserver, ABC):
         self.address = None
         self.name = name
         self.holdings = {}
+        # the holdings will be a dictionary with an object of Crypto as the key and the amount of the crypto as the value
+        # e.g. {Crypto: 0.5, Crypto: 1.0}
 
     @staticmethod
     @abstractmethod
@@ -21,19 +23,17 @@ class Wallet(CryptoObserver, ABC):
 
     def update(self, crypto_id: str, crypto_data: dict):
         if crypto_id in self.holdings:
-            holding = self.holding[crypto_id]
-            new_price = crypto_data["current_price"]
-            holding["value"] = holding["quantity"] * new_price
-            print("Updated " [crypto_id] + " value to " + str(holding["value"]))
-            self._calcualte_total_balance()
+            crypto = self.holdings[crypto_id]["crypto"]
+            crypto.update(crypto_id, crypto_data)
+            print(f"Updated {crypto_id}")
         else:
-            print("Could not update " [crypto_id] + " value")
+            print(f"Could not update {crypto_id}, not found in holdings")
             
             
     def _calcualte_total_balance(self):
         self.balance = 0.0
-        for holding in self.holdings.values():
-            self.balance += holding["value"]
+        for crypto in self.holdings:
+            self.balance += crypto.current_price * self.holdings[crypto]
             
             
     def get_total_balance(self):
