@@ -1,11 +1,18 @@
+body{
+  background: linear-gradient(142deg, #2E2D44 37.09%, #26273F 57.87%, #1B1E37 86.72%);;
+}
+
+
+
 .portfolio-container {
-  background-color: #1a1a1a;
+  background: pink;
   color: #fff;
   padding: 20px;
-  border-radius: 10px;
-  max-width: 600px;
+  /*border-radius: 10px;*/
+  /*max-width: 600px;*/
   margin: 0 auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);*/
 }
 
 .portfolio-title {

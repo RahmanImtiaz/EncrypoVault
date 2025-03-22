@@ -15,10 +15,10 @@ export function Login({ onLogin }: LoginProps) {
   const [isPasswordVerified, _setIsPasswordVerified] = useState(false);
   const [useFallbackAuth, setUseFallbackAuth] = useState(false);
   const [accounts, setAccounts] = useState<string[]>([])
-  const [_isBiometricsSupported, setIsBiometricsSupported] = useState<boolean | null>(null);
+  //const [_isBiometricsSupported, setIsBiometricsSupported] = useState<boolean | null>(null);
 
   // Check biometric support when component mounts
-  useEffect(() => {
+  useEffect(() => {/*
     const checkBiometricSupport = async () => {
       try {
         const supported = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
@@ -27,7 +27,7 @@ export function Login({ onLogin }: LoginProps) {
         console.error('Error checking biometric support:', err);
         setIsBiometricsSupported(false);
       }
-    };
+    };*/
 
     function fetchAccounts() {
       // If pywebview is already available, use it immediately
@@ -62,7 +62,7 @@ export function Login({ onLogin }: LoginProps) {
       }
     }
 
-    checkBiometricSupport();
+    //checkBiometricSupport();
     fetchAccounts()
   }, []);
 
@@ -114,6 +114,8 @@ export function Login({ onLogin }: LoginProps) {
       // }
       //setIsPasswordVerified(true);
       //setLoading(false);
+      onLogin();
+      console.log("Login successful!");
       await handleBiometricAuth()
     } catch (err) {
       setError(err instanceof Error ? err.message : "Password verification failed");

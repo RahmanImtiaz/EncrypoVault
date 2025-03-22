@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import './Portfolio.css';
-import Wallet from './Wallet';
-import {WalletType} from "./index";
+import '../styles/Portfolio.css';
+import Wallet from '../Wallet';
+import {WalletType} from "../index";
 
 
 

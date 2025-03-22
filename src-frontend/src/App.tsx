@@ -2,9 +2,15 @@ import {useEffect, useState} from 'react';
 import './App.css';
 import Login from './Login';
 import Register from './Register';
-import Portfolio from './Portfolio';
-import './Portfolio.css';
 import {WalletType} from "./index";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Contacts from './pages/Contacts';
+import Market from './pages/Market';
+import Wallets from './pages/Wallets';
+import Setting from './pages/Setting';
+import Portfolio from './pages/Portfolio';
+import './styles/Portfolio.css';
 
 export function App() {
   const [isLogin, setIsLogin] = useState(true);
@@ -81,6 +87,7 @@ export function App() {
 
 
   return (
+    <Router>
     <div className="app">
       {!isAuthenticated ? (
         isLogin ? (
@@ -89,14 +96,32 @@ export function App() {
           <Register />
         )
       ) : (
-        <Portfolio balance={balance} wallets={wallets} />
+        <>
+          {/* Navbar (header) is always here once authenticated */}
+          <Navbar />
+          {/* Routes for different pages */}
+          <Routes>
+            <Route
+              path="/"
+              element={<Portfolio balance={balance} wallets={wallets} />}
+            />
+            <Route path="/portfolio" element={<Portfolio balance={balance} wallets={wallets} />}/>
+            <Route path="/wallets" element={<Wallets />} />
+            <Route path="/contacts" element={<Contacts />} />
+            <Route path="/market" element={<Market />} />
+            <Route path="/settings" element={<Setting />} />
+          </Routes>
+        </>
       )}
+
+      {/* Show the login/register toggle button only when the user is not authenticated */}
       {!isAuthenticated && (
         <button onClick={toggleForm} className="toggle-button">
-          {isLogin ? "Need to Register?" : "Already have an account?"}
+          {isLogin ? 'Need to Register?' : 'Already have an account?'}
         </button>
       )}
     </div>
+  </Router>
   );
 }
 

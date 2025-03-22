@@ -1,0 +1,37 @@
+/* src/Navbar.css */
+
+/* Styles for the Navbar */
+.navbar {
+    background-color: #222227;;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+  
+  /* Styles for the navigation list */
+  .navList {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  /* Styles for each navigation item */
+  .navItem {
+    margin: 0 15px;
+  }
+  
+  /* Styles for each navigation link */
+  .navLink {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-size: 18px;
+  }
+  
+  .navLink:hover {
+    color: #3498db; /* Add hover effect */
+  }
