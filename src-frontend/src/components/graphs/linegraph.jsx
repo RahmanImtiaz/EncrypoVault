@@ -9,15 +9,14 @@ const LineGraph = ({ crypto_id, time_range }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-
         const options = {
-            method: 'GET',
-            headers: {
-              accept: 'application/json',
-              'x-cg-demo-api-key': '	CG-E46h8ehSNZFLW8b3zrv1xzyP'
-            }
-          };
-          
+          method: 'GET',
+          headers: {
+            accept: 'application/json',
+            'x-cg-demo-api-key': '	CG-E46h8ehSNZFLW8b3zrv1xzyP'
+          }
+        };
+
         const response = await fetch(`https://api.coingecko.com/api/v3/coins/${crypto_id}/market_chart?vs_currency=gbp&days=${time_range}`, options);
         const data = await response.json();
 
@@ -45,9 +44,9 @@ const LineGraph = ({ crypto_id, time_range }) => {
     if (time_range <= 1) {
       return 5 * 60 * 1000;
     } else if (time_range <= 90) {
-      return 60 * 60 * 1000; 
+      return 60 * 60 * 1000;
     } else {
-      return 24 * 60 * 60 * 1000; 
+      return 24 * 60 * 60 * 1000;
     }
   };
 
@@ -84,6 +83,7 @@ const LineGraph = ({ crypto_id, time_range }) => {
           };
         },
       },
+      background: '#121212',
     },
     dataLabels: {
       enabled: false,
@@ -94,6 +94,9 @@ const LineGraph = ({ crypto_id, time_range }) => {
     title: {
       text: 'Price Movement',
       align: 'left',
+      style: {
+        color: '#ffffff', 
+      },
     },
     fill: {
       type: 'gradient',
@@ -107,20 +110,32 @@ const LineGraph = ({ crypto_id, time_range }) => {
     },
     yaxis: {
       labels: {
+        style: {
+          colors: '#ffffff', 
+        },
         formatter: function (val) {
           return val.toFixed(2);
         },
       },
       title: {
         text: 'Price (GBP)',
+        style: {
+          color: '#ffffff',
+        },
       },
     },
     xaxis: {
       type: 'datetime',
       min: minDate,
       max: maxDate,
+      labels: {
+        style: {
+          colors: '#ffffff', 
+        },
+      },
     },
     tooltip: {
+      theme: 'dark',
       shared: false,
       y: {
         formatter: function (val) {
@@ -128,6 +143,15 @@ const LineGraph = ({ crypto_id, time_range }) => {
         },
       },
     },
+    grid: {
+      borderColor: '#333',
+    },
+    plotOptions: {
+      area: {
+        borderRadius: 10,
+      },
+    },
+    colors: ['#00E396'], 
   };
 
   return (
