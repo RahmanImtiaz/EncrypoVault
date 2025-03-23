@@ -1,8 +1,7 @@
 import React from "react";
+import { useState } from "react";
 import useCryptoData from "./useCryptoData";
 import LineGraph from "./graphs/linegraph";
-import { useState } from "react";
-
 
 
 // This is a functional component that will be shown to beginner users whenever they search for a certain cryptocurrency.
@@ -16,7 +15,48 @@ import { useState } from "react";
 
 //This time range will between 1 - 365 days.
 
-const BasicDetails = ({ cryptoId }) => {
+/*
+interface CryptoData {
+  name?: string;
+  symbol?: string;
+  image?: {
+    small?: string;
+  };
+  market_data?: {
+    current_price?: {
+      gbp?: number;
+    };
+    price_change_percentage_24h?: number;
+    market_cap?: {
+      gbp?: number;
+    };
+    high_24h?: {
+      gbp?: number;
+    };
+    low_24h?: {
+      gbp?: number;
+    };
+  };
+  market_cap_rank?: number;
+  description?: {
+    en?: string;
+  };
+  links?: {
+    homepage?: string[];
+    blockchain_site?: string[];
+    official_forum_url?: string[];
+    chat_url?: string[];
+  };
+}*/
+  
+
+interface BasicDetailsProps {
+  cryptoId: string;
+}
+
+
+
+const BasicDetails: React.FC<BasicDetailsProps> = ({ cryptoId }) => {
     const { cryptoData, isLoading, error } = useCryptoData(cryptoId);
     const [timeRange, setTimeRange] = useState(30);
 
@@ -31,26 +71,26 @@ const BasicDetails = ({ cryptoId }) => {
     }
 
     // Helper function to safely display nested data
-    const getValue = (value) => value !== undefined && value !== null ? value : "N/A";
+    const getValue = (value: any) => value !== undefined && value !== null ? value : "N/A";
 
     return (
         <div>
             <div className="crypto-header">
                 <h1>
-                    {getValue(cryptoData.name)} ({getValue(cryptoData.symbol)?.toUpperCase()})
+                    {getValue(cryptoData?.name)} ({getValue(cryptoData?.symbol)?.toUpperCase()})
                 </h1>
-                {cryptoData.image && cryptoData.image.small && (
+                {cryptoData?.image && cryptoData?.image.small && (
                     <img src={cryptoData.image.small} alt={cryptoData.name} />
                 )}
 
                 <div className="price-info">
-                    <p> Current Price: {getValue(cryptoData.market_data?.current_price?.gbp)} </p>
+                    <p> Current Price: {getValue(cryptoData?.market_data?.current_price?.gbp)} </p>
                 </div>
             </div>
 
             <div className="description">
                 <p>
-                    {cryptoData.description && cryptoData.description.en
+                    {cryptoData?.description && cryptoData?.description.en
                         ? cryptoData.description.en
                         : "No description available."}
                 </p>
@@ -76,18 +116,18 @@ const BasicDetails = ({ cryptoId }) => {
             </div>
 
             <div className="basic-info">
-                <p>24h Price Change (%): {getValue(cryptoData.market_data?.price_change_percentage_24h)}</p>
-                <p>Market Cap Rank: {getValue(cryptoData.market_cap_rank)}</p>
-                <p>Market Cap (GBP): {getValue(cryptoData.market_data?.market_cap?.gbp)}</p>
-                <p>24h High (GBP): {getValue(cryptoData.market_data?.high_24h?.gbp)}</p>
-                <p>24h Low (GBP): {getValue(cryptoData.market_data?.low_24h?.gbp)}</p>
+                <p>24h Price Change (%): {getValue(cryptoData?.market_data?.price_change_percentage_24h)}</p>
+                <p>Market Cap Rank: {getValue(cryptoData?.market_cap_rank)}</p>
+                <p>Market Cap (GBP): {getValue(cryptoData?.market_data?.market_cap?.gbp)}</p>
+                <p>24h High (GBP): {getValue(cryptoData?.market_data?.high_24h?.gbp)}</p>
+                <p>24h Low (GBP): {getValue(cryptoData?.market_data?.low_24h?.gbp)}</p>
             </div>
 
             <div className="links">
-                <p>Homepage: {cryptoData.links?.homepage?.[0] || "N/A"}</p>
-                <p>Blockchain Site: {cryptoData.links?.blockchain_site?.[0] || "N/A"}</p>
-                <p>Official Forum: {cryptoData.links?.official_forum_url?.[0] || "N/A"}</p>
-                <p>Chat: {cryptoData.links?.chat_url?.[0] || "N/A"}</p>
+                <p>Homepage: {cryptoData?.links?.homepage?.[0] || "N/A"}</p>
+                <p>Blockchain Site: {cryptoData?.links?.blockchain_site?.[0] || "N/A"}</p>
+                <p>Official Forum: {cryptoData?.links?.official_forum_url?.[0] || "N/A"}</p>
+                <p>Chat: {cryptoData?.links?.chat_url?.[0] || "N/A"}</p>
             </div>
         </div>
     );

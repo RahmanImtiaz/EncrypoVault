@@ -1,15 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import Chart from 'react-apexcharts';
+import { ApexOptions } from 'apexcharts';
 
-const LineGraph = ({ crypto_id, time_range }) => {
-  const [series, setSeries] = useState([]);
-  const [minDate, setMinDate] = useState(null);
-  const [maxDate, setMaxDate] = useState(null);
+interface LineGraphProps {
+  crypto_id: string;
+  time_range: number;
+}
+
+interface PriceData {
+  x: Date;
+  y: number;
+}
+
+interface SeriesData {
+  name: string;
+  data: PriceData[];
+}
+
+
+const LineGraph: React.FC<LineGraphProps> = ({ crypto_id, time_range }) => {
+  const [series, setSeries] = useState<SeriesData[]>([]);
+  const [minDate, setMinDate] = useState<number | null>(null);
+  const [maxDate, setMaxDate] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const options = {
+        const fetchOptions = {
           method: 'GET',
           headers: {
             accept: 'application/json',
@@ -17,15 +34,15 @@ const LineGraph = ({ crypto_id, time_range }) => {
           }
         };
 
-        const response = await fetch(`https://api.coingecko.com/api/v3/coins/${crypto_id}/market_chart?vs_currency=gbp&days=${time_range}`, options);
+        const response = await fetch(`https://api.coingecko.com/api/v3/coins/${crypto_id}/market_chart?vs_currency=gbp&days=${time_range}`, fetchOptions);
         const data = await response.json();
 
-        const prices = data.prices.map(price => ({
+        const prices = data.prices.map((price: [number, number]) => ({
           x: new Date(price[0]),
           y: price[1],
         }));
 
-        const dates = prices.map(entry => entry.x.getTime());
+        const dates = prices.map((entry: PriceData) => entry.x.getTime());
         const minDate = Math.min(...dates);
         const maxDate = Math.max(...dates);
 
@@ -52,7 +69,7 @@ const LineGraph = ({ crypto_id, time_range }) => {
 
   const minZoomRange = determineMinZoomRange();
 
-  const options = {
+  const options: ApexOptions = {
     chart: {
       type: 'area',
       height: 350,
@@ -65,14 +82,14 @@ const LineGraph = ({ crypto_id, time_range }) => {
         autoSelected: 'zoom',
       },
       events: {
-        beforeZoom: function (chartContext, { xaxis }) {
-          let newMin = Math.max(xaxis.min, minDate);
-          let newMax = Math.min(xaxis.max, maxDate);
+        beforeZoom: function (_: any, { xaxis }: { xaxis: { min: number; max: number } }) {
+          let newMin = Math.max(xaxis.min, minDate || 0);
+          let newMax = Math.min(xaxis.max, maxDate || Infinity);
 
           if (newMax - newMin < minZoomRange) {
             const midPoint = (newMin + newMax) / 2;
-            newMin = Math.max(midPoint - minZoomRange / 2, minDate);
-            newMax = Math.min(midPoint + minZoomRange / 2, maxDate);
+            newMin = Math.max(midPoint - minZoomRange / 2, minDate || 0);
+            newMax = Math.min(midPoint + minZoomRange / 2, maxDate || Infinity);
           }
 
           return {
@@ -113,7 +130,7 @@ const LineGraph = ({ crypto_id, time_range }) => {
         style: {
           colors: '#ffffff', 
         },
-        formatter: function (val) {
+        formatter: function (val : number) {
           return val.toFixed(2);
         },
       },
@@ -126,8 +143,8 @@ const LineGraph = ({ crypto_id, time_range }) => {
     },
     xaxis: {
       type: 'datetime',
-      min: minDate,
-      max: maxDate,
+      min: minDate || undefined,
+      max: maxDate || undefined,
       labels: {
         style: {
           colors: '#ffffff', 
@@ -138,7 +155,7 @@ const LineGraph = ({ crypto_id, time_range }) => {
       theme: 'dark',
       shared: false,
       y: {
-        formatter: function (val) {
+        formatter: function (val: number) {
           return val.toFixed(2);
         },
       },
@@ -147,9 +164,7 @@ const LineGraph = ({ crypto_id, time_range }) => {
       borderColor: '#333',
     },
     plotOptions: {
-      area: {
-        borderRadius: 10,
-      },
+      area: {},
     },
     colors: ['#00E396'], 
   };
