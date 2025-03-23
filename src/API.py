@@ -5,6 +5,7 @@ from AccountsFileManager import AccountsFileManager
 from AuthenticationManager import AuthenticationManager
 from crypto_impl.BitcoinWallet import BitcoinWallet
 import webauthn
+import sys
 
 class WebviewAPI:
     authentication_manager: AuthenticationManager
@@ -22,7 +23,12 @@ class WebviewAPI:
         return self.accounts_manager.get_loaded_account()
 
     def authenticate_account(self, account_name, password, biometrics):
-        self.authentication_manager.authenticate_account(account_name, password, biometrics)
+        if sys.platform == "darwin":
+            from macos_touch_id import authenticate_with_touch_id
+            if not authenticate_with_touch_id():
+                print("Touch ID authentication failed")
+                return False
+        return self.authentication_manager.authenticate_account(account_name, password, biometrics)
 
     def create_account(self, account_name, account_password, account_type):
         return self.accounts_manager.create_account(account_name, account_type, account_password)
@@ -36,3 +42,34 @@ class WebviewAPI:
 
     def create_webauthn_reg_options(self, account_name) -> str:
         return options_to_json(webauthn.generate_registration_options(challenge=bytes.fromhex("c99a420cd739ff56632d3262582df92c43d50bd64e045374422ca3ed68826e5e"), rp_id="localhost", rp_name=account_name, user_name=account_name))
+    
+    def get_platform(self):
+        """Return the current platform: 'windows', 'macos', or 'other'"""
+        if sys.platform == 'darwin':
+            return 'macos'
+        elif sys.platform == 'win32':
+            return 'windows'
+        else:
+            return 'other'
+
+    def authenticate_with_touch_id(self, account_name, password):
+        """Authenticate specifically using Touch ID for macOS"""
+        if sys.platform != 'darwin':
+            return False
+            
+        from macos_touch_id import authenticate_with_touch_id
+        if not authenticate_with_touch_id():
+            print("Touch ID authentication failed")
+            return False
+            
+        try:
+            # Still need to verify the account/password
+            account = self.authentication_manager.authenticate_account(
+                account_name, 
+                password, 
+                b"touch_id_verified"  # Special marker for Touch ID
+            )
+            return bool(account)
+        except Exception as e:
+            print(f"Account authentication failed after Touch ID: {str(e)}")
+            return False

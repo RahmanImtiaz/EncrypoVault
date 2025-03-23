@@ -51,6 +51,9 @@ interface PyWebView {
     create_webauthn_auth_options():  Promise<string>
     create_webauthn_reg_options(): Promise<string>
     authenticate_account(account_name, password, biometrics): Promise<Account | null>
+    get_platform(): Promise<'windows' | 'macos' | 'other'>
+    authenticate_with_touch_id(account_name: string, password: string): Promise<boolean>
+
   }
 }
 declare global {
