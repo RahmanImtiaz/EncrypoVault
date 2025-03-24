@@ -32,4 +32,10 @@ class AuthRoutes:
         def create_auth_options():
             return options_to_json(webauthn.generate_authentication_options(challenge=bytes.fromhex("c99a420cd739ff56632d3262582df92c43d50bd64e045374422ca3ed68826e5e"), rp_id="localhost", user_verification=UserVerificationRequirement.REQUIRED))
 
+        @auth_bp.route('/webauthn_reg/<account_name>', methods=['GET'])
+        def create_reg_options(account_name):
+            return options_to_json(webauthn.generate_registration_options(
+                challenge=bytes.fromhex("c99a420cd739ff56632d3262582df92c43d50bd64e045374422ca3ed68826e5e"),
+                rp_id="localhost", rp_name=account_name, user_name=account_name)), 200
+
         api_bp.register_blueprint(auth_bp)

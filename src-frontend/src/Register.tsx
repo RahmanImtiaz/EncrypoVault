@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Login.css";
+import { PublicKeyCredentialCreationOptionsJSON, startRegistration} from "@simplewebauthn/browser";
 
 export function Register() {
   const [accountName, setAccountName] = useState("");
@@ -23,14 +24,17 @@ export function Register() {
 
     try {
       // Check if the account already exists
-      const accounts = await window.pywebview.api.get_accounts();
+      const accounts = await window.api.getAccountNames();
       if (accounts.includes(accountName)) {
           setError("Account already exists. Please choose a different account name.");
           return;
       }
+      const authData = await window.api.getWebauthnRegOpts(accountName) as unknown as PublicKeyCredentialCreationOptionsJSON;
+      const biometrics = await startRegistration({optionsJSON: authData})
+      console.log(biometrics)
       // Here you would call your backend to register the account
-      const response = await window.pywebview.api.create_account(accountName, password, accountType)
-      console.log(response)
+      //const response = await window.pywebview.api.create_account(accountName, password, accountType)
+      //console.log(response)
       console.log("Account created successfully");
       setError("Account created successfully");
       // onRegister();

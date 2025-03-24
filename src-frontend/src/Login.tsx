@@ -109,6 +109,7 @@ export function Login({ onLogin }: LoginProps) {
         onLogin();
       } else {
         // This will trigger the system's biometric prompt (fingerprint, Face ID, etc.)
+        // TODO: this is sorta hacky, make this conversion a little nicer
         const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
         //const authData2 = {"challenge": "yZpCDNc5_1ZjLTJiWC35LEPVC9ZOBFN0Qiyj7WiCbl4", "timeout": 60000, "rpId": "localhost", "allowCredentials": [], "userVerification": "preferred"}
         console.log("Before")

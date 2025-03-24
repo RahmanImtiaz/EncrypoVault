@@ -27,9 +27,14 @@ async function getWebauthnLoginOpts(): Promise<JSON> {
     return await (await fetch("/api/auth/webauthn_auth")).json()
 }
 
+async function getWebauthnRegOpts(accountName: string): Promise<JSON> {
+    return await (await fetch(`/api/auth/webauthn_reg/${accountName}`)).json()
+}
+
 export default {
     getAccountNames,
     login,
     getOS,
-    getWebauthnLoginOpts
+    getWebauthnLoginOpts,
+    getWebauthnRegOpts
 }
