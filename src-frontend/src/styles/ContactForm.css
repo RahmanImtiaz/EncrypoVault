@@ -1,6 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap');
+
 .main-label{
     color: #ffffff;
-    font-family: "Lexend Deca";
+    /*font-family: "Lexend Deca";*/
+    font-family: 'Manrope', sans-serif;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
@@ -43,7 +46,7 @@
     background: rgba(63, 54, 73, 0.8); /* Semi-transparent for soft effect */
     backdrop-filter: blur(1px); /* Blurs only the background, not text */
     height: 3em;
-    width: 30em;
+    width: 28em;
     font-size: 1em;
     border: none;
     outline: none;
@@ -51,6 +54,11 @@
 
 #contact{
     margin-bottom: 3em;
+    padding-left: 2em;
+}
+
+#waddress{
+    padding-left: 2em;
 }
 
 

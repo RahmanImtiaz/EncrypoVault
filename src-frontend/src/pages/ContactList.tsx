@@ -1,6 +1,6 @@
 // Portfolio.tsx
 //import React from 'react';
-//import '../styles/ContactList.css';
+import '../styles/ContactList.css';
 //import { useState } from 'react';
 //import { Contact } from "./types";
 
