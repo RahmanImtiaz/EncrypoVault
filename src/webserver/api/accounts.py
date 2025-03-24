@@ -15,4 +15,5 @@ class AccountRoutes:
         def get_account_names():
             return AccountsFileManager.get_instance().get_accounts()
 
+
         api_bp.register_blueprint(acc_bp)

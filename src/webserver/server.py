@@ -28,15 +28,6 @@ class FlaskServer:
         # register api routes (the ones starting from /api)
         ApiRoutes(self.app)
 
-        @self.app.route('/shutdown')
-        def shutdown_server():
-            """Shutdown route for macOS."""
-            func = request.environ.get('werkzeug.server.shutdown')
-            if func is None:
-                raise RuntimeError('Not running with the Werkzeug Server')
-            func()
-            return 'Server shutting down...'
-
         self.server_thread = threading.Thread(target=self.run_server)
 
         atexit.register(self.close_server)
@@ -59,7 +50,7 @@ class FlaskServer:
             import requests
 
             shutdown_thread = threading.Thread(
-                target=lambda: requests.get(f'http://localhost:{self.port}/shutdown', timeout=1.0)
+                target=lambda: requests.get(f'http://localhost:{self.port}/api/utils/shutdown', timeout=1.0)
             )
             shutdown_thread.daemon = True  # Make it a daemon so it doesn't block program exit
             shutdown_thread.start()

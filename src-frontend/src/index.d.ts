@@ -1,4 +1,4 @@
-import {  PublicKeyCredentialRequestOptionsJSON } from "@simplewebauthn/browser";
+type APIType = typeof import("./lib/api.ts").default
 
 export interface WalletType {
   name: string;
@@ -49,7 +49,12 @@ interface PyWebView {
   }
 }
 declare global {
-    interface Window { pywebview: PyWebView; }
+    interface Window {
+      pywebview: PyWebView,
+      api: APIType;
+    }
 }
 
 window.pywebview = window.pywebview || {};
+
+window.api = API
