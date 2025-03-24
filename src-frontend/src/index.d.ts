@@ -32,15 +32,7 @@ interface Account {
   accountType: AccountType,
   encryptionKey: string
 }
-/*
-data = {
-            "accountName": self._accountName,
-            "secretKey": self._secretKey,
-            "contacts": self._contacts,
-            "accountType": self._accountType.get_type_name(),
-            "encryptionKey": encryption_key_str
-        }
- */
+
 interface PyWebView {
   api: {
     get_accounts(): Promise<string[]>

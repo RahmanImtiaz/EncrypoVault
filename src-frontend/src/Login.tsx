@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {PublicKeyCredentialRequestOptionsJSON, startAuthentication} from '@simplewebauthn/browser';
+import api from "./lib/api.ts"
 
 import "./Login.css";
 
@@ -79,9 +80,7 @@ export function Login({ onLogin }: LoginProps) {
     }
 
     function fetchAccounts() {
-      // If pywebview is already available, use it immediately
-      if (window.pywebview && window.pywebview.api) {
-        window.pywebview.api.get_accounts()
+      api.getAccountNames()
           .then(fetchedAccounts => {
             console.log("Accounts fetched:", fetchedAccounts);
             setAccounts(fetchedAccounts);
@@ -89,26 +88,7 @@ export function Login({ onLogin }: LoginProps) {
           .catch(err => {
             console.error("Error fetching accounts:", err);
           });
-      } else {
-        // Otherwise wait for the pywebviewready event
-        const readyHandler = async () => {
-          try {
-            if (window.pywebview && window.pywebview.api) {
-              const fetchedAccounts = await window.pywebview.api.get_accounts();
-              console.log("Accounts fetched after ready event:", fetchedAccounts);
-              setAccounts(fetchedAccounts);
-            }
-          } catch (err) {
-            console.error("Error fetching accounts after ready event:", err);
-          }
-        };
 
-        window.addEventListener("pywebviewready", readyHandler);
-        
-        return () => {
-          window.removeEventListener("pywebviewready", readyHandler);
-        };
-      }
     }
 
     //checkBiometricSupport();

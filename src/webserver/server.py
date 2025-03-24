@@ -6,6 +6,8 @@ import atexit
 
 from flask import Flask, send_from_directory, request
 
+from AccountsFileManager import AccountsFileManager
+
 
 class FlaskServer:
 
@@ -20,6 +22,10 @@ class FlaskServer:
         @self.app.route('/<path:path>')
         def send_file(path):
             return send_from_directory('../../src-frontend/dist', path)
+
+        @self.app.route('/api/get_accounts')
+        def api_get_accounts():
+            return AccountsFileManager.get_instance().get_accounts()
 
         @self.app.route('/shutdown')
         def shutdown_server():
