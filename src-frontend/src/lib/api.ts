@@ -1,5 +1,5 @@
 async function getAccountNames(): Promise<string[]> {
-    let accounts = await fetch("/api/get_accounts")
+    const accounts = await fetch("/api/accounts/names")
 
     return (await accounts.json())
 }

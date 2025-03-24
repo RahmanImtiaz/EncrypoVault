@@ -7,6 +7,7 @@ import atexit
 from flask import Flask, send_from_directory, request
 
 from AccountsFileManager import AccountsFileManager
+from webserver.api.api import ApiRoutes
 
 
 class FlaskServer:
@@ -23,9 +24,9 @@ class FlaskServer:
         def send_file(path):
             return send_from_directory('../../src-frontend/dist', path)
 
-        @self.app.route('/api/get_accounts')
-        def api_get_accounts():
-            return AccountsFileManager.get_instance().get_accounts()
+
+        # register api routes (the ones starting from /api)
+        ApiRoutes(self.app)
 
         @self.app.route('/shutdown')
         def shutdown_server():
