@@ -20,9 +20,9 @@ interface Contact {
 }
 
 enum AccountType {
-  BEGINNER,
-  ADVANCED,
-  TESTER
+  BEGINNER = "Beginner",
+  ADVANCED = "Advanced",
+  TESTER = "Tester"
 }
 
 interface Account {

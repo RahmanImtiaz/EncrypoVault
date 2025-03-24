@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import "./Login.css";
-import { PublicKeyCredentialCreationOptionsJSON, startRegistration} from "@simplewebauthn/browser";
+import {PublicKeyCredentialCreationOptionsJSON, startRegistration} from "@simplewebauthn/browser";
+import type { AccountType } from "./index";
 
 export function Register() {
   const [accountName, setAccountName] = useState("");
-  const [accountType, setAccountType] = useState("Beginner");
+  const [accountType, setAccountType] = useState<AccountType>("Beginner" as AccountType);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -33,8 +34,8 @@ export function Register() {
       const biometrics = await startRegistration({optionsJSON: authData})
       console.log(biometrics)
       // Here you would call your backend to register the account
-      //const response = await window.pywebview.api.create_account(accountName, password, accountType)
-      //console.log(response)
+      const response = await window.api.register(accountName, password, accountType, biometrics.response.clientDataJSON)
+      console.log(response)
       console.log("Account created successfully");
       setError("Account created successfully");
       // onRegister();
@@ -85,7 +86,7 @@ export function Register() {
                   id="accountType"
                   className="login-input"
                   value={accountType}
-                  onChange={(e) => setAccountType(e.target.value)}
+                  onChange={(e) => setAccountType(e.target.value as AccountType)}
                   required
                 >
                   <option value="Beginner">Beginner</option>

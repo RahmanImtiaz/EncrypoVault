@@ -102,7 +102,7 @@ class MainWindow(QMainWindow):
         # Build path to your React app's index.html.
         # For example, if your React build folder is in the same directory:
         # local_url = QUrl.fromLocalFile(file_path)
-        local_url= QUrl("http://localhost:9209/index.html")
+        local_url= QUrl("http://localhost:9209/")
         self.browser.setUrl(local_url)
 
 
