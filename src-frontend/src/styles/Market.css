@@ -1,7 +1,217 @@
-body{
-    background: linear-gradient(68deg, #2E2D44 16.36%, #26273F 24.55%, #20203C 50.38%, #202E44 74.86%, #203A4B 84.82%, #203A4B 92.81%);
-}
-
-.crypto-search-container{
-    margin-top: 10em;
-}
+:root {
+    --primary-bg: #121212;
+    --secondary-bg: #1e1e1e;
+    --accent-color: #00E396;
+    --border-color: #333;
+    --text-color: #ffffff;
+    --input-bg: #2a2a2a;
+    --hover-bg: #333;
+    --border-radius: 0.5rem;
+    --transition: 0.3s;
+    --shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.3);
+    --base-font-size: 1.25rem;
+  }
+  
+  html {
+    font-size: 16px; /* 1rem = 16px by default */
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    font-size: var(--base-font-size); /* base font size increased to 1.25rem (20px) */
+  }
+  
+  /* Container for the crypto search and details */
+  .crypto-search-container {
+    width: 90%;
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: var(--secondary-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+  }
+  
+  /* Search Section */
+  .search-section {
+    margin-bottom: 1.25rem;
+    position: relative;
+  }
+  
+  .search-box {
+    position: relative;
+  }
+  
+  .crypto-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: background-color var(--transition);
+  }
+  
+  .crypto-input:focus {
+    background-color: var(--secondary-bg);
+    outline: none;
+  }
+  
+  .suggestions-box {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--secondary-bg);
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    max-height: 12.5rem;
+    overflow-y: auto;
+    z-index: 10;
+  }
+  
+  .suggestion-item {
+    padding: 0.625rem 1rem;
+    cursor: pointer;
+    transition: background-color var(--transition);
+    font-size: 1rem;
+  }
+  
+  .suggestion-item:hover {
+    background-color: var(--hover-bg);
+  }
+  
+  /* Details Section */
+  .details-section {
+    padding: 1.25rem;
+    background-color: var(--secondary-bg);
+    border-radius: var(--border-radius);
+  }
+  
+  .placeholder {
+    text-align: center;
+    padding: 2.5rem;
+  }
+  
+  /* Basic / Advanced Details Styles */
+  .crypto-header {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.625rem;
+  }
+  
+  .crypto-header h1 {
+    margin: 0;
+    font-size: 1.75rem;
+  }
+  
+  .crypto-header img {
+    width: 3.125rem;
+    height: 3.125rem;
+    border-radius: 50%;
+  }
+  
+  .price-info p {
+    font-size: 1.25rem;
+    margin: 0.3125rem 0;
+  }
+  
+  .description {
+    margin-bottom: 1.25rem;
+    font-size: 1.125rem;
+    color: #ccc;
+  }
+  
+  /* Graph Section */
+  .graph-holder {
+    margin-bottom: 1.25rem;
+  }
+  
+  .time-range {
+    margin-bottom: 0.625rem;
+  }
+  
+  .time-range select {
+    padding: 0.5rem 0.75rem;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: background-color var(--transition);
+  }
+  
+  .time-range select:focus {
+    outline: none;
+    background-color: var(--secondary-bg);
+  }
+  
+  .graph {
+    background-color: var(--secondary-bg);
+    padding: 0.625rem;
+    border-radius: var(--border-radius);
+  }
+  
+  /* Info Sections for various data categories */
+  .basic-info,
+  .technical-details,
+  .ath-data,
+  .atl-data,
+  .market-data,
+  .supply-metrics,
+  .links {
+    margin-bottom: 1.25rem;
+    padding: 0.625rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--input-bg);
+  }
+  
+  .basic-info p,
+  .technical-details p,
+  .ath-data p,
+  .atl-data p,
+  .market-data p,
+  .supply-metrics p,
+  .links p {
+    margin: 0.3125rem 0;
+    font-size: 1rem;
+  }
+  
+  .links p a {
+    color: var(--accent-color);
+    text-decoration: none;
+  }
+  
+  .links p a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .crypto-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .basic-info,
+    .technical-details,
+    .ath-data,
+    .atl-data,
+    .market-data,
+    .supply-metrics,
+    .links {
+      font-size: 0.9375rem;
+    }
+  }
+  
