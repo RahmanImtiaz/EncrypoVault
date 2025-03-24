@@ -1,29 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap');
+
 body{
-    background: linear-gradient(142deg, #2E2D44 37.09%, #26273F 57.87%, #1B1E37 86.72%);
+  background: linear-gradient(68deg, #2E2D44 16.36%, #26273F 24.55%, #20203C 50.38%, #202E44 74.86%, #203A4B 84.82%, #203A4B 92.81%);
 }
 
 /* Wallets.css */
-.walletContainter {
-    background-color: pink;
+.walletContaiter {
     display: flex;
     flex-direction: column; /* Stack children vertically */
-    justify-content: center; /* Vertically center the container */
+    justify-content: flex-start; /* Vertically center the container */
     align-items: center; /* Horizontally center the container */
-    min-height: 100vh; /* Take full viewport height */
+    /*min-height: 100vh; Take full viewport height */
+    margin-top: 0em;
     padding: 20px; /* Padding around the container */
+    height: 39em;
+    /*width: 40em;*/
+    width: 80em;
+
   }
   
   .walletHeading {
-    background-color: orange;
+    /*background-color: orange;*/
     display: flex; /* Align items horizontally */
     justify-content: space-between; /* Space between h1 and button */
     width: 100%; /* Make the walletHeading take full width */
-    max-width: 600px; /* Optional: Set a max width for the heading */
     margin-bottom: 20px; /* Space below walletHeading */
+    padding: 0 2em;
+    box-sizing: border-box;
   }
   
   .walletHeading h1 {
+    font-family: 'Manrope', sans-serif !important;
     margin: 0; /* Remove default margin */
+  }
+
+
+  .walletHeading button {
+    padding: 0.5em 1em;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+
+  .walletHeading button:hover {
+      background-color: #5F5C7D;
   }
   
   .walletList {
@@ -33,6 +56,7 @@ body{
     gap: 10px; /* Space between wallet items */
     width: 100%;
     max-width: 600px; /* Optional: Set a max width for the list */
+    margin-top: 2em;
   }
   
   .walletList div {
@@ -42,3 +66,53 @@ body{
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
   }
   
+
+
+.walletForm{
+  background-color: #161619;
+  border-radius: 1em;
+  width: 95%; /* Make the walletHeading take full width */
+  height: 8em;
+  padding: 0 2em;
+  box-sizing: border-box;
+}
+
+.formLabel{
+  font-family: 'Manrope', sans-serif !important;
+  display: flex;
+  margin-left: 0.5em;
+  margin-top: 1em;
+}
+
+
+.add-wallet-button{
+  border-radius: 10px;
+  background: linear-gradient(93deg, #35B5FF 0.4%, #75428E 99.6%);
+  width: 6em;
+}
+
+.goBack{
+  border-radius: 10px;
+  background: #353535;
+  width: 6em;
+}
+
+.inputWallet {
+  border-radius: 20px;
+  padding-left: 1em;
+  z-index: 1;
+  background: rgba(63, 54, 73, 0.8); /* Semi-transparent for soft effect */
+  backdrop-filter: blur(1px); /* Blurs only the background, not text */
+  height: 3em;
+  width: 28em;
+  font-size: 0.9em;
+  border: none;
+  outline: none;
+}
+
+.inputArea{
+  margin-top: 1em;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}

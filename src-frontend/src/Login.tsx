@@ -17,10 +17,10 @@ export function Login({ onLogin }: LoginProps) {
   const [useFallbackAuth, setUseFallbackAuth] = useState(false);
   const [accounts, setAccounts] = useState<string[]>([])
   const [platform, setPlatform] = useState<string | null>(null);
-  //const [_isBiometricsSupported, setIsBiometricsSupported] = useState<boolean | null>(null);
+  const [_isBiometricsSupported, setIsBiometricsSupported] = useState<boolean | null>(null);
 
   // Check biometric support when component mounts
-  useEffect(() => {/*
+  useEffect(() => {
     const checkBiometricSupport = async () => {
       try {
         const supported = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
@@ -29,7 +29,7 @@ export function Login({ onLogin }: LoginProps) {
         console.error('Error checking biometric support:', err);
         setIsBiometricsSupported(false);
       }
-    };*/
+    };
 
     function detectPlatform() {
       // If pywebview is already available, use it immediately
@@ -91,7 +91,7 @@ export function Login({ onLogin }: LoginProps) {
 
     }
 
-    //checkBiometricSupport();
+    checkBiometricSupport();
     fetchAccounts()
     detectPlatform();
   }, []);
@@ -121,6 +121,7 @@ export function Login({ onLogin }: LoginProps) {
         await window.pywebview.api.authenticate_account(selectedAccount, password, webauthnResponse.response.authenticatorData)
         onLogin();
       }
+      //onLogin();  //this is the code that should be deleted after, and the top bit needs to be uncommented.
     } catch (err) {
       console.error('Biometric auth error:', err);
       setUseFallbackAuth(true);
@@ -165,6 +166,7 @@ export function Login({ onLogin }: LoginProps) {
        } else {
          throw new Error("Invalid credentials");
        }
+      //onLogin();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Password verification failed");
       setLoading(false);
@@ -175,7 +177,6 @@ export function Login({ onLogin }: LoginProps) {
     e.preventDefault();
     setLoading(true);
     setError("");
-
     try {
       // Here you would verify with your backend using desktop password
       const DEMO_DESKTOP_PASSWORD = "desktop123";

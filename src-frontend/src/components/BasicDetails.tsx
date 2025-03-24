@@ -2,6 +2,7 @@ import React from "react";
 import { useState, ChangeEvent } from "react";
 import useCryptoData from "./useCryptoData";
 import LineGraph from "./graphs/linegraph";
+import "../styles/BasicDetails.css";
 
 
 // This is a functional component that will be shown to beginner users whenever they search for a certain cryptocurrency.
@@ -18,7 +19,7 @@ import LineGraph from "./graphs/linegraph";
 interface BasicDetailsProps {
   cryptoId: string;
 }
-
+/*
 interface CryptoData {
   name?: string;
   symbol?: string;
@@ -50,7 +51,7 @@ interface CryptoData {
     official_forum_url?: string[];
     chat_url?: string[];
   };
-}
+}*/
 
 const BasicDetails: React.FC<BasicDetailsProps> = ({ cryptoId }) => {
   const { cryptoData, isLoading, error } = useCryptoData(cryptoId);
@@ -88,7 +89,7 @@ const BasicDetails: React.FC<BasicDetailsProps> = ({ cryptoId }) => {
         )}
 
         <div className="price-info">
-          <p>Current Price: {getValue(cryptoData?.market_data?.current_price?.gbp)}</p>
+            <p> Current Price: {getValue(cryptoData?.market_data?.current_price?.gbp)} </p>
         </div>
       </div>
 
@@ -133,6 +134,7 @@ const BasicDetails: React.FC<BasicDetailsProps> = ({ cryptoId }) => {
         <p>Official Forum: {cryptoData?.links?.official_forum_url?.[0] || "N/A"}</p>
         <p>Chat: {cryptoData?.links?.chat_url?.[0] || "N/A"}</p>
       </div>
+
     </div>
   );
 };

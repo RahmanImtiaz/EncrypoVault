@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap');
+
+.main-label{
+    color: #ffffff;
+    /*font-family: "Lexend Deca";*/
+    font-family: 'Manrope', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    font-size: 2em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.contact-form{
+    background-color: #161619;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 35em;
+    height: 40em;
+    margin-top: 3em;
+}
+
+
+#contactLabel{
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    margin-right: 23em;
+
+}
+
+#addresslabel{
+    margin-top: 0.5m;
+    margin-bottom: 0.5em;
+    margin-right: 23em;
+}
+
+
+.contactInput {
+    position: relative;
+    border-radius: 20px;
+    margin-left: 3em;
+    margin-right: 3em;
+    z-index: 1;
+    background: rgba(63, 54, 73, 0.8); /* Semi-transparent for soft effect */
+    backdrop-filter: blur(1px); /* Blurs only the background, not text */
+    height: 3em;
+    width: 28em;
+    font-size: 1em;
+    border: none;
+    outline: none;
+}
+
+#contact{
+    margin-bottom: 3em;
+    padding-left: 2em;
+}
+
+#waddress{
+    padding-left: 2em;
+}
+
+
+
+.buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 30em;
+    margin-top: 3em;
+    border: none;
+    outline: none;
+    background-size: cover;
+}
+
+.qrcode{
+    margin-top: 2.5em;
+    margin-right: 20em;
+    margin-bottom: 2em;
+    border-radius: 10px;
+    background: #353535;
+    width: 10em;
+}
+
+.goBack{
+    border-radius: 10px;
+    background: #353535;
+    width: 6em;
+}
+
+
+.add-contact-button{
+    border-radius: 10px;
+    background: linear-gradient(93deg, #35B5FF 0.4%, #75428E 99.6%);
+    width: 6em;
+}
+
+.error-message{
+    margin-top: 3em;
+}
+

@@ -1,12 +1,20 @@
 // Portfolio.tsx
-import React, { ChangeEvent } from 'react';
+//import { useState } from 'react';
+import React from 'react';
+import '../styles/Market.css';
 import BasicDetails from '../components/BasicDetails';
+import { ChangeEvent } from 'react';
 
 interface Coin {
   id: string;
   name: string;
   symbol: string;
 }
+
+
+//you need to use a ? to understand if a search value has been identified or not. Instead also, it can be that the user has a drop down showing all the current available crypto out there.
+//
+let searchValue: string | undefined = '';
 
 const Market: React.FC = () => {
   const [coins, setCoins] = useState<Coin[]>([]);
@@ -56,7 +64,7 @@ const Market: React.FC = () => {
   };
 
 
-  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+  const handleInputFocus = () => {
     if (
       searchInput.trim() !== "" &&
       (!selectedCoin || searchInput !== selectedCoin.name)
@@ -69,7 +77,7 @@ const Market: React.FC = () => {
   };
 
 
-  const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const handleInputBlur = () => {
     setTimeout(() => {
       setFilteredCoins([]);
     }, 200);
@@ -117,9 +125,19 @@ const Market: React.FC = () => {
           </div>
         )}
       </div>
+      <div className="detailsComponent">
+        <BasicDetails cryptoId={searchValue}/>
+      </div>
     </div>
   );
 };
+
+/*<div className="marketContainer">
+      <div className="searchHeader">
+        <input type="text" placeholder="Search for a cryptocurrency" />
+        <button>Search</button>
+      </div>
+    </div>*/
 
 
 export default Market;

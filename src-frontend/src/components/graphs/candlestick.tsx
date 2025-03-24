@@ -57,7 +57,7 @@ const Candlestick: React.FC<CandlestickProps> = ({ crypto_id, time_range }) => {
       height: 350,
       background: '#121212',
       events: {
-        beforeZoom: function (chartContext, { xaxis }) {
+        beforeZoom: function (_, { xaxis }) {
           // Ensure that minDate and maxDate are set
           if (minDate === null || maxDate === null) {
             return {};
@@ -136,8 +136,7 @@ const Candlestick: React.FC<CandlestickProps> = ({ crypto_id, time_range }) => {
           downward: '#FF4560',
         },
       },
-    },
-    background: '#121212',
+    }
   };
 
   return (
