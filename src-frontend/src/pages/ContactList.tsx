@@ -1,11 +1,8 @@
+// Portfolio.tsx
 //import React from 'react';
-import '../styles/Contacts.css';
-import { useState } from 'react';
-
-
+//import '../styles/ContactList.css';
+//import { useState } from 'react';
 //import { Contact } from "./types";
-import ContactList from './ContactList';
-import ContactForm from './ContactForm';
 
 
 /*
@@ -13,7 +10,6 @@ interface ContactListProps{
   contacts: Contact[];
   onAddContact: () => void;
 }*/
-
 /*
 const [isContactDisplay, setIsContactDisplay] = useState(true);
 
@@ -27,35 +23,28 @@ const toggleContacts = () => {
 //const Contacts = ({contacts, onAddContact} : ContactListProps) => {
 
 //calls the function when button is clicked.
-/*
-const Contacts = () => {
+//<button onClick={toggleContacts}>add contact</button>
+
+
+
+
+
+
+const ContactList = ({goToForm} : {goToForm: () => void}) => {
   return (
-    <div className="contactsContainer">
-      <div className="contactsHeading">
+    <div className="contactsListContainer">
+      <div className="contactsListHeading">
         <h1>Contacts</h1>
-        <button onClick={toggleContacts}>add contact</button>
+        <button onClick={goToForm}>add contact</button>
       </div>
-      <div className="contactsList">
+      <div className="contactsList-list">
         <p>No contacts added yet</p>
       </div>
     </div>
   );
-};*/
+};
 
-
-export const Contacts = () => {
-  const [inContactsListPage, setInContactsListPage] = useState(true);
-
-  return (
-    <div>
-      {inContactsListPage ?
-      (<ContactList goToForm = {() => setInContactsListPage(false)}/>) 
-      : (<ContactForm goToList = {() => setInContactsListPage(true)}/>)}
-    </div>
-  );
-}
-
-export default Contacts;
+export default ContactList;
 
 
 

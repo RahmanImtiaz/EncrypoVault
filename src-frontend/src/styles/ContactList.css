@@ -1,9 +1,8 @@
 body {
     background: linear-gradient(68deg, #2E2D44 16.36%, #26273F 24.55%, #20203C 50.38%, #202E44 74.86%, #203A4B 84.82%, #203A4B 92.81%);
 }
-
-
-.contactsContainer {
+  
+.contactsListContainer {
     /*background-color: pink;*/
     height: 39em;
     width: 80em;
@@ -16,7 +15,7 @@ body {
     gap: 2em;
 }
 
-.contactsHeading {
+.contactsListHeading {
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -24,11 +23,11 @@ body {
     box-sizing: border-box;
 }
 
-.contactsHeading h1 {
+.contactsListHeading h1 {
     margin: 0;
 }
 
-.contactsHeading button {
+.contactsListHeading button {
     padding: 0em 1em;
     border: none;
     color: white;
@@ -38,11 +37,11 @@ body {
     transition: background-color 0.3s ease;
 }
 
-.contactsHeading button:hover {
+.contactsListHeading button:hover {
     background-color: #5F5C7D;
 }
 
-.contactsList {
+.contactsList-list {
     /*background-color: burlywood;*/
     width: 100%; /* Ensures it spans the full width */
     height: 100%;
