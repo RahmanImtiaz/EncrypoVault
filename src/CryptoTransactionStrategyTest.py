@@ -7,15 +7,15 @@ import asyncio
 async def main():
     # Initialize with API key
     API_KEY = "fdade57267b549538799a94164f3db43"
-    wallet_manager = WalletManager(API_KEY)
+    portfolio = WalletManager(API_KEY)
     
     # Wallet selection/creation
     print("\n=== Available Wallets ===")
-    existing_wallets = wallet_manager.wallets.keys()
+    existing_wallets = portfolio.wallets.keys()
     if existing_wallets:
         print("Existing wallets:")
         for i, name in enumerate(existing_wallets, 1):
-            wallet = wallet_manager.get_wallet(name)
+            wallet = portfolio.get_wallet(name)
             print(f"{i}. {name} ({wallet.coin_symbol}) - £{wallet.balance:.2f}")
         print(f"{len(existing_wallets)+1}. Create new wallet")
         
@@ -24,22 +24,22 @@ async def main():
             choice = int(choice)
             if 1 <= choice <= len(existing_wallets):
                 wallet_name = list(existing_wallets)[choice-1]
-                wallet = wallet_manager.get_wallet(wallet_name)
+                wallet = portfolio.get_wallet(wallet_name)
                 print(f"\nUsing existing wallet: {wallet_name}")
             elif choice == len(existing_wallets)+1:
                 wallet_name = input("Enter new wallet name: ")
                 coin_symbol = input("Enter coin symbol (btc-testnet/eth-testnet): ") or 'btc-testnet'
                 initial_balance = float(input("Enter initial balance: ") or 10000.00)
-                wallet = wallet_manager.create_wallet(wallet_name, coin_symbol, initial_balance)
+                wallet = portfolio.create_wallet(wallet_name, coin_symbol, initial_balance)
                 print(f"\nCreated new wallet: {wallet_name}")
             else:
                 raise ValueError("Invalid selection")
         except (ValueError, IndexError):
             print("Invalid input, using default wallet")
-            wallet = wallet_manager.get_wallet("TestWallet") or wallet_manager.create_wallet("TestWallet", "btc-testnet")
+            wallet = portfolio.get_wallet("TestWallet") or portfolio.create_wallet("TestWallet", "btc-testnet")
     else:
         print("No existing wallets found, creating default TestWallet")
-        wallet = wallet_manager.create_wallet("TestWallet", "btc-testnet")
+        wallet = portfolio.create_wallet("TestWallet", "btc-testnet")
     
     print(f"\n=== Wallet Selected ===")
     print(f"Name: {wallet.name}")
@@ -65,7 +65,7 @@ async def main():
     await asyncio.sleep(2)  # Wait for initial prices
     
     # Initialize trader
-    trader = RealTransaction(exchange, wallet_manager)
+    trader = RealTransaction(exchange, portfolio)
     
     print("\n=== Current Prices ===")
     print(f"Bitcoin: £{bitcoin.current_price or 'Unavailable'}")

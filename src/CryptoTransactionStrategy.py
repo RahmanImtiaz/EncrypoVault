@@ -18,14 +18,14 @@ class CryptoTransactionStrategy(ABC):
         pass
 
 class RealTransaction(CryptoTransactionStrategy):
-    def __init__(self, exchange, wallet_manager):
+    def __init__(self, exchange, portfolio): 
         self.exchange = exchange
-        self.wallet_manager = wallet_manager
+        self.portfolio = portfolio
         self.transaction_history = []
 
     async def buy(self, wallet_name: str, crypto_name: str, amount: float) -> bool:
         """Execute buy transaction for specified wallet"""
-        wallet = self.wallet_manager.get_wallet(wallet_name)
+        wallet = self.portfolio.get_wallet(wallet_name)
         if not wallet:
             print(f"Wallet {wallet_name} not found")
             return False
@@ -63,7 +63,7 @@ class RealTransaction(CryptoTransactionStrategy):
 
     async def sell(self, wallet_name: str, crypto_name: str, amount: float) -> bool:
         """Execute sell transaction for specified wallet"""
-        wallet = self.wallet_manager.get_wallet(wallet_name)
+        wallet = self.portfolio.get_wallet(wallet_name)
         if not wallet:
             print(f"Wallet {wallet_name} not found")
             return False
@@ -105,7 +105,7 @@ class RealTransaction(CryptoTransactionStrategy):
 
     async def send(self, wallet_name: str, recipient: str, crypto_name: str, amount: float) -> bool:
         """Execute send transaction from specified wallet"""
-        wallet = self.wallet_manager.get_wallet(wallet_name)
+        wallet = self.portfolio.get_wallet(wallet_name)
         if not wallet:
             print(f"Wallet {wallet_name} not found")
             return False
