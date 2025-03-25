@@ -21,7 +21,7 @@ class UtilRoutes:
             if func is None:
                 raise RuntimeError('Not running with the Werkzeug Server')
             func()
-            return 'Server shutting down...'
+            return jsonify({"message": "Server shutting down..."}), 200
 
 
 

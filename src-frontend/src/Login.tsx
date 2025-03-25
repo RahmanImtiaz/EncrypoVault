@@ -102,14 +102,29 @@ export function Login({ onLogin }: LoginProps) {
     setError("");
     const platform = await window.api.getOS()
     try {
-      if (platform == 'darwin') {
-        // Use Touch ID for macOS
-        console.log("Setting biometrics to null so the backend calls the mac equivalent instead!");
-        await window.api.login(selectedAccount, password, null)
+      if (platform === 'darwin') {
+        // For macOS: Use Touch ID through the backend
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            account_name: selectedAccount,
+            password: password
+            // No biometrics for macOS - Touch ID is handled on backend
+          }),
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Authentication failed');
+        }
+        
         onLogin();
       } else {
         // This will trigger the system's biometric prompt (fingerprint, Face ID, etc.)
-        // TODO: this is sorta hacky, make this conversion a little nicer
         const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
         //const authData2 = {"challenge": "yZpCDNc5_1ZjLTJiWC35LEPVC9ZOBFN0Qiyj7WiCbl4", "timeout": 60000, "rpId": "localhost", "allowCredentials": [], "userVerification": "preferred"}
         console.log("Before")
@@ -129,6 +144,7 @@ export function Login({ onLogin }: LoginProps) {
       setLoading(false);
     }
   };
+
 
   // const _handlePasswordSubmit = async (e: React.FormEvent) => {
   //   e.preventDefault();
