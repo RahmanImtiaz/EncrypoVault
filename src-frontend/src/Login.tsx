@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {PublicKeyCredentialRequestOptionsJSON, startAuthentication} from '@simplewebauthn/browser';
 
+
 import "./Login.css";
 
 interface LoginProps {
@@ -8,6 +9,7 @@ interface LoginProps {
 }
 
 export function Login({ onLogin }: LoginProps) {
+
   const [selectedAccount, setSelectedAccount] = useState("demo_account");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -79,9 +81,7 @@ export function Login({ onLogin }: LoginProps) {
     }
 
     function fetchAccounts() {
-      // If pywebview is already available, use it immediately
-      if (window.pywebview && window.pywebview.api) {
-        window.pywebview.api.get_accounts()
+      window.api.getAccountNames()
           .then(fetchedAccounts => {
             console.log("Accounts fetched:", fetchedAccounts);
             setAccounts(fetchedAccounts);
@@ -89,26 +89,7 @@ export function Login({ onLogin }: LoginProps) {
           .catch(err => {
             console.error("Error fetching accounts:", err);
           });
-      } else {
-        // Otherwise wait for the pywebviewready event
-        const readyHandler = async () => {
-          try {
-            if (window.pywebview && window.pywebview.api) {
-              const fetchedAccounts = await window.pywebview.api.get_accounts();
-              console.log("Accounts fetched after ready event:", fetchedAccounts);
-              setAccounts(fetchedAccounts);
-            }
-          } catch (err) {
-            console.error("Error fetching accounts after ready event:", err);
-          }
-        };
 
-        window.addEventListener("pywebviewready", readyHandler);
-        
-        return () => {
-          window.removeEventListener("pywebviewready", readyHandler);
-        };
-      }
     }
 
     checkBiometricSupport();
@@ -119,26 +100,39 @@ export function Login({ onLogin }: LoginProps) {
   const handleBiometricAuth = async () => {
     setLoading(true);
     setError("");
-
+    const platform = await window.api.getOS()
     try {
-      if (platform == 'macos') {
-        // Use Touch ID for macOS
-        console.log("Using Touch ID for authentication");
-        const authenticated = await window.pywebview.api.authenticate_with_touch_id(selectedAccount, password);
-        if (!authenticated) {
-          throw new Error("Touch ID authentication failed");
+      if (platform === 'darwin') {
+        // For macOS: Use Touch ID through the backend
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            account_name: selectedAccount,
+            password: password
+            // No biometrics for macOS - Touch ID is handled on backend
+          }),
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Authentication failed');
         }
+        
         onLogin();
       } else {
         // This will trigger the system's biometric prompt (fingerprint, Face ID, etc.)
-        const authData: PublicKeyCredentialRequestOptionsJSON = JSON.parse(await window.pywebview.api.create_webauthn_auth_options())
+        const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
         //const authData2 = {"challenge": "yZpCDNc5_1ZjLTJiWC35LEPVC9ZOBFN0Qiyj7WiCbl4", "timeout": 60000, "rpId": "localhost", "allowCredentials": [], "userVerification": "preferred"}
         console.log("Before")
         console.log(`authdata:`)
         console.log(authData)
         const webauthnResponse = await startAuthentication({optionsJSON: authData})
         console.log("After")
-        await window.pywebview.api.authenticate_account(selectedAccount, password, webauthnResponse.response.authenticatorData)
+        await window.api.login(selectedAccount, password, webauthnResponse.response.authenticatorData)
         onLogin();
       }
       //onLogin();  //this is the code that should be deleted after, and the top bit needs to be uncommented.
@@ -151,47 +145,49 @@ export function Login({ onLogin }: LoginProps) {
     }
   };
 
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
 
-    try {
-      // Here you would verify with your backend
-      //new changes from here. Remove the comments in the next three lines and remove everything else, make sure there is no space before }
-      //const DEMO_PASSWORD = "demo123";
-      //if (selectedAccount === "demo_account" && password !== DEMO_PASSWORD) {
-      //  throw new Error("Invalid password for demo account (use: demo123)");
-      // //}
-      // const account = await window.pywebview.api.authenticate_account(selectedAccount, password);
-      // console.log('Account verified:', account);
-      //
-      // if (account) {
-      //   setIsPasswordVerified(true);
-      //   onLogin();
-      // }
-      // else {
-      //   throw new Error("Invalid credentials");
-      // }
-      //setIsPasswordVerified(true);
-      //setLoading(false);
-      
-       // First verify the account/password combination
-       const account = await window.pywebview.api.authenticate_account(selectedAccount, password, null);
-       console.log('Credentials verified:', account);
-       
-       if (account) {
-         // Set password as verified but don't log in yet - this will show biometric screen
-         _setIsPasswordVerified(true);
-       } else {
-         throw new Error("Invalid credentials");
-       }
-      //onLogin();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Password verification failed");
-      setLoading(false);
-    }
-  };
+  // const _handlePasswordSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setError("");
+  //
+  //   try {
+  //     // Here you would verify with your backend
+  //     //new changes from here. Remove the comments in the next three lines and remove everything else, make sure there is no space before }
+  //     //const DEMO_PASSWORD = "demo123";
+  //     //if (selectedAccount === "demo_account" && password !== DEMO_PASSWORD) {
+  //     //  throw new Error("Invalid password for demo account (use: demo123)");
+  //     // //}
+  //     // const account = await window.pywebview.api.authenticate_account(selectedAccount, password);
+  //     // console.log('Account verified:', account);
+  //     //
+  //     // if (account) {
+  //     //   setIsPasswordVerified(true);
+  //     //   onLogin();
+  //     // }
+  //     // else {
+  //     //   throw new Error("Invalid credentials");
+  //     // }
+  //     //setIsPasswordVerified(true);
+  //     //setLoading(false);
+  //
+  //      // First verify the account/password combination
+  //
+  //      const account = await window.pywebview.api.authenticate_account(selectedAccount, password, null);
+  //      console.log('Credentials verified:', account);
+  //
+  //      if (account) {
+  //        // Set password as verified but don't log in yet - this will show biometric screen
+  //        _setIsPasswordVerified(true);
+  //      } else {
+  //        throw new Error("Invalid credentials");
+  //      }
+  //     //onLogin();
+  //   } catch (err) {
+  //     setError(err instanceof Error ? err.message : "Password verification failed");
+  //     setLoading(false);
+  //   }
+  // };
 
   const handleDesktopAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -266,7 +262,7 @@ export function Login({ onLogin }: LoginProps) {
             
             {!isPasswordVerified ? (
               // Step 1: Password Authentication
-              <form onSubmit={handlePasswordSubmit}>
+              <form onSubmit={handleBiometricAuth}>
                 <label htmlFor="account" className="login-label">
                   Select Account
                 </label>

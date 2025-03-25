@@ -1,4 +1,4 @@
-import {  PublicKeyCredentialRequestOptionsJSON } from "@simplewebauthn/browser";
+type APIType = typeof import("./lib/api.ts").default
 
 export interface WalletType {
   name: string;
@@ -20,9 +20,9 @@ interface Contact {
 }
 
 enum AccountType {
-  BEGINNER,
-  ADVANCED,
-  TESTER
+  BEGINNER = "Beginner",
+  ADVANCED = "Advanced",
+  TESTER = "Tester"
 }
 
 interface Account {
@@ -32,15 +32,7 @@ interface Account {
   accountType: AccountType,
   encryptionKey: string
 }
-/*
-data = {
-            "accountName": self._accountName,
-            "secretKey": self._secretKey,
-            "contacts": self._contacts,
-            "accountType": self._accountType.get_type_name(),
-            "encryptionKey": encryption_key_str
-        }
- */
+
 interface PyWebView {
   api: {
     get_accounts(): Promise<string[]>
@@ -57,7 +49,12 @@ interface PyWebView {
   }
 }
 declare global {
-    interface Window { pywebview: PyWebView; }
+    interface Window {
+      pywebview: PyWebView,
+      api: APIType;
+    }
 }
 
 window.pywebview = window.pywebview || {};
+
+window.api = API

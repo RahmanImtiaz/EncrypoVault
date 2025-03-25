@@ -46,7 +46,7 @@ export const ContactForm = ({goToList} : {goToList: () => void}) => {
             <label htmlFor="contact" className="block font-medium" id="contactLabel">Contact Name</label>
             <input type="text" onChange={(e) => setContactName(e.target.value)} name="contact" id="contact" placeholder="Enter name" className="contactInput"/>
             <label htmlFor="waddress" className="block font-medium" id="addresslabel">Enter Address</label>
-            <input type="text" onChange={(e) => setContactAddress(e.target.value)} name="waddress" id="waddress" placeholder="Enter address" className="contactInput"/>
+            <input type="text" onChange={(e) => setContactAddress(e.target.value)} name="waddress" id="waddress" placeholder="Enter wallet address" className="contactInput"/>
             <button type="button" className="qrcode">Scan QR code</button>
             <div className="buttons">
                 <button type="button" className="goBack" onClick={goToList}>Cancel</button>
