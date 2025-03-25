@@ -1,41 +1,46 @@
 from abc import ABC, abstractmethod
-
 from CryptoObserver import CryptoObserver
 from Crypto import Crypto
 
-class Wallet(CryptoObserver, ABC):
-    def __init__(self, name: str):
-        self.balance = 0.0
-        self.address = None
+class Wallet(CryptoObserver):
+    def __init__(self, name: str, initial_balance: float = 0.0):
         self.name = name
-        self.holdings = {}
-        # the holdings will be a dictionary with an object of Crypto as the key and the amount of the crypto as the value
-        # e.g. {Crypto: 0.5, Crypto: 1.0}
+        self.balance = initial_balance
+        self.address = None
+        self.holdings = {}  # Now using {crypto_id: {"crypto": Crypto, "amount": float}}
 
     @staticmethod
-    @abstractmethod
-    def create_wallet(name):
-        pass
+    def create_wallet(name: str):
+        return Wallet(name)
 
-    @abstractmethod
     def toJSON(self):
-        pass
+        return {
+            "name": self.name,
+            "balance": self.balance,
+            "address": self.address,
+            "holdings": {
+                crypto_id: {
+                    "crypto": data["crypto"].crypto_id,
+                    "amount": data["amount"]
+                }
+                for crypto_id, data in self.holdings.items()
+            }
+        }
 
     def update(self, crypto_id: str, crypto_data: dict):
         if crypto_id in self.holdings:
-            crypto = self.holdings[crypto_id]["crypto"]
-            crypto.update(crypto_id, crypto_data)
-            print(f"Updated {crypto_id}")
+            self.holdings[crypto_id]["crypto"].update(crypto_id, crypto_data)
+            print(f"Updated {crypto_id} in wallet {self.name}")
         else:
-            print(f"Could not update {crypto_id}, not found in holdings")
-            
-            
-    def _calcualte_total_balance(self):
-        self.balance = 0.0
-        for crypto in self.holdings:
-            self.balance += crypto.current_price * self.holdings[crypto]
-            
-            
-    def get_total_balance(self):
-        return self.balance
+            print(f"Crypto {crypto_id} not found in wallet {self.name}")
 
+    def _calculate_total_balance(self):
+        self.balance = sum(
+            data["crypto"].current_price * data["amount"]
+            for data in self.holdings.values()
+            if data["crypto"].current_price is not None
+        )
+
+    def get_total_balance(self):
+        self._calculate_total_balance()
+        return self.balance
