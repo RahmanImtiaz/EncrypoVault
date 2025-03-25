@@ -1,13 +1,13 @@
 from Crypto import Crypto
 from ExchangeSocket import ExchangeSocket
-from WalletManager import WalletManager
+from Portfolio import Portfolio
 from CryptoTransactionStrategy import RealTransaction
 import asyncio
 
 async def main():
     # Initialize with API key
     API_KEY = "fdade57267b549538799a94164f3db43"
-    portfolio = WalletManager(API_KEY)
+    portfolio = Portfolio(API_KEY)
     
     # Wallet selection/creation
     print("\n=== Available Wallets ===")
