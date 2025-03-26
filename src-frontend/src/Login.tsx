@@ -85,6 +85,10 @@ export function Login({ onLogin }: LoginProps) {
           .then(fetchedAccounts => {
             console.log("Accounts fetched:", fetchedAccounts);
             setAccounts(fetchedAccounts);
+            // Set the selected account to the first account in the list if available
+            if (fetchedAccounts && fetchedAccounts.length > 0) {
+              setSelectedAccount(fetchedAccounts[0]);
+            }
           })
           .catch(err => {
             console.error("Error fetching accounts:", err);
