@@ -37,7 +37,10 @@ class AuthRoutes:
             if 'use_touch_id' in data and data['use_touch_id'] and 'biometrics' not in data:
                 if sys.platform == 'darwin':
                     try:
-                        data['biometrics'] = AuthenticationManager.get_instance().prompt_for_biometrics()
+                        biometrics = AuthenticationManager.get_instance().prompt_for_biometrics()
+                        if not biometrics:  # Check if empty (user cancelled)
+                            return jsonify({"error": "Biometric authentication cancelled"}), 400
+                        data['biometrics'] = biometrics
                     except Exception as e:
                         return jsonify({"error": f"Biometric error: {str(e)}"}), 500
             
