@@ -1,61 +1,62 @@
+#!/usr/bin/env python3
+
 import sys
 import time
+from Foundation import NSRunLoop, NSDate
 
-def authenticate_with_touch_id(reason="Authenticate to access EncryptoVault"):
+def authenticate_with_touch_id(reason="Authentication required"):
     """
-    Shows a native macOS Touch ID prompt and returns True if successful.
-    
-    Args:
-        reason (str): The reason displayed to the user in the Touch ID prompt
-        
-    Returns:
-        bool: True if authentication succeeded, False otherwise
+    Displays macOS authentication dialog with password fallback
+    Returns True if authenticated, False if failed/canceled
     """
     if sys.platform != "darwin":
-        print("Touch ID is only available on macOS")
+        print("Error: This feature requires macOS")
         return False
 
     try:
-        from LocalAuthentication import LAContext, LAPolicyDeviceOwnerAuthenticationWithBiometrics
+        from LocalAuthentication import LAContext, LAPolicyDeviceOwnerAuthentication
 
-        # Create authentication context
         context = LAContext.new()
+        auth_result = [None]
+        error_info = [None]
 
-        # Check if Touch ID is available
-        can_evaluate, error = context.canEvaluatePolicy_error_(
-            LAPolicyDeviceOwnerAuthenticationWithBiometrics,
-            None
+        # Check if authentication is available
+        can_authenticate, error = context.canEvaluatePolicy_error_(
+            LAPolicyDeviceOwnerAuthentication, None
         )
 
-        if not can_evaluate:
-            print(f"Touch ID not available: {error}")
+        if not can_authenticate:
+            print(f"Authentication unavailable: {error.localizedDescription() if error else 'Unknown error'}")
             return False
 
-        # Using a list to store result from callback
-        result = [False]
+        # Define completion handler
+        def auth_completion(success, error):
+            auth_result[0] = success
+            error_info[0] = error
 
-        def callback(success, error):
-            """Callback when Touch ID verification completes"""
-            result[0] = success
-            if error:
-                print(f"Touch ID error: {error}")
-
-        # Request Touch ID authentication
+        # Show authentication dialog
         context.evaluatePolicy_localizedReason_reply_(
-            LAPolicyDeviceOwnerAuthenticationWithBiometrics,
+            LAPolicyDeviceOwnerAuthentication,
             reason,
-            callback
+            auth_completion
         )
 
-        # Wait for Touch ID result (with timeout)
-        timeout = 10  # seconds
-        interval = 0.1
-        elapsed = 0
-        while elapsed < timeout and not result[0]:
-            time.sleep(interval)
-            elapsed += interval
+        # Wait for response with timeout
+        run_loop = NSRunLoop.currentRunLoop()
+        start_time = time.time()
+        timeout = 30  # seconds
 
-        return result[0]
+        while time.time() - start_time < timeout and auth_result[0] is None:
+            run_loop.runUntilDate_(NSDate.dateWithTimeIntervalSinceNow_(0.1))
+
+        if error_info[0]:
+            print(f"Authentication error: {error_info[0].localizedDescription()}")
+            
+        return auth_result[0] if auth_result[0] is not None else False
+
+    except ImportError:
+        print("Missing required framework: pip install pyobjc")
+        return False
     except Exception as e:
-        print(f"Error using Touch ID: {str(e)}")
+        print(f"Unexpected error: {str(e)}")
         return False
