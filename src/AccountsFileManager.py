@@ -70,7 +70,7 @@ class AccountsFileManager:
                 "accountName": account_name, 
                 "encryptionKey": encryption_key.hex(), 
                 "secretKey": "123", 
-                "contacts": [], 
+                "contacts": {}, 
                 "accountType": account_type
             }), account_type=account_type)
             
