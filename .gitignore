@@ -3,3 +3,4 @@
 .venv
 .venv-py
 src/__pycache__
+./**/__pycache__

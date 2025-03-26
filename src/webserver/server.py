@@ -23,7 +23,6 @@ class FlaskServer:
         @self.app.route('/<path:path>')
         @self.app.route("/", defaults={'path': 'index.html'})
         def send_file(path):
-            print(f"path: {path}")
             return send_from_directory('../../src-frontend/dist', path)
 
 

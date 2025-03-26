@@ -15,7 +15,7 @@ export function Login({ onLogin }: LoginProps) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [isPasswordVerified, _setIsPasswordVerified] = useState(false);
-  const [useFallbackAuth, setUseFallbackAuth] = useState(false);
+  const [useFallbackAuth, _setUseFallbackAuth] = useState(false);
   const [accounts, setAccounts] = useState<string[]>([])
   const [platform, setPlatform] = useState<string | null>(null);
   const [_isBiometricsSupported, setIsBiometricsSupported] = useState<boolean | null>(null);
@@ -97,7 +97,8 @@ export function Login({ onLogin }: LoginProps) {
     detectPlatform();
   }, []);
 
-  const handleBiometricAuth = async () => {
+  const handleBiometricAuth = async (e: React.FormEvent) => {
+    e.preventDefault()
     setLoading(true);
     setError("");
     const platform = await window.api.getOS()
@@ -115,7 +116,7 @@ export function Login({ onLogin }: LoginProps) {
         console.log("Before")
         console.log(`authdata:`)
         console.log(authData)
-        const webauthnResponse = await startAuthentication({optionsJSON: authData})
+        const webauthnResponse = await startAuthentication({optionsJSON: authData, useBrowserAutofill: false})
         console.log("After")
         await window.api.login(selectedAccount, password, webauthnResponse.response.authenticatorData)
         onLogin();
@@ -123,8 +124,7 @@ export function Login({ onLogin }: LoginProps) {
       //onLogin();  //this is the code that should be deleted after, and the top bit needs to be uncommented.
     } catch (err) {
       console.error('Biometric auth error:', err);
-      setUseFallbackAuth(true);
-      setError("Biometric verification failed. Please use desktop password.");
+      setError("You closed the OS login prompt!");
     } finally {
       setLoading(false);
     }
