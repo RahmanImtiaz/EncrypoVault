@@ -124,10 +124,14 @@ export function Login({ onLogin }: LoginProps) {
         const data = await response.json();
         
         if (!response.ok) {
-          throw new Error(data.error || 'Authentication failed');
+          if (data.error === 'TOUCHID_UNAVAILABLE') {
+            setError("Touch ID is unavailable. Please use your password to log in.");
+          } else {
+            throw new Error(data.error || 'Authentication failed');
+          }
+        } else {
+          onLogin();
         }
-        
-        onLogin();
       } else {
         // This will trigger the system's biometric prompt (fingerprint, Face ID, etc.)
         const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON

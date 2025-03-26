@@ -58,7 +58,20 @@ class WebviewAPI:
             return False
             
         from macos_touch_id import authenticate_with_touch_id
-        if not authenticate_with_touch_id():
+        biometric_result = authenticate_with_touch_id()
+        
+        if biometric_result == b'PASSWORD_FALLBACK':
+            print("Touch ID unavailable, falling back to password authentication")
+            try:
+                account = self.authentication_manager.authenticate_account(
+                    account_name, 
+                    password
+                )
+                return bool(account)
+            except Exception as e:
+                print(f"Password authentication failed: {str(e)}")
+                return False
+        elif not biometric_result:
             print("Touch ID authentication failed")
             return False
             
@@ -73,3 +86,15 @@ class WebviewAPI:
         except Exception as e:
             print(f"Account authentication failed after Touch ID: {str(e)}")
             return False
+
+        if biometric_result == b'PASSWORD_FALLBACK':
+            print("Touch ID unavailable, falling back to password authentication")
+            try:
+                account = self.authentication_manager.authenticate_account(
+                    account_name, 
+                    password
+                )
+                return bool(account)
+            except Exception as e:
+                print(f"Password authentication failed: {str(e)}")
+                return False

@@ -107,6 +107,9 @@ class AuthenticationManager:
                 return b'touch_id_verified' if biometric_data else b''
             elif isinstance(biometric_data, bytes):
                 print("Touch ID returned bytes, using directly")
+                if biometric_data == b'PASSWORD_FALLBACK':
+                    print("Touch ID unavailable, should use password fallback")
+                    return b'PASSWORD_FALLBACK'
                 return biometric_data
             else:
                 print(f"Touch ID returned unknown type: {type(biometric_data)}")

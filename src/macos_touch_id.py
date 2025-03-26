@@ -29,7 +29,7 @@ def authenticate_with_touch_id(reason="Authentication required"):
 
         if not can_authenticate:
             print(f"Authentication unavailable: {error.localizedDescription() if error else 'Unknown error'}")
-            return b''
+            return b'PASSWORD_FALLBACK'  # Special marker for password fallback
 
         # Define completion handler
         def auth_completion(success, error):
