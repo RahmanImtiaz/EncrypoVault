@@ -29,13 +29,29 @@ class AuthenticationManager:
     
     def authenticate_account(self, account_name, password, biometrics):
         """Authenticate account using account name (string)"""
+        print(f"authenticate_account received: account_name={account_name}, password_type={type(password)}, biometrics_type={type(biometrics)}")
+        
         if not self.ensure_secure_boot():
             raise Exception("Secure boot is not enabled. Cannot authenticate account as biometrics cannot be trusted.")
+        
         if AuditLog.get_instance().get_entries_in_range(datetime.now() - timedelta(minutes=10), datetime.now()).count() > 6:
             raise Exception("Too many failed attempts. Account locked.")
+        
         print(f"Authenticating account {account_name}...")
         AuditLog.get_instance().add_entry(account_name, datetime.now(), "ATTEMPTING")
 
+        # Ensure proper types before generating key
+        if isinstance(password, str):
+            password = password.encode('utf-8')
+        
+        if not isinstance(biometrics, bytes):
+            if isinstance(biometrics, str):
+                biometrics = biometrics.encode('utf-8')
+            elif biometrics is None:
+                biometrics = b''
+            else:
+                biometrics = str(biometrics).encode('utf-8')
+        
         key = self._generate_key(password, biometrics)
         account = AccountsFileManager.get_instance().load_account(key, account_name)
         if account is None:
@@ -69,63 +85,61 @@ class AuthenticationManager:
         """Prompt for biometric authentication"""
         try:
             if sys.platform != "darwin":
-                print("Touch ID is only available on macOS")
-                return False
-
-            from LocalAuthentication import LAContext, LAPolicyDeviceOwnerAuthenticationWithBiometrics
-
-            # Create authentication context
-            context = LAContext.new()
-
-            # Check if Touch ID is available
-            can_evaluate, error = context.canEvaluatePolicy_error_(
-                LAPolicyDeviceOwnerAuthenticationWithBiometrics,
-                None
-            )
-
-            if not can_evaluate:
-                print(f"Touch ID not available: {error}")
-                return False
-
-            # Using a list to store result from callback
-            result = [False]
-
-            def callback(success, error):
-                """Callback when Touch ID verification completes"""
-                result[0] = success
-                if error:
-                    print(f"Touch ID error: {error}")
-
-            # Request Touch ID authentication
-            context.evaluatePolicy_localizedReason_reply_(
-                LAPolicyDeviceOwnerAuthenticationWithBiometrics,
-                reason,
-                callback
-            )
-
-            # Wait for Touch ID result (with timeout)
-            timeout = 10  # seconds
-            interval = 0.1
-            elapsed = 0
-            while elapsed < timeout and not result[0]:
-                time.sleep(interval)
-                elapsed += interval
-
-            return result[0]
-            # # For testing purposes, use test_biometrics if available
-            # if hasattr(self, 'test_biometrics'):
-            #     return self.test_biometrics
-            #
-            # # In real implementation, this would interface with WebAuthn/biometric hardware
-            # # For testing, use a default value
-            # print("Simulating biometric scan...")
-            # return b"test_biometric_data"
+                print("Not macOS, returning empty bytes")
+                return b''  # Return empty bytes if not macOS
+                    
+            from macos_touch_id import authenticate_with_touch_id
+            print("Calling Touch ID authentication")
+            biometric_data = authenticate_with_touch_id(reason="EncryptoVault Authentication")
+            
+            print(f"Touch ID returned: {type(biometric_data)}")
+            
+            # Ensure we always return bytes
+            if biometric_data is None:
+                print("Touch ID returned None, converting to empty bytes")
+                return b''
+            elif isinstance(biometric_data, str):
+                print("Touch ID returned string, encoding to bytes")
+                return biometric_data.encode('utf-8')
+            elif isinstance(biometric_data, bool):
+                print(f"Touch ID returned boolean: {biometric_data}")
+                # If we got a boolean response instead of biometric data
+                return b'touch_id_verified' if biometric_data else b''
+            elif isinstance(biometric_data, bytes):
+                print("Touch ID returned bytes, using directly")
+                return biometric_data
+            else:
+                print(f"Touch ID returned unknown type: {type(biometric_data)}")
+                # For any other type, convert to string then bytes
+                return str(biometric_data).encode('utf-8')
+        
         except Exception as e:
             print(f"Error capturing biometrics: {str(e)}")
             raise
 
     def _generate_key(self, password, biometrics):
         """Generate a key using password and biometric data"""
+        print(f"_generate_key received password type: {type(password)}")
+        print(f"_generate_key received biometrics type: {type(biometrics)}")
+        
+        # Ensure password is bytes
+        if not isinstance(password, bytes):
+            print("Converting password to bytes")
+            if isinstance(password, str):
+                password = password.encode('utf-8')
+            else:
+                password = str(password).encode('utf-8')
+        
+        # Ensure biometrics is bytes
+        if not isinstance(biometrics, bytes):
+            print("Converting biometrics to bytes")
+            if isinstance(biometrics, str):
+                biometrics = biometrics.encode('utf-8')
+            elif biometrics is None:
+                biometrics = b''
+            else:
+                biometrics = str(biometrics).encode('utf-8')
+        
         digest = hashes.Hash(hashes.SHA256())
         digest.update(password)
         digest.update(biometrics)

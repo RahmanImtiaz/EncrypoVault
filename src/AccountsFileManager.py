@@ -46,13 +46,37 @@ class AccountsFileManager:
     def get_loaded_account(self) -> Account:
         return self.loaded_account
 
-    def create_account(self, account_name, account_type, account_password):
+    def create_account(self, account_name, account_type, password, biometrics=None):
         if account_name in self.get_accounts():
             raise Exception('Account already exists')
         else:
-
-            account = Account(save_data=json.dumps({"accountName": account_name, "encryptionKey": "00 00", "secretKey": "123", "contacts": [], "accountType": account_type}), account_type=account_type)
+            # Get the authentication manager
+            from AuthenticationManager import AuthenticationManager
+            auth_manager = AuthenticationManager.get_instance()
+            
+            # Use the provided password and biometrics to generate the encryption key
+            if isinstance(password, str):
+                password = password.encode('utf-8')
+                
+            # If biometrics not provided, prompt for them
+            if biometrics is None:
+                biometrics = auth_manager.prompt_for_biometrics()
+                
+            # Generate the encryption key
+            encryption_key = auth_manager._generate_key(password, biometrics)
+            
+            # Create the account with proper initialization
+            account = Account(save_data=json.dumps({
+                "accountName": account_name, 
+                "encryptionKey": encryption_key.hex(), 
+                "secretKey": "123", 
+                "contacts": [], 
+                "accountType": account_type
+            }), account_type=account_type)
+            
+            # Save using the generated key
             self.save_account(account)
+            return account
 
     def save_account(self, account):
         """Save account object to file"""
