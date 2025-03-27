@@ -1,0 +1,22 @@
+{
+    "TestWallet": {
+        "address": "my8xWk8jibAoTRoSq4CUSKx24UmrLHomJi",
+        "coin_symbol": "btc-testnet",
+        "balance": 10000.0
+    },
+    "TestWallet2": {
+        "address": "mrM3keMwyzQgC3fLXimPTXT8Rj7kayLJhH",
+        "coin_symbol": "btc-testnet",
+        "balance": 10000.0
+    },
+    "eth3": {
+        "address": "5025edd7e748acbdc0c9e23397ceaab023bd39db",
+        "coin_symbol": "beth/test",
+        "balance": 10000.0
+    },
+    "eth4": {
+        "address": "8322b5f212ad561f67b43bc22dc29deb80b805cc",
+        "coin_symbol": "eth-testnet",
+        "balance": 10000.0
+    }
+}
