@@ -95,7 +95,7 @@ const Market: React.FC = () => {
 
   return (
     <div className="crypto-search-container">
-      <h1 className="market-title">Markets</h1>
+      <h1 className="market-title">Market</h1>
       <div className="search-section">
         <div className="search-box">
           <input
@@ -130,6 +130,7 @@ const Market: React.FC = () => {
       </div>
 
       <div className="details-section">
+        <h2 className="details-title">Description</h2>
         {loading ? (
           <div className="placeholder">
             <p>Loading cryptocurrencies...</p>

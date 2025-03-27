@@ -28,7 +28,7 @@
   
   /* Container for the crypto search and details */
   .crypto-search-container {
-    width: 90%;
+    width: 100%;
     max-width: 1400px;
     margin: 2rem auto;
     padding: 1.5rem;
@@ -115,6 +115,9 @@
     padding: 1.25rem;
     background-color: var(--secondary-bg);
     border-radius: var(--border-radius);
+    max-width: 100%;
+    overflow-wrap: break-word; 
+    box-sizing: border-box; 
   }
   
   .placeholder {
