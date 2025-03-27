@@ -11,7 +11,6 @@ interface Coin {
   symbol: string;
 }
 
-
 //you need to use a ? to understand if a search value has been identified or not. Instead also, it can be that the user has a drop down showing all the current available crypto out there.
 //
 let searchValue: string | undefined = '';
@@ -63,7 +62,6 @@ const Market: React.FC = () => {
     setFilteredCoins([]);
   };
 
-
   const handleInputFocus = () => {
     if (
       searchInput.trim() !== "" &&
@@ -76,15 +74,28 @@ const Market: React.FC = () => {
     }
   };
 
-
   const handleInputBlur = () => {
     setTimeout(() => {
       setFilteredCoins([]);
     }, 200);
   };
 
+  const handleClear = () => {
+    setSearchInput("");
+    setSelectedCoin(null);
+    setFilteredCoins([]);
+    searchValue = ''; // Reset the searchValue
+    setLoading(true); // Show loading state temporarily
+    
+    // Reset loading state after a brief delay
+    setTimeout(() => {
+      setLoading(false);
+    }, 300);
+  };
+
   return (
     <div className="crypto-search-container">
+      <h1 className="market-title">Markets</h1>
       <div className="search-section">
         <div className="search-box">
           <input
@@ -93,9 +104,15 @@ const Market: React.FC = () => {
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
-            placeholder="Type a cryptocurrency name..."
+            placeholder="Type a Cryptocurrency name..."
             className="crypto-input"
           />
+          <button 
+            onClick={handleClear}
+            className="clear-button"
+          >
+            Clear
+          </button>
           {filteredCoins.length > 0 && (
             <div className="suggestions-box">
               {filteredCoins.slice(0, 10).map((coin) => (
@@ -117,27 +134,13 @@ const Market: React.FC = () => {
           <div className="placeholder">
             <p>Loading cryptocurrencies...</p>
           </div>
-        ) : selectedCoin ? (
-          <BasicDetails cryptoId={selectedCoin.id} />
         ) : (
-          <div className="placeholder">
-            <p>Please select a cryptocurrency to view details.</p>
-          </div>
+          <BasicDetails cryptoId={selectedCoin?.id || searchValue || ""} />
         )}
-      </div>
-      <div className="detailsComponent">
-        <BasicDetails cryptoId={searchValue}/>
       </div>
     </div>
   );
 };
-
-/*<div className="marketContainer">
-      <div className="searchHeader">
-        <input type="text" placeholder="Search for a cryptocurrency" />
-        <button>Search</button>
-      </div>
-    </div>*/
 
 
 export default Market;
