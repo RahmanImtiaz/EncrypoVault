@@ -12,6 +12,8 @@ body {
     position: fixed;
     top: 0;
     left: 0;
+    display: flex; /* Enables Flexbox */
+    justify-content: center;
     width: 100%;
     z-index: 1000;
   }
@@ -28,6 +30,7 @@ body {
   /* Styles for each navigation item */
   .navItem {
     margin: 0 15px;
+    text-align: center; 
   }
   
   /* Styles for each navigation link */
@@ -42,6 +45,8 @@ body {
   }
 
   .navButton {
+    position: relative;
+    flex-direction: column;
     background-color: #5F5C7D;
     width: 1em;
     height: 1em;  
@@ -52,9 +57,29 @@ body {
     padding: 0.5em; /* Ensures spacing inside */
   }
 
+  .navButton:hover {
+    background-color: #3498db; /* Change background color on hover */
+}
+
   .navButton img{
     width: 1.5em;
     height: 1.5em;
     justify-content: center;
     align-items: center;
   }
+
+  /* Label styling: Initially hidden */
+.navLabel {
+  display: none; 
+  position: absolute; 
+  top: 100%; 
+  margin-top: 8px; 
+  font-size: 14px;
+  color: #ecf0f1;
+  white-space: nowrap; 
+}
+
+/* Show label on hover */
+.navButton:hover .navLabel {
+  display: block;
+}
