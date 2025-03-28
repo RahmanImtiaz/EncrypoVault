@@ -121,11 +121,29 @@ class WebviewAPI:
             return []
         
     def _format_holdings(self, holdings):
-        """Format the holdings data for JSON response"""
-        formatted_holdings = []
+        """Format holdings data for the frontend"""
+        formatted = {}
+        
         for crypto_id, data in holdings.items():
-            formatted_holdings.append({
-                "crypto_id": crypto_id,
-                "amount": data["amount"]
-            })
-        return formatted_holdings
+            # Get amount from the data
+            amount = data.get("amount", 0)
+            
+            # Get crypto object if available
+            crypto_obj = data.get("crypto", None)
+            
+            # Create default holding structure
+            formatted[crypto_id] = {
+                "amount": amount,
+                "name": crypto_id.title(),  # Capitalize the ID as a fallback name
+                "symbol": crypto_id.lower(),
+                "value": 0  # Default value
+            }
+            
+            # If we have a crypto object, use its data
+            if crypto_obj:
+                formatted[crypto_id]["name"] = crypto_obj.name
+                formatted[crypto_id]["symbol"] = crypto_obj.symbol
+                if hasattr(crypto_obj, 'current_price') and crypto_obj.current_price:
+                    formatted[crypto_id]["value"] = amount * crypto_obj.current_price
+                    
+        return formatted
