@@ -1,118 +1,131 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap');
 
-body{
+body {
   background: linear-gradient(68deg, #2E2D44 16.36%, #26273F 24.55%, #20203C 50.38%, #202E44 74.86%, #203A4B 84.82%, #203A4B 92.81%);
 }
 
-/* Wallets.css */
-.walletContaiter {
-    display: flex;
-    flex-direction: column; /* Stack children vertically */
-    justify-content: flex-start; /* Vertically center the container */
-    align-items: center; /* Horizontally center the container */
-    /*min-height: 100vh; Take full viewport height */
-    margin-top: 0em;
-    padding: 20px; /* Padding around the container */
-    height: 39em;
-    /*width: 40em;*/
-    width: 80em;
+/* Wallet Container */
+.walletContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 20px;
+  height: clamp(35em, 40vh, 45em);
+  width: clamp(60em, 80vw, 90em);
+}
 
-  }
-  
-  .walletHeading {
-    /*background-color: orange;*/
-    display: flex; /* Align items horizontally */
-    justify-content: space-between; /* Space between h1 and button */
-    width: 100%; /* Make the walletHeading take full width */
-    margin-bottom: 20px; /* Space below walletHeading */
-    padding: 0 2em;
-    box-sizing: border-box;
-  }
-  
-  .walletHeading h1 {
-    font-family: 'Manrope', sans-serif !important;
-    margin: 0; /* Remove default margin */
-  }
-
-
-  .walletHeading button {
-    padding: 0.5em 1em;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: 1.1rem;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-  }
-
-  .walletHeading button:hover {
-      background-color: #5F5C7D;
-  }
-  
-  .walletList {
-    background-color: lightblue;
-    display: flex;
-    flex-direction: column; /* Stack items vertically */
-    gap: 10px; /* Space between wallet items */
-    width: 100%;
-    max-width: 600px; /* Optional: Set a max width for the list */
-    margin-top: 2em;
-  }
-  
-  .walletList div {
-    background-color: red;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
-  }
-  
-
-
-.walletForm{
-  background-color: #161619;
-  border-radius: 1em;
-  width: 95%; /* Make the walletHeading take full width */
-  height: 8em;
+/* Wallet Heading */
+.walletHeading {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
   padding: 0 2em;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+/* Heading Text */
+.walletHeading h1 {
+  font-family: 'Manrope', sans-serif;
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  margin: 0;
+}
+
+/* Button Styling */
+.walletHeading button {
+  padding: 0.8vh 1.5vw;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: clamp(1rem, 1.2vw, 1.2rem);
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.walletHeading button:hover {
+  background-color: #5F5C7D;
+}
+
+/* Wallet List */
+.walletList {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5em;
+  width: 100%;
+  padding: 2em;
   box-sizing: border-box;
 }
 
-.formLabel{
-  font-family: 'Manrope', sans-serif !important;
+/* Wallet List Items */
+.walletList div {
+  background-color: red;
+  padding: 1.5vh;
+  width: 80%;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Wallet Form */
+.walletForm {
+  margin-top: 2vh;
+  background-color: #161619;
+  border-radius: 1em;
+  width: 95%;
+  height: 13vh;
+  padding: 0 2vw;
+  box-sizing: border-box;
+}
+
+/* Form Label */
+.formLabel {
+  font-family: 'Manrope', sans-serif;
   display: flex;
-  margin-left: 0.5em;
-  margin-top: 1em;
+  margin-left: 1vw;
+  margin-top: 1vh;
 }
 
 
-.add-wallet-button{
+.add-wallet-button,
+.goBack {
   border-radius: 10px;
+  width: clamp(5em, 6vw, 8em);
+  height: clamp(2.5em, 3vh, 4em);
+  font-size: clamp(0.8rem, 1vw, 1.1rem);
+}
+
+.add-wallet-button {
   background: linear-gradient(93deg, #35B5FF 0.4%, #75428E 99.6%);
-  width: 6em;
 }
 
-.goBack{
-  border-radius: 10px;
+.goBack {
   background: #353535;
-  width: 6em;
 }
+
 
 .inputWallet {
   border-radius: 20px;
-  padding-left: 1em;
+  padding-left: 1vw;
   z-index: 1;
-  background: rgba(63, 54, 73, 0.8); /* Semi-transparent for soft effect */
-  backdrop-filter: blur(1px); /* Blurs only the background, not text */
-  height: 3em;
-  width: 28em;
-  font-size: 0.9em;
+  background: rgba(63, 54, 73, 0.8);
+  backdrop-filter: blur(1px);
+  height: clamp(2.5em, 3vh, 4em);
+  width: clamp(20vw, 28vw, 35vw);
+  font-size: clamp(0.8rem, 0.9vw, 1rem);
   border: none;
   outline: none;
 }
 
-.inputArea{
-  margin-top: 1em;
+
+.inputArea {
+  margin-top: 1vh;
   display: flex;
   align-items: center;
-  gap: 1em;
+  gap: 1vw;
+}
+
+.inputArea input{
+  font-size: 2vh;
 }

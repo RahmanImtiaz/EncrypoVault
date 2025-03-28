@@ -1,102 +1,119 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap');
 
-.main-label{
+.main-label {
     color: #ffffff;
-    /*font-family: "Lexend Deca";*/
     font-family: 'Manrope', sans-serif;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
-    font-size: 2em;
-    margin-top: 1em;
-    margin-bottom: 1em;
+    font-size: clamp(1.5rem, 2vw, 2em);
+    margin: 1em 0;
 }
 
-.contact-form{
+/* Contact Form Container */
+.contact-form {
     background-color: #161619;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 35em;
-    height: 40em;
+    width: clamp(25em, 35vw, 40em);
+    height: clamp(35em, 45vh, 50em);
     margin-top: 3em;
+    padding: 2em;
+    border-radius: 10px;
 }
 
-
-#contactLabel{
-    margin-top: 1.5em;
+/* Labels */
+#contactLabel, #addresslabel {
+    margin-top: 1em;
     margin-bottom: 0.5em;
-    margin-right: 23em;
-
+    text-align: left;
+    width: 100%;
+    font-size: clamp(1rem, 1.2vw, 1.3rem);
 }
 
-#addresslabel{
-    margin-top: 0.5m;
-    margin-bottom: 0.5em;
-    margin-right: 23em;
+/* Fix inconsistent margin */
+#contactLabel {
+    margin-right: auto;
 }
 
+#addresslabel {
+    margin-right: auto;
+}
 
+/* Contact Input */
 .contactInput {
-    position: relative;
     border-radius: 20px;
-    margin-left: 3em;
-    margin-right: 3em;
-    z-index: 1;
     background: rgba(63, 54, 73, 0.8); /* Semi-transparent for soft effect */
     backdrop-filter: blur(1px); /* Blurs only the background, not text */
     height: 3em;
-    width: 28em;
+    width: 30vw;
     font-size: 1em;
     border: none;
     outline: none;
+    padding-left: 1em;
 }
 
-#contact{
+/* Contact Input Specific Styles */
+#contact {
     margin-bottom: 3em;
-    padding-left: 2em;
+    padding-left: 1.5em;
 }
 
-#waddress{
-    padding-left: 2em;
+#waddress {
+    padding-left: 1.5em;
 }
 
-
-
-.buttons{
+/* Button Container */
+.buttons {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
-    width: 30em;
+    width: clamp(20em, 30vw, 35em);
     margin-top: 3em;
-    border: none;
-    outline: none;
-    background-size: cover;
 }
 
-.qrcode{
-    margin-top: 2.5em;
-    margin-right: 20em;
-    margin-bottom: 2em;
+/* QR Code Button */
+.qrcode {
+    margin-top: 2.5vh;
     border-radius: 10px;
     background: #353535;
-    width: 10em;
+    width: 12vw;
+    padding: 1em;
+    text-align: center;
 }
 
-.goBack{
+/* Buttons */
+.goBack, .add-contact-button {
     border-radius: 10px;
-    background: #353535;
     width: 6em;
+    padding: 0.7em;
+    font-size: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
+/* Specific button colors */
+.goBack {
+    background: #353535;
+    color: white;
+}
 
-.add-contact-button{
-    border-radius: 10px;
+.add-contact-button {
     background: linear-gradient(93deg, #35B5FF 0.4%, #75428E 99.6%);
-    width: 6em;
+    color: white;
 }
 
-.error-message{
+.add-contact-button:hover {
+    filter: brightness(1.2);
+}
+
+/* Error Message */
+.error-message {
     margin-top: 3em;
+    color: red;
+    font-size: clamp(1rem, 1.2vw, 1.3rem);
+    text-align: center;
 }
 

@@ -70,7 +70,7 @@ const Wallets: React.FC = () => {
   }
 
   return (
-    <div className="walletContaiter">
+    <div className="walletContainer">
       <div className="walletHeading">
         <h1>Your Wallets</h1>
         <button onClick={toggleForm}>Add Wallet</button>

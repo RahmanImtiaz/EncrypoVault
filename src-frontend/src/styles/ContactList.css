@@ -2,45 +2,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&display=swap');
 
-
-
 body {
     background: linear-gradient(68deg, #2E2D44 16.36%, #26273F 24.55%, #20203C 50.38%, #202E44 74.86%, #203A4B 84.82%, #203A4B 92.81%);
 }
 
 .contactsListContainer {
-    /*background-color: pink;*/
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Align content to top */
+    justify-content: flex-start;
     align-items: center;
-    margin-top: 0em;
+    margin-top: 0;
     padding: 20px;
-    height: 39em;
-    width: 80em;
+    height: clamp(35em, 40vh, 45em);
+    width: clamp(60em, 80vw, 90em);
 }
 
 .contactsListHeading {
-    /*background-color: orange;*/
     display: flex;
     justify-content: space-between;
     width: 100%;
     padding: 0 2em;
     box-sizing: border-box;
-}
-
-.contactsListHeading h1{
-    font-family: 'Manrope', sans-serif;
-    margin: 0;
-    /*font-family: 'Inter', sans-serif;*/
+    align-items: center;
 }
 
 .contactsListHeading h1 {
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(1.5rem, 2vw, 2em);
     margin: 0;
 }
 
 .contactsListHeading button {
-    padding: 0em 1em;
+    padding: 0.5em 1.2em;
     border: none;
     color: white;
     cursor: pointer;
@@ -54,9 +47,8 @@ body {
 }
 
 .contactsList-list {
-    width: 100%; /* Ensures it spans the full width */
+    width: 100%;
     height: 100%;
-    /*margin-bottom: 5em;*/
     padding: 2em;
     border-radius: 8px;
     box-sizing: border-box;
