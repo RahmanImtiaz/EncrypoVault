@@ -48,7 +48,30 @@ async function getWebauthnRegOpts(accountName: string): Promise<JSON> {
     return await (await fetch(`/api/auth/webauthn_reg/${accountName}`)).json()
 }
 
+async function get_portfolio_balance() {
+    try {
+        const response = await fetch("/api/portfolio/balance");
+        const data = await response.json();
+        
+        // Handle different possible response formats
+        if (data.balance !== undefined) {
+            return data.balance; // If response has {balance: value}
+        } else if (typeof data === 'number') {
+            return data; // If response is just a number
+        } else {
+            console.error('Unexpected balance format:', data);
+            return 0;
+        }
+    } catch (error) {
+        console.error('Error fetching portfolio balance:', error);
+        return 0;
+    }
+}
 
+async function get_portfolio_wallets() {
+    const wallets = await fetch("/api/portfolio/wallets")
+    return (await wallets.json()).wallets
+}
 
 export default {
     getAccountNames,
@@ -56,5 +79,7 @@ export default {
     register,
     getOS,
     getWebauthnLoginOpts,
-    getWebauthnRegOpts
+    getWebauthnRegOpts,
+    get_portfolio_balance,
+    get_portfolio_wallets
 }

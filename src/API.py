@@ -1,11 +1,12 @@
 from webauthn import options_to_json
 from webauthn.helpers.structs import PublicKeyCredentialRequestOptions, UserVerificationRequirement
+import webauthn
+import sys
 
 from AccountsFileManager import AccountsFileManager
 from AuthenticationManager import AuthenticationManager
 from crypto_impl.BitcoinWallet import BitcoinWallet
-import webauthn
-import sys
+from Portfolio import Portfolio
 
 class WebviewAPI:
     authentication_manager: AuthenticationManager
@@ -13,6 +14,8 @@ class WebviewAPI:
     def __init__(self):
         self.authentication_manager = AuthenticationManager().get_instance()
         self.accounts_manager = AccountsFileManager().get_instance()
+        api_key = "fdade57267b549538799a94164f3db43"
+        self.portfolio = Portfolio(api_key)
 
     def get_accounts(self):
         accounts = self.accounts_manager.get_accounts()
@@ -86,15 +89,43 @@ class WebviewAPI:
         except Exception as e:
             print(f"Account authentication failed after Touch ID: {str(e)}")
             return False
+        
+    def get_portfolio_balance(self):
+        """Get the total balance of all wallets"""
+        try:
+            self.portfolio.update_all_balances()  # Refresh all balances before returning
+            return self.portfolio.get_total_balance()
+        except Exception as e:
+            print(f"Error getting portfolio balance: {str(e)}")
+            return 0
+        
 
-        if biometric_result == b'PASSWORD_FALLBACK':
-            print("Touch ID unavailable, falling back to password authentication")
-            try:
-                account = self.authentication_manager.authenticate_account(
-                    account_name, 
-                    password
-                )
-                return bool(account)
-            except Exception as e:
-                print(f"Password authentication failed: {str(e)}")
-                return False
+    def get_portfolio_wallets(self):
+        """Get all wallets with their data"""
+        try:
+            self.portfolio.update_all_balances()
+            
+            wallets = self.portfolio.get_all_wallets()
+            return [
+                {
+                    "name": wallet.name,
+                    "balance": wallet.balance,
+                    "address": wallet.address,
+                    "coin_symbol": wallet.coin_symbol,
+                    "holdings": self._format_holdings(wallet.holdings)
+                }
+                for wallet in wallets
+            ]
+        except Exception as e:
+            print(f"Error getting wallets: {str(e)}")
+            return []
+        
+    def _format_holdings(self, holdings):
+        """Format the holdings data for JSON response"""
+        formatted_holdings = []
+        for crypto_id, data in holdings.items():
+            formatted_holdings.append({
+                "crypto_id": crypto_id,
+                "amount": data["amount"]
+            })
+        return formatted_holdings
