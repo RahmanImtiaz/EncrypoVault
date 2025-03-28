@@ -10,110 +10,105 @@
     margin: 1em 0;
 }
 
-/* Contact Form Container */
 .contact-form {
     background-color: #161619;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: clamp(25em, 35vw, 40em);
-    height: clamp(35em, 45vh, 50em);
-    margin-top: 3em;
-    padding: 2em;
+    width: 35vw;
+    height: 75vh;
+    margin-top: 3rem;
+    padding: 2rem;
     border-radius: 10px;
 }
 
-/* Labels */
+
 #contactLabel, #addresslabel {
+    margin-right: auto;
     margin-top: 1em;
-    margin-bottom: 0.5em;
+    margin-bottom: 0.5rem;
     text-align: left;
     width: 100%;
-    font-size: clamp(1rem, 1.2vw, 1.3rem);
+    font-size: 1.2vw;
 }
 
-/* Fix inconsistent margin */
-#contactLabel {
-    margin-right: auto;
-}
 
-#addresslabel {
-    margin-right: auto;
-}
-
-/* Contact Input */
 .contactInput {
-    border-radius: 20px;
-    background: rgba(63, 54, 73, 0.8); /* Semi-transparent for soft effect */
-    backdrop-filter: blur(1px); /* Blurs only the background, not text */
-    height: 3em;
-    width: 30vw;
-    font-size: 1em;
+    border-radius: 15px;
+    background: rgba(63, 54, 73, 0.8);
+    backdrop-filter: blur(1px);
+    height: 3rem;
+    width: 30.5vw;
+    font-size: 1rem;
     border: none;
     outline: none;
-    padding-left: 1em;
+    padding-left: 1rem;
 }
 
-/* Contact Input Specific Styles */
+
 #contact {
-    margin-bottom: 3em;
-    padding-left: 1.5em;
+    margin-bottom: 3rem;
+    padding-left: 1.5rem;
 }
 
 #waddress {
-    padding-left: 1.5em;
+    padding-left: 1.5rem;
 }
 
-/* Button Container */
-.buttons {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    width: clamp(20em, 30vw, 35em);
-    margin-top: 3em;
-}
-
-/* QR Code Button */
 .qrcode {
     margin-top: 2.5vh;
     border-radius: 10px;
     background: #353535;
     width: 12vw;
-    padding: 1em;
+    padding: 0.5rem;
     text-align: center;
-}
-
-/* Buttons */
-.goBack, .add-contact-button {
-    border-radius: 10px;
-    width: 6em;
-    padding: 0.7em;
     font-size: 1rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    margin-right: auto;
 }
 
-/* Specific button colors */
+.buttons {
+    display: flex;
+    justify-content: space-evenly;
+    width: 30vw;
+    margin-top: 4rem;
+}
+
+
 .goBack {
     background: #353535;
     color: white;
+    font-size: 1rem !important;
+    padding-top: 0rem;
+    padding-bottom: 0rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .add-contact-button {
     background: linear-gradient(93deg, #35B5FF 0.4%, #75428E 99.6%);
     color: white;
+    font-size: 1rem;
+    padding-top: 0rem;
+    padding-bottom: 0rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .add-contact-button:hover {
     filter: brightness(1.2);
 }
 
-/* Error Message */
+
 .error-message {
-    margin-top: 3em;
+    margin-top: 2rem;
     color: red;
-    font-size: clamp(1rem, 1.2vw, 1.3rem);
+    font-size: 0.8rem;
     text-align: center;
 }
 

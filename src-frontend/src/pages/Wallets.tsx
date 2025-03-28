@@ -95,7 +95,7 @@ const Wallets: React.FC = () => {
       )}
       
       {wallets.length === 0 ? (
-        <p>No wallets found. Create a wallet to get started.</p>
+        <p className="message">No wallets found. Create a wallet to get started.</p>
       ) : (
         <div className="walletList">
           {wallets.map((wallet, index) => (

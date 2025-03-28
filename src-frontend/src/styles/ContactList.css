@@ -48,8 +48,9 @@ body {
 
 .contactsList-list {
     width: 100%;
+    margin-top: 2rem;
     height: 100%;
-    padding: 2em;
+    padding: 2rem;
     border-radius: 8px;
     box-sizing: border-box;
 }

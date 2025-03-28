@@ -129,3 +129,8 @@ body {
 .inputArea input{
   font-size: 2vh;
 }
+
+.message{
+  margin-top: 2rem;
+  padding: 2rem;
+}
