@@ -1,40 +1,33 @@
 body {
   background: linear-gradient(68deg, #2E2D44 16.36%, #26273F 24.55%, #20203C 50.38%, #202E44 74.86%, #203A4B 84.82%, #203A4B 92.81%);
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
 }
 
 .portfolioContainer {
-  /*background-color: pink;*/
-  height: 39em;
-  width: 80em;  /*previously was 70em*/
-  margin-top: 3em;
-  display: flex; /*All the items within the portfolioContainer are set to flex*/
-  flex-direction: column; /*set as column direction*/
-  justify-content: flex-start; /*This is for vertical direction. It aligns items from the start or top. */
-  align-items: center; /*Used to center items horizontally */
-  padding-top: 2.5em;
-  gap: 4em;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 20px;
+  height: clamp(35em, 40vh, 45em);
+  width: clamp(60em, 80vw, 90em);
+  gap: 4rem;
 }
 
 .balanceContainer {
   position: relative;
   border-radius: 34px;
-  border: 1px solid #000;
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.25);
-  width: 30em;
-  height: 7em;
-  display: flex;  /*items such as text are set to flex*/
+  background: linear-gradient(135deg, rgba(63, 54, 73, 0.7), rgba(128, 128, 128, 0.3));
+  box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.15);
+  width: 30rem;
+  height: 7rem;
+  display: flex;
   flex-direction: column;
-  justify-content: center; /*vertical alignment*/
-  align-items: center; /*horizontal alignment*/
+  justify-content: center;
+  align-items: center;
   padding: 10px;
-  overflow: hidden; /* Ensures that content doesn't overflow */
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+  border: none;
 }
 
 .balanceContainer::before {
@@ -84,4 +77,18 @@ body {
   background: inherit; /* Inherit the background from the container */
   filter: blur(5px);   /* Apply the blur effect to the background */
   z-index: -1;         /* Place the pseudo-element behind the content */
+}
+
+
+.actionButtons{
+  display: flex;
+  gap: 1rem;
+}
+
+.actionButton{
+  transition: background-color 0.3s ease;
+}
+
+.actionButton:hover{
+  background-color: #5F5C7D;
 }

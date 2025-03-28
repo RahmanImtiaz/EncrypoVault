@@ -156,6 +156,7 @@ const Portfolio: React.FC = () => {
           <button className="actionButton">Buy Crypto</button>
           <button className="actionButton">Sell Crypto</button>
           <button className="actionButton">Send Crypto</button>
+          <button className="actionButton">Receive Crypto</button>
         </div>
       </div>
     </div>
