@@ -3,7 +3,11 @@ import "./Login.css";
 import {PublicKeyCredentialCreationOptionsJSON, startRegistration} from "@simplewebauthn/browser";
 import type { AccountType } from "./index";
 
-export function Register() {
+interface RegisterProps {
+  toggleForm: () => void; // Add toggleForm prop
+}
+
+export function Register({ toggleForm }: RegisterProps) {
   const [accountName, setAccountName] = useState("");
   const [accountType, setAccountType] = useState<AccountType>("Beginner" as AccountType);
   const [password, setPassword] = useState("");
@@ -90,13 +94,6 @@ export function Register() {
   return (
     <div className="login-container">
       <div className="login-content">
-        <div className="login-image-column">
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/a22ceb90578e417ca7fce76dfa9d5dc1/34e199f73a6b2c0e069b1697c3b8fd46052ddff71a9a62e0e2783f1bb23cb260?placeholderIfAbsent=true"
-            alt="Register illustration"
-            className="login-image"
-          />
-        </div>
         <div className="login-form-column">
           <div className="login-form-wrapper">
             <div className="login-header">
@@ -171,6 +168,13 @@ export function Register() {
 
               <button type="submit" className="login-button">
                 Register
+              </button>
+              <button 
+                type="button"
+                onClick={toggleForm} 
+                className="toggle-button"
+              >
+                Already have an account?
               </button>
             </form>
           </div>

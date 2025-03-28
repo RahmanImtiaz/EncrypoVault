@@ -86,43 +86,34 @@ export function App() {
     setIsAuthenticated(true);
   };
 
-
-
   return (
     <Router>
-    <div className="app">
-      {!isAuthenticated ? (
-        isLogin ? (
-          <Login onLogin={handleLogin} />
+      <div className="app">
+        {!isAuthenticated ? (
+          isLogin ? (
+            <Login onLogin={handleLogin} toggleForm={toggleForm} />
+          ) : (
+            <Register toggleForm={toggleForm} />
+          )
         ) : (
-          <Register />
-        )
-      ) : (
-        <>
-          {/* Navbar (header) is always here once authenticated */}
-          <Navbar />
-          {/* Routes for different pages */}
-          <Routes>
-            <Route path="/" element={<Portfolio/>}/>
-            {/*<Route path="/" element={<Portfolio/>}/>*/}
-            {/*<Route path="/portfolio" element={<Portfolio balance={balance} wallets={wallets} />}/>*/}
-            <Route path="/portfolio" element={<Portfolio/>}/>
-            <Route path="/wallets" element={<Wallets />} />
-            <Route path="/contacts" element={<Contacts />} />
-            <Route path="/market" element={<Market />} />
-            <Route path="/settings" element={<Setting />} />
-          </Routes>
-        </>
-      )}
-
-      {/* Show the login/register toggle button only when the user is not authenticated */}
-      {!isAuthenticated && (
-        <button onClick={toggleForm} className="toggle-button">
-          {isLogin ? 'Need to Register?' : 'Already have an account?'}
-        </button>
-      )}
-    </div>
-  </Router>
+          <>
+            {/* Navbar (header) is always here once authenticated */}
+            <Navbar />
+            {/* Routes for different pages */}
+            <Routes>
+              <Route path="/" element={<Portfolio />} />
+              {/*<Route path="/" element={<Portfolio/>}/>*/}
+              {/*<Route path="/portfolio" element={<Portfolio balance={balance} wallets={wallets} />}/>*/}
+              <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/wallets" element={<Wallets />} />
+              <Route path="/contacts" element={<Contacts />} />
+              <Route path="/market" element={<Market />} />
+              <Route path="/settings" element={<Setting />} />
+            </Routes>
+          </>
+        )}
+      </div>
+    </Router>
   );
 }
 
