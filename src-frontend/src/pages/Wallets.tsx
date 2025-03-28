@@ -20,32 +20,55 @@ interface Wallet {
 
 const Wallets: React.FC = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
+  const [filteredWallets, setFilteredWallets] = useState<Wallet[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  // Removed unused error state
-  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [isCreatingWallet, setIsCreatingWallet] = useState<boolean>(false);
   const [newWalletName, setNewWalletName] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   
   useEffect(() => {
     fetchWallets();
   }, []);
+  
+  useEffect(() => {
+    // Filter wallets based on search query
+    if (searchQuery.trim() === '') {
+      setFilteredWallets(wallets);
+    } else {
+      const filtered = wallets.filter(wallet => 
+        wallet.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        wallet.coin_symbol.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredWallets(filtered);
+    }
+  }, [searchQuery, wallets]);
   
   const fetchWallets = async () => {
     try {
       setLoading(true);
       const wallets = await window.api.get_portfolio_wallets();
       setWallets(wallets);
+      setFilteredWallets(wallets);
     } catch (err) {
       console.error('Error fetching wallets:', err);
-      console.error('Failed to load wallets');
     } finally {
       setLoading(false);
     }
   };
   
-  const toggleForm = () => setIsVisible(!isVisible);
+  const toggleCreateForm = () => {
+    setIsCreatingWallet(!isCreatingWallet);
+    setNewWalletName("");
+  };
+  
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Search is already handled by the useEffect
+  };
   
   const createNewWallet = async (event: React.FormEvent) => {
     event.preventDefault();
+    
     if (!newWalletName.trim()) {
       alert('Please enter a wallet name');
       return;
@@ -56,74 +79,108 @@ const Wallets: React.FC = () => {
       // await window.api.create_wallet(newWalletName);
       alert(`New wallet "${newWalletName}" created`);
       setNewWalletName("");
-      toggleForm();
-      // Refresh wallet list
-      fetchWallets();
+      setIsCreatingWallet(false);
+      fetchWallets(); // Refresh wallet list
     } catch (err) {
       console.error('Error creating wallet:', err);
       alert('Failed to create wallet');
     }
   };
 
+  const handleWalletClick = (wallet: Wallet) => {
+    // Go to wallet details page
+    console.log(`Navigating to wallet: ${wallet.name}`);
+    // its empty for now
+  };
+
   if (loading) {
-    return <div className="walletContaiter"><p>Loading wallets...</p></div>;
+    return (
+      <div className="wallets-container">
+        <div className="loading-state">
+          <div className="loading-spinner"></div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="walletContainer">
-      <div className="walletHeading">
-        <h1>Your Wallets</h1>
-        <button onClick={toggleForm}>Add Wallet</button>
+    <div className="wallets-container">
+      <div className="wallets-header">
+        <h1 className="wallets-title">Your Wallets</h1>
+        <button className="add-wallet-btn" onClick={toggleCreateForm}>
+          + Add New Wallet
+        </button>
       </div>
       
-      {isVisible && (
-        <form onSubmit={createNewWallet} className='walletForm'>
-          <label htmlFor="walletName" className="formLabel">Create new wallet:</label>
-          <div className="inputArea">
+      <div className="wallets-toolbar">
+        {isCreatingWallet ? (
+          <form onSubmit={createNewWallet} className="create-form">
+            <span className="create-label">Create new wallet:</span>
             <input 
               type="text" 
-              id="walletName"
-              placeholder='Enter name' 
-              className="inputWallet"
+              className="create-input"
+              placeholder="Enter wallet name"
               value={newWalletName}
               onChange={(e) => setNewWalletName(e.target.value)}
+              autoFocus
             />
-            <button type="submit" className="add-wallet-button">Create</button>
-            <button type="button" onClick={toggleForm} className="goBack">Cancel</button>
-          </div>
-        </form>
-      )}
+            <button type="submit" className="create-btn">Create</button>
+            <button type="button" className="cancel-btn" onClick={toggleCreateForm}>Cancel</button>
+          </form>
+        ) : (
+          <form onSubmit={handleSearch} className="search-form">
+            <input 
+              type="text" 
+              className="search-input"
+              placeholder="Search wallets by name or type..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button type="submit" className="search-btn">Search</button>
+          </form>
+        )}
+      </div>
       
-      {wallets.length === 0 ? (
-        <p className="message">No wallets found. Create a wallet to get started.</p>
+      {filteredWallets.length === 0 ? (
+        <div className="empty-state">
+          <p>No wallets found. Create a wallet to get started.</p>
+          <button className="add-wallet-btn" onClick={toggleCreateForm}>
+            + Create Wallet
+          </button>
+        </div>
       ) : (
-        <div className="walletList">
-          {wallets.map((wallet, index) => (
-            <div key={index} className="walletItem">
-              <div className="walletItemHeader">
-                <h3>{wallet.name}</h3>
-                <span className="walletBalance">£{wallet.balance.toFixed(2)}</span>
+        <div className="wallets-list">
+          {filteredWallets.map((wallet, index) => (
+            <div 
+              key={index} 
+              className="wallet-item" 
+              onClick={() => handleWalletClick(wallet)}
+            >
+              <div className="wallet-header">
+                <h3 className="wallet-name">{wallet.name}</h3>
+                <span className="wallet-balance">£{wallet.balance.toFixed(2)}</span>
               </div>
-              <p className="walletAddress">Address: {wallet.address}</p>
-              <p className="walletType">Type: {wallet.coin_symbol}</p>
-              
-              {Object.keys(wallet.holdings).length > 0 && (
-                <div className="holdingsSection">
-                  <h4>Holdings</h4>
-                  {Object.entries(wallet.holdings).map(([cryptoId, holding]) => (
-                    <div key={cryptoId} className="holdingItem">
-                      <span>{holding.name} ({holding.symbol.toUpperCase()})</span>
-                      <span>{holding.amount.toFixed(8)}</span>
-                      <span>£{holding.value.toFixed(2)}</span>
-                    </div>
-                  ))}
+              <div className="wallet-content">
+                <div className="wallet-details">
+                  <div className="wallet-detail-row">
+                    <span className="wallet-detail-label">Address:</span>
+                    <span className="wallet-detail-value">{wallet.address.substring(0, 20)}...</span>
+                  </div>
+                  <div className="wallet-detail-row">
+                    <span className="wallet-detail-label">Type:</span>
+                    <span className="wallet-detail-value">{wallet.coin_symbol}</span>
+                  </div>
+                  <div className="wallet-detail-row">
+                    <span className="wallet-detail-label">Holdings:</span>
+                    <span className="wallet-detail-value">
+                      {Object.keys(wallet.holdings).length} assets
+                    </span>
+                  </div>
                 </div>
-              )}
-              
-              <div className="walletActions">
-                <button className="walletAction">Send</button>
-                <button className="walletAction">Receive</button>
-                <button className="walletAction">Trade</button>
+                
+                <button className="wallet-view-btn" title="View wallet details">
+                  →
+                </button>
               </div>
             </div>
           ))}
