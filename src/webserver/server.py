@@ -1,3 +1,4 @@
+import logging
 import os
 import signal
 import sys
@@ -38,7 +39,13 @@ class FlaskServer:
         self.server_thread.start()
 
     def run_server(self):
-        self.app.run(host='localhost', port=self.port)
+        if self.app.socketio:
+            self.app.logger.setLevel(logging.INFO)
+            logging.getLogger('werkzeug').setLevel(logging.INFO)
+            self.app.socketio.run(self.app, host='localhost', port=self.port)
+            #self.app.run(host="localhost", port=self.port)
+        else:
+            print("Socket io not registered!!")
 
     def close_server(self):
         """Send a signal to stop the Flask server."""
@@ -51,7 +58,7 @@ class FlaskServer:
             import requests
 
             shutdown_thread = threading.Thread(
-                target=lambda: requests.get(f'http://localhost:{self.port}/api/utils/shutdown', timeout=1.0)
+                target=lambda: requests.post(f'http://localhost:{self.port}/api/utils/shutdown', timeout=1.0)
             )
             shutdown_thread.daemon = True  # Make it a daemon so it doesn't block program exit
             shutdown_thread.start()

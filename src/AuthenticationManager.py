@@ -146,15 +146,20 @@ class AuthenticationManager:
         out = digest.finalize()
         return out
 
-    def ensure_secure_boot(self):
+    def ensure_secure_boot(self) -> bool:
         if sys.platform == 'win32':
-            import wmi
-            w = wmi.WMI()
+            import winreg
 
             # noinspection SqlNoDataSourceInspection
-            result = w.query("SELECT SecureBootEnabled FROM Win32_BIOS")
+            try:
+                reg = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
+                key = winreg.OpenKey(reg, r"SYSTEM\CurrentControlSet\Control\SecureBoot\State")
 
-            return len(result) > 0 and result[0].SecureBootEnabled
+                val = winreg.QueryValueEx(key, "UEFISecureBootEnabled")
+                return val[0] == 1
+            except Exception as e:
+                print(f"Error querying for uefi secure boot: {str(e)}")
+            return False
         elif sys.platform == 'darwin':
             # for mac we can always assume secure boot
             return True
