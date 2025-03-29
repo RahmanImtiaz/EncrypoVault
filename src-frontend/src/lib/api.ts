@@ -48,7 +48,7 @@ async function getWebauthnRegOpts(accountName: string): Promise<JSON> {
     return await (await fetch(`/api/auth/webauthn_reg/${accountName}`)).json()
 }
 
-async function get_portfolio_balance() {
+async function getPortfolioBalance() {
     try {
         const response = await fetch("/api/portfolio/balance");
         const data = await response.json();
@@ -68,7 +68,7 @@ async function get_portfolio_balance() {
     }
 }
 
-async function get_portfolio_wallets() {
+async function getPortfolioWallets() {
     const wallets = await fetch("/api/portfolio/wallets")
     return (await wallets.json()).wallets
 }
@@ -80,6 +80,6 @@ export default {
     getOS,
     getWebauthnLoginOpts,
     getWebauthnRegOpts,
-    get_portfolio_balance,
-    get_portfolio_wallets
+    getPortfolioBalance,
+    getPortfolioWallets
 }

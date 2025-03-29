@@ -46,7 +46,7 @@ const Wallets: React.FC = () => {
   const fetchWallets = async () => {
     try {
       setLoading(true);
-      const wallets = await window.api.get_portfolio_wallets();
+      const wallets = await window.api.getPortfolioWallets();
       setWallets(wallets);
       setFilteredWallets(wallets);
     } catch (err) {
