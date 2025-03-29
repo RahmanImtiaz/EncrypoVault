@@ -1,4 +1,5 @@
 import {AccountType} from "../index";
+import {io} from "socket.io-client"
 
 async function getAccountNames(): Promise<string[]> {
     const accounts = await fetch("/api/accounts/names")
@@ -81,5 +82,6 @@ export default {
     getWebauthnLoginOpts,
     getWebauthnRegOpts,
     getPortfolioBalance,
-    getPortfolioWallets
+    getPortfolioWallets,
+    io
 }

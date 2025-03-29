@@ -20,15 +20,15 @@ class CryptoRoutes:
         ws_prefix = api_bp.url_prefix+crypto_bp.url_prefix
 
         @socket.on('connect', ws_prefix+'/ws')
-        def handle_connect(ws):
-            print('got client connection from {}'.format(ws))
+        def handle_connect(auth):
+            print('got client connection w/ auth: {}'.format(auth))
 
         @socket.on('disconnect', ws_prefix+'/ws')
-        def handle_disconnect(ws):
-            print('got client disconnect from {}'.format(ws))
+        def handle_disconnect(reason):
+            print('got client disconnect w/ reason: {}'.format(reason))
 
         @socket.on('message', ws_prefix+'/ws')
-        def handle_message(ws, message):
-            print('got message {} from {}'.format(message, ws))
+        def handle_message(message):
+            print('got message {}'.format(message))
 
         api_bp.register_blueprint(crypto_bp)
