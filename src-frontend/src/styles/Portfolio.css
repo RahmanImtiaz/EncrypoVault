@@ -1,5 +1,10 @@
 body {
-  background: linear-gradient(68deg, #2E2D44 16.36%, #26273F 24.55%, #20203C 50.38%, #202E44 74.86%, #203A4B 84.82%, #203A4B 92.81%);
+  background: linear-gradient(135deg, #13183F, #3A3F92, #726FBA);
+  /*background: linear-gradient(135deg, #13183F, #2B3A67, #5A7EBB);*/
+  /*background: linear-gradient(135deg, #13183F, #2B3A67, #5A7EBB, #203A4B 92.81%);*/
+  /*background: linear-gradient(135deg, #1A2157, #33467C, #5A7EBB, #4F7699, #2F4F66);*/
+ /* background: linear-gradient(135deg, #1A2157, #3A4F7A, #5A7EBB, #3C6078);*/
+
 }
 
 .portfolioContainer {
@@ -85,10 +90,31 @@ body {
   gap: 1rem;
 }
 
+
+.actionButton {
+  background: linear-gradient(92.23deg, var(--primary) 21.43%, var(--primary-light) 119.36%);
+  border: none;
+  color: var(--text-light);
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.actionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -10px rgba(54, 113, 233, 0.5);
+}
+/*
 .actionButton{
   transition: background-color 0.3s ease;
 }
 
 .actionButton:hover{
   background-color: #5F5C7D;
-}
+}*/
