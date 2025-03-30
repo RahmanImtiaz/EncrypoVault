@@ -14,7 +14,7 @@ class AccountsFileManager:
     def __new__(cls):
         if cls._AccountsFileManager is None:
             cls._AccountsFileManager = super(AccountsFileManager, cls).__new__(cls)
-            cls._AccountsFileManager.__initialized = False
+            cls._AccountsFileManager._initialized = False
         return cls._AccountsFileManager
     
     def __init__(self):

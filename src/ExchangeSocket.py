@@ -4,12 +4,15 @@ import asyncio
 import aiohttp
 from Crypto import Crypto
 from Wallet import Wallet
-import websockets
 from CryptoObserver import CryptoObserver
 
 class CryptoWatch(abc.ABC):
     def __init__(self):
         self.watchedCrypto = []
+        self.observers = []
+
+    def subscribe(self, observer):
+        self.observers.append(observer)
     
     
     @abstractmethod
@@ -21,17 +24,27 @@ class CryptoWatch(abc.ABC):
         pass
     
     @abstractmethod
-    def notifyObservers(self):
+    def notify_observers(self, crypto_id, crypto_data):
         pass
 
 
 class ExchangeSocket(CryptoWatch):
     COINGECKO_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=gbp&ids={crypto_ids}"
-    
-    def __init__(self, product_ids):
+    _ExchangeSocket = None
+
+    def __new__(cls):
+        if cls._ExchangeSocket is None:
+            cls._ExchangeSocket = super(ExchangeSocket, cls).__new__(cls)
+            cls._ExchangeSocket._initialized = False
+        return cls._ExchangeSocket
+
+    def __init__(self):
+        if getattr(self, '_initialized'):
+            return
         super().__init__()
-        self.product_ids = product_ids
+        self.product_ids = []
         self.session = None
+        self._initialized = True
     
     def add_crypto(self, observer: CryptoObserver):
         """Implementation of abstract method from CryptoWatch"""
@@ -53,9 +66,9 @@ class ExchangeSocket(CryptoWatch):
                 self.watchedCrypto.remove(observer)
                 print(f"Removed {observer.crypto_id} from the watch list")
     
-    def notifyObservers(self, crypto_id: str, crypto_data: dict):
+    def notify_observers(self, crypto_id: str, crypto_data: dict):
         """Implementation of abstract method from CryptoWatch"""
-        for observer in self.watchedCrypto:
+        for observer in self.observers:
             observer.update(crypto_id, crypto_data)
     
     async def connect_to_exchange(self):

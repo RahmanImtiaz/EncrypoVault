@@ -1,5 +1,5 @@
 import {AccountType} from "../index";
-import {io} from "socket.io-client"
+import {io, Socket} from "socket.io-client"
 
 async function getAccountNames(): Promise<string[]> {
     const accounts = await fetch("/api/accounts/names")
@@ -74,22 +74,23 @@ async function getPortfolioWallets() {
     return (await wallets.json()).wallets
 }
 
-// let cryptoSocket: Socket|null = null
+let cryptoSocket: Socket|null = null
 async function getCryptoSocket() {
-    // if(!cryptoSocket) {
-    //     try {
-    //         await new Promise<void>((res, rej) => {
-    //             const connAttempt =
-    //             connAttempt.once("connect", () => {cryptoSocket = connAttempt; res()})
-    //             connAttempt.once("error", (e: Error) => rej(e) )
-    //         })
-    //     } catch (e) {
-    //         console.error("Failed to connect to crypto socket!")
-    //         console.error(e)
-    //     }
-    // }
-    // return cryptoSocket
-    return io("http://localhost:9209/api/crypto/ws")
+    if(!cryptoSocket) {
+        try {
+            return await new Promise((res, rej) => {
+                const connAttempt = io("http://localhost:9209/api/crypto/ws")
+                connAttempt.once("connect", () => {cryptoSocket = connAttempt; res(cryptoSocket)})
+                connAttempt.once("error", (e: Error) => rej(e) )
+                connAttempt.on("server_error", (e) => console.log(e))
+            })
+        } catch (e) {
+            console.error("Failed to connect to crypto socket!")
+            console.error(e)
+        }
+    }
+    return cryptoSocket
+    //return io("http://localhost:9209/api/crypto/ws")
 }
 
 export default {
