@@ -70,7 +70,7 @@
   
   .clear-button {
     padding: 0.75rem 1.25rem;
-    background-color: var(--input-bg);
+    background-color:  #3A3F92;
     color: var(--text-color);
     border: none;
     border-radius: var(--border-radius);
@@ -113,7 +113,7 @@
   .details-section {
     position: relative;
     padding: 1.25rem;
-    background-color: var(--secondary-bg);
+    background-color:  var(--secondary-bg);
     border-radius: var(--border-radius);
     max-width: 100%;
     overflow-wrap: break-word; 
@@ -214,7 +214,7 @@
   }
   
   .links p a {
-    color: var(--accent-color);
+    color:  #3A3F92;
     text-decoration: none;
   }
   

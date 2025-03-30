@@ -4,7 +4,18 @@ body {
   /*background: linear-gradient(135deg, #13183F, #2B3A67, #5A7EBB, #203A4B 92.81%);*/
   /*background: linear-gradient(135deg, #1A2157, #33467C, #5A7EBB, #4F7699, #2F4F66);*/
  /* background: linear-gradient(135deg, #1A2157, #3A4F7A, #5A7EBB, #3C6078);*/
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  min-height: 100vh; /* Full viewport height */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  box-sizing: border-box;
+}
 
+html, body {
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 .portfolioContainer {
@@ -16,6 +27,8 @@ body {
   height: clamp(35em, 40vh, 45em);
   width: clamp(60em, 80vw, 90em);
   gap: 4rem;
+  box-sizing: border-box; /* Include padding in width/height calculations */
+  overflow: hidden; 
 }
 
 .balanceContainer {
@@ -110,6 +123,8 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 10px 20px -10px rgba(54, 113, 233, 0.5);
 }
+
+
 /*
 .actionButton{
   transition: background-color 0.3s ease;
