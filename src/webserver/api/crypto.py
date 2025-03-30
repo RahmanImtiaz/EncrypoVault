@@ -29,6 +29,10 @@ class CryptoRoutes:
 
         @socket.on('message', ws_prefix+'/ws')
         def handle_message(message):
-            print('got message {}'.format(message))
+            print('got non json message {}'.format(message))
+
+        @socket.on('json', ws_prefix + '/ws')
+        def handle_message(payload):
+            print('got json payload {}'.format(payload))
 
         api_bp.register_blueprint(crypto_bp)

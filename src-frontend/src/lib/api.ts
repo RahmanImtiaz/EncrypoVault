@@ -74,6 +74,24 @@ async function getPortfolioWallets() {
     return (await wallets.json()).wallets
 }
 
+// let cryptoSocket: Socket|null = null
+async function getCryptoSocket() {
+    // if(!cryptoSocket) {
+    //     try {
+    //         await new Promise<void>((res, rej) => {
+    //             const connAttempt =
+    //             connAttempt.once("connect", () => {cryptoSocket = connAttempt; res()})
+    //             connAttempt.once("error", (e: Error) => rej(e) )
+    //         })
+    //     } catch (e) {
+    //         console.error("Failed to connect to crypto socket!")
+    //         console.error(e)
+    //     }
+    // }
+    // return cryptoSocket
+    return io("http://localhost:9209/api/crypto/ws")
+}
+
 export default {
     getAccountNames,
     login,
@@ -83,5 +101,5 @@ export default {
     getWebauthnRegOpts,
     getPortfolioBalance,
     getPortfolioWallets,
-    io
+    getCryptoSocket
 }
