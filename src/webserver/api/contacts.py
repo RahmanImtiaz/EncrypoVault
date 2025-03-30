@@ -3,7 +3,7 @@ from AccountsFileManager import AccountsFileManager
 
 class ContactRoutes:
     def __init__(self, api_bp: Blueprint):
-        contacts_bp = Blueprint('contacts', "contacts")
+        contacts_bp = Blueprint('contacts', __name__, url_prefix="/contacts")
 
         @contacts_bp.route('/list', methods=['GET'])
         def list_contacts():
