@@ -46,6 +46,7 @@ class CryptoRoutes:
         def handle_message(message=None):
             if message is None:
                 self.send_socket_message("error", {"error": "got nothing in socket, bruh??"})
+                return
             if type(message) is not dict:
                 try:
                     data = json.loads(message)
