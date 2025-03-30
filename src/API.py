@@ -147,3 +147,24 @@ class WebviewAPI:
                     formatted[crypto_id]["value"] = amount * crypto_obj.current_price
                     
         return formatted
+    
+    def add_contact(self, contact_name, contact_address):
+        """Add a contact to the wallet"""
+        try:
+            if self.accounts_manager.get_loaded_account() != None:
+                self.accounts_manager.get_loaded_account().add_contact(contact_name, contact_address)
+            return True
+        except Exception as e:
+            print(f"Error adding contact: {str(e)}")
+            return False
+        
+    def get_contacts(self):
+        """Get contacts for the current account"""
+        try:
+            if self.accounts_manager.get_loaded_account() != None:
+                return self.accounts_manager.get_loaded_account().get_contacts()
+            else:
+                return []
+        except Exception as e:
+            print(f"Error getting contacts: {e}")
+            return []
