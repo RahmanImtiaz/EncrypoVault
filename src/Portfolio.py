@@ -2,6 +2,7 @@ import json
 import os
 from typing import Dict, Optional, List
 from Wallet import Wallet
+from crypto_impl.WalletType import WalletType
 
 class Portfolio:
     def __init__(self, api_key: str, name: str = "MainPortfolio"):
@@ -10,6 +11,9 @@ class Portfolio:
         self.wallets: Dict[str, Wallet] = {}  # Dictionary of wallet_name: Wallet
         self.load_wallets()
     
+    
+    
+    # changed the code to fit the new structure
     def load_wallets(self, filepath: str = 'wallets.json'):
         """Load wallets from JSON file"""
         try:
@@ -18,9 +22,7 @@ class Portfolio:
                 for name, data in wallets.items():
                     self.wallets[name] = Wallet(
                         name=name,
-                        api_key=self.api_key,
-                        coin_symbol=data.get('coin_symbol', 'btc-testnet'),
-                        initial_balance=data.get('balance', 10000.00),
+                        wallet_type=WalletType[data.get('type', 'BITCOIN')],
                         address=data['address']
                     )
         except (FileNotFoundError, json.JSONDecodeError) as e:
@@ -31,8 +33,8 @@ class Portfolio:
     
     def create_wallet(self, 
                      name: str, 
-                     coin_symbol: str = 'btc-testnet',
-                     initial_balance: float = 10000.00,
+                     wallet_type: WalletType = WalletType.BITCOIN,
+                     address: Optional[str] = None,
                      overwrite: bool = False) -> Wallet:
         """Create new wallet in the portfolio"""
         if name in self.wallets and not overwrite:
@@ -40,9 +42,8 @@ class Portfolio:
             
         wallet = Wallet(
             name=name,
-            api_key=self.api_key,
-            coin_symbol=coin_symbol,
-            initial_balance=initial_balance
+            wallet_type=wallet_type,    
+            address=address,
         )
         self.wallets[name] = wallet
         self._save_wallets()
@@ -78,7 +79,7 @@ class Portfolio:
         data = {
             name: {
                 'address': wallet.address,
-                'coin_symbol': wallet.coin_symbol,
+                'type': wallet.wallet_type.name,
                 'balance': wallet.balance,
                 'holdings': {
                     crypto_id: {"amount": data["amount"]} 
