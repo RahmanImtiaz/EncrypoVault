@@ -1,14 +1,11 @@
 import json
-import sys
 from json import JSONDecodeError
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint
 from flask_socketio import SocketIO
 
-from AccountsFileManager import AccountsFileManager
-from AuthenticationManager import AuthenticationManager
-from CryptoObserver import CryptoObserver, ConcreteCryptoObserver
-from ExchangeSocket import CryptoWatch, ExchangeSocket
+from ConcreteCryptoObserver import ConcreteCryptoObserver
+from ExchangeSocket import ExchangeSocket
 
 
 class CryptoRoutes:
@@ -45,7 +42,7 @@ class CryptoRoutes:
         @socket.on('message', ws_prefix+'/ws')
         def handle_message(message=None):
             if message is None:
-                self.send_socket_message("error", {"error": "got nothing in socket, bruh??"})
+                self.send_socket_message("server_error", {"error": "got nothing in socket, bruh??"})
                 return
             if type(message) is not dict:
                 try:
@@ -59,7 +56,6 @@ class CryptoRoutes:
             if 'command' not in data:
                 self.send_socket_message("server_error", {"error": "invalid socket message! missing command"})
                 return
-            print('got command {}'.format(data))
 
             cmd = data['command']
 
@@ -70,7 +66,7 @@ class CryptoRoutes:
                     else:
                         crypto_id = data['crypto_id']
                         ExchangeSocket().add_crypto(crypto_id)
-                        self.send_socket_message("message", {"crypto_id": crypto_id})
+                        self.send_socket_message("message", {"message": "added crypto: {}".format(crypto_id)})
 
         self.socket = socket
         self.ws_prefix = ws_prefix

@@ -1,10 +1,9 @@
-import abc, json
-from abc import abstractmethod
+import abc
 import asyncio
+from abc import abstractmethod
+
 import aiohttp
-from Crypto import Crypto
-from Wallet import Wallet
-from CryptoObserver import CryptoObserver
+
 
 class CryptoWatch(abc.ABC):
     def __init__(self):
@@ -46,25 +45,14 @@ class ExchangeSocket(CryptoWatch):
         self.session = None
         self._initialized = True
     
-    def add_crypto(self, observer: CryptoObserver):
+    def add_crypto(self, crypto_name: str):
         """Implementation of abstract method from CryptoWatch"""
-        if observer not in self.watchedCrypto:
-            if isinstance(observer, Wallet):
-                self.watchedCrypto.append(observer)
-                print(f"Added {observer.name} to the watch list")
-            elif isinstance(observer, Crypto):
-                self.watchedCrypto.append(observer)
-                print(f"Added {observer.crypto_id} to the watch list")
-    
-    def remove_crypto(self, observer: CryptoObserver):
+        self.watchedCrypto.append(crypto_name)
+
+    def remove_crypto(self, crypto_name: str):
         """Implementation of abstract method from CryptoWatch"""
-        if observer in self.watchedCrypto:
-            if isinstance(observer, Wallet):
-                self.watchedCrypto.remove(observer)
-                print(f"Removed {observer.name} from the watch list")
-            elif isinstance(observer, Crypto):
-                self.watchedCrypto.remove(observer)
-                print(f"Removed {observer.crypto_id} from the watch list")
+        self.watchedCrypto.remove(crypto_name)
+        print(f"Removed {crypto_name} from the watch list")
     
     def notify_observers(self, crypto_id: str, crypto_data: dict):
         """Implementation of abstract method from CryptoWatch"""
@@ -89,7 +77,7 @@ class ExchangeSocket(CryptoWatch):
                     for crypto_data in data:
                         crypto_id = crypto_data.get("id")
                         if crypto_id:
-                            self.notifyObservers(crypto_id, crypto_data)
+                            self.notify_observers(crypto_id, crypto_data)
                 else:
                     print(f"Failed to fetch data: HTTP {response.status}")
         except Exception as e:

@@ -1,7 +1,9 @@
 import datetime
-from CryptoObserver import CryptoObserver
 
-class Crypto(CryptoObserver):
+from CryptoObserver import ConcreteCryptoObserver
+
+
+class Crypto:
     def __init__(self, crypto_id : str ):
         self.crypto_id = crypto_id
         self.name = None
@@ -28,6 +30,8 @@ class Crypto(CryptoObserver):
         self.circulating_supply = None
         self.fully_diluted_valuation = None
         self.last_updated = None
+        self.observer = ConcreteCryptoObserver(on_update=self.update)
+
 
     
     
