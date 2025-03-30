@@ -2,6 +2,7 @@ from flask import Blueprint, Flask
 
 from .accounts import AccountRoutes
 from .auth import AuthRoutes
+from .contacts import ContactRoutes
 from .crypto import CryptoRoutes
 from .utils import UtilRoutes
 
@@ -12,5 +13,6 @@ class ApiRoutes:
         AccountRoutes(api_bp)
         AuthRoutes(api_bp)
         UtilRoutes(api_bp)
+        ContactRoutes(api_bp)
         CryptoRoutes(api_bp, app)
         app.register_blueprint(api_bp)

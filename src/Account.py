@@ -1,5 +1,7 @@
 import json
 from AccountType import AccountType, Beginner, Advanced, Tester
+from Wallet import Wallet
+
 
 class Account:
     def __init__(self, save_data=None, account_type=None):
@@ -13,6 +15,7 @@ class Account:
         self._accountName = ""
         self._secretKey = ""
         self._contacts = {}
+        self._wallets = {}
         self._encryption_key = ""
         
         # Set default account type if none is provided
@@ -44,6 +47,13 @@ class Account:
     def get_account_name(self):
         """Get account name"""
         return self._accountName
+
+    def get_wallets(self):
+        """Get wallets"""
+        return self._wallets
+
+    def add_wallet(self, wallet: Wallet):
+        self._wallets[wallet.name] = wallet
     
     def get_secret_key(self):
         """Get secret key"""
