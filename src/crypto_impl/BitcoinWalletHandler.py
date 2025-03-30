@@ -3,14 +3,14 @@ import json
 import bitcoinlib
 
 from AccountsFileManager import AccountsFileManager
-from Wallet import Wallet
+from crypto_impl.HandlerInterface import HandlerInterface
 
 
-class BitcoinWallet(Wallet):
+class BitcoinWalletHandler(HandlerInterface):
     wallet: bitcoinlib.wallets.Wallet
 
     @staticmethod
-    def create_wallet(name) -> 'BitcoinWallet':
+    def create_wallet(name) -> bitcoinlib.wallets.Wallet:
         account = AccountsFileManager.get_instance().get_loaded_account()
         wallet = bitcoinlib.wallets.Wallet.create(name=name, keys=[account.get_secret_key()])
 

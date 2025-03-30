@@ -5,7 +5,7 @@ import sys
 
 from AccountsFileManager import AccountsFileManager
 from AuthenticationManager import AuthenticationManager
-from crypto_impl.BitcoinWallet import BitcoinWallet
+from crypto_impl.BitcoinWalletHandler import BitcoinWalletHandler
 from Portfolio import Portfolio
 
 class WebviewAPI:
@@ -37,7 +37,7 @@ class WebviewAPI:
         return self.accounts_manager.create_account(account_name, account_type, account_password)
 
     def create_bitcoin_wallet(self, wallet_name):
-        btc_wallet = BitcoinWallet.create_wallet(wallet_name)
+        btc_wallet = BitcoinWalletHandler.create_wallet(wallet_name)
         return btc_wallet.toJSON()
 
     def create_webauthn_auth_options(self) -> str:
