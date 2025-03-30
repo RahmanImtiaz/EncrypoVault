@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+    --primary: #3671E9;
+    --primary-light: #4A80EA;
+    --primary-dark: #2B5ECA;
+    --accent: #4AE3B5;
+    --accent-glow: rgba(74, 227, 181, 0.15);
+    --bg-dark: #0D0D2B;
+    --bg-card: #13183F;
+    --bg-input: #191B4E;
+    --text-light: #FFFFFF;
+    --text-dim: rgba(255, 255, 255, 0.7);
+    --text-muted: rgba(255, 255, 255, 0.5);
+    --danger: #F43F5E;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+body {
+    background: linear-gradient(135deg, #13183F, #3A3F92, #726FBA);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.main-label {
+    color: var(--text-light);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 2vw, 2em);
+    margin: 1em 0;
+}
+
+.buy-form {
+    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 35vw;
+    height: 75vh;
+    margin-top: 3rem;
+    padding: 2rem;
+    border-radius: 10px;
+}
+
+/* Ensure labels and p elements are left-aligned */
+#buyLabel{
+    margin-right: auto;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    text-align: left;
+    width: 100%;
+    font-size: 1.2vw;
+}
+
+#buy-receive-amount{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-right: auto;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    width: 100%;
+    font-size: 1.2vw;
+}
+
+#buy-amountLabel{
+    margin-right: auto;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+    text-align: left;
+    width: 100%;
+    font-size: 1.2vw;
+}
+
+/* Ensure the dropdown takes full width */
+.toBuy {
+    width: 100%;
+}
+
+.toBuy p{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 1rem;
+    font-size: 1rem;;
+}
+
+#buy-crypto-dropdown {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    font-size: 1.2rem;
+    border-radius: 12px;
+    height: 3rem;
+    width: 100%;
+    padding: 0 1rem;
+    color: var(--text-light);
+}
+
+
+#buy-amount {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    height: 3rem;
+    width: 100%;
+    padding: 0 1rem;
+    font-size: 1rem;
+    color: var(--text-light);
+}
+
+
+
+.goBack, .buy-button {
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    width: 8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.buy-button {
+    background: linear-gradient(92.23deg, var(--primary) 21.43%, var(--primary-light) 119.36%);
+    border: none;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .toBuy {
+        flex-direction: column;
+        height: auto;
+        padding: 0.5rem;
+    }
+
+    #buy-crypto-dropdown,
+    #buy-amount {
+        width: 100%;
+        text-align: center;
+    }
+}

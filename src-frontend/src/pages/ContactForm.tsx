@@ -43,9 +43,9 @@ export const ContactForm = ({goToList} : {goToList: () => void}) => {
     return(
         <form onSubmit={handleAddContact} className="contact-form">
             <label htmlFor="" className="main-label">New Contact</label>
-            <label htmlFor="contact" className="block font-medium" id="contactLabel">Contact Name</label>
+            <label htmlFor="contact" id="contactLabel">Contact Name</label>
             <input type="text" onChange={(e) => setContactName(e.target.value)} name="contact" id="contact" placeholder="Enter name" className="contactInput"/>
-            <label htmlFor="waddress" className="block font-medium" id="addresslabel">Enter Address</label>
+            <label htmlFor="waddress" id="addresslabel">Enter Address</label>
             <input type="text" onChange={(e) => setContactAddress(e.target.value)} name="waddress" id="waddress" placeholder="Enter wallet address" className="contactInput"/>
             <button type="button" className="qrcode">Scan QR code</button>
             <div className="buttons">

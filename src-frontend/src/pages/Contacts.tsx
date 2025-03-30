@@ -1,8 +1,6 @@
 //import React from 'react';
 /*import '../styles/Contacts.css';*/
 import { useState } from 'react';
-
-
 //import { Contact } from "./types";
 import ContactList from './ContactList';
 import ContactForm from './ContactForm';
