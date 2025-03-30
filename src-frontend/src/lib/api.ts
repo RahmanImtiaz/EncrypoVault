@@ -93,6 +93,26 @@ async function getCryptoSocket() {
     //return io("http://localhost:9209/api/crypto/ws")
 }
 
+
+async function addContact(name: string, address: string): Promise<Response> {
+    return fetch("/api/contacts/add", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name,
+            address
+        })
+    });
+}
+
+async function getContacts(): Promise<{name: string, address: string}[]> {
+    const response = await fetch("/api/contacts/list");
+    const data = await response.json();
+    return data.contacts || [];
+}
+
 export default {
     getAccountNames,
     login,
@@ -102,5 +122,7 @@ export default {
     getWebauthnRegOpts,
     getPortfolioBalance,
     getPortfolioWallets,
-    getCryptoSocket
+    getCryptoSocket,
+    addContact,
+    getContacts
 }

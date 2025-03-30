@@ -28,6 +28,7 @@ class FlaskServer:
         ApiRoutes(self.app)
 
         self.register_portfolio_routes()
+        self.register_contacts_routes()
 
         @self.app.route('/<path:path>')
         @self.app.route("/", defaults={'path': 'index.html'})
@@ -67,7 +68,36 @@ class FlaskServer:
             except Exception as e:
                 print(f"Error getting wallets: {str(e)}")
                 return jsonify({"error": str(e)}), 500
-
+            
+    def register_contacts_routes(self):
+        """Register contact-related routes with the Flask app"""
+        
+        @self.app.route('/api/contacts/list', methods=['GET'])
+        def get_contacts():
+            try:
+                contacts = self.api.get_contacts()
+                contact_list = [{"name": name, "address": address} for name, address in contacts.items()]
+                return jsonify({"contacts": contact_list})
+            except Exception as e:
+                print(f"Error getting contacts: {str(e)}")
+                return jsonify({"error": str(e)}), 500
+                
+        @self.app.route('/api/contacts/add', methods=['POST'])
+        def add_contact():
+            try:
+                data = request.json
+                if not data or 'name' not in data or 'address' not in data:
+                    return jsonify({"error": "Missing name or address"}), 400
+                    
+                success = self.api.add_contact(data['name'], data['address'])
+                if success:
+                    return jsonify({"success": True, "message": "Contact added successfully"})
+                else:
+                    return jsonify({"error": "Failed to add contact"}), 500
+            except Exception as e:
+                print(f"Error adding contact: {str(e)}")
+                return jsonify({"error": str(e)}), 500
+        
     def run_server(self):
         if self.app.socketio:
             self.app.logger.setLevel(logging.INFO)

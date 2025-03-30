@@ -51,6 +51,8 @@ class Account:
     
     def get_contacts(self):
         """Get contacts"""
+        if not hasattr(self, '_contacts'):
+            self._contacts = {}
         return self._contacts
         
     def get_account_type(self):
@@ -85,6 +87,8 @@ class Account:
         
     def add_contact(self, name, address):
         """Add a contact"""
+        if not hasattr(self, '_contacts'):
+            self._contacts = {}
         self._contacts[name] = address
         
     def to_json(self):
