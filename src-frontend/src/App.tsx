@@ -12,6 +12,10 @@ import Wallets from './pages/Wallets';
 import Setting from './pages/Setting';
 import Portfolio from './pages/Portfolio';
 import './styles/Portfolio.css';
+import BuyCrypto from './pages/BuyCrypto';
+import SellCrypto from './pages/SellCrypto';
+import SendCrypto from './pages/SendCrypto';
+import ReceiveCrypto from './pages/ReceiveCrypto';
 
 export function App() {
   const [isLogin, setIsLogin] = useState(true);
@@ -101,14 +105,20 @@ export function App() {
             <Navbar />
             {/* Routes for different pages */}
             <Routes>
+              {/*Routes for navigation*/}
               <Route path="/" element={<Portfolio />} />
-              {/*<Route path="/" element={<Portfolio/>}/>*/}
-              {/*<Route path="/portfolio" element={<Portfolio balance={balance} wallets={wallets} />}/>*/}
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/wallets" element={<Wallets />} />
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/market" element={<Market />} />
               <Route path="/settings" element={<Setting />} />
+
+              {/* Routes for crypto transaction actions */}
+              <Route path="/buy" element={<BuyCrypto />} />
+              <Route path="/sell" element={<SellCrypto />} />
+              <Route path="/send" element={<SendCrypto />} />
+              <Route path="/receive" element={<ReceiveCrypto />} />
+
             </Routes>
           </>
         )}
