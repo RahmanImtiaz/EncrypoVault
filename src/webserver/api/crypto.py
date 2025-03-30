@@ -1,11 +1,14 @@
 import json
 from json import JSONDecodeError
 
-from flask import Blueprint
+from flask import Blueprint, request
 from flask_socketio import SocketIO
 
+from AccountsFileManager import AccountsFileManager
 from ConcreteCryptoObserver import ConcreteCryptoObserver
 from ExchangeSocket import ExchangeSocket
+from Wallet import Wallet
+from crypto_impl.WalletType import WalletType
 
 
 class CryptoRoutes:
@@ -26,6 +29,23 @@ class CryptoRoutes:
         app.socketio = socket
 
         ws_prefix = api_bp.url_prefix+crypto_bp.url_prefix
+
+        @crypto_bp.route("/create_wallet", methods=["POST"])
+        def create_wallet():
+            data = request.get_json()
+            if not data:
+                return {"error": "No data provided"}, 400
+            required_values = ["walletType", "walletName"]
+            for required_value in required_values:
+                if required_value not in data:
+                    return {"error": f"{required_value} not found"}, 400
+
+            wallet_type = data["walletType"]
+            wallet_type = WalletType.from_str(wallet_type)
+            wallet_name = data["walletName"]
+            wallet = Wallet(wallet_name, wallet_type)
+            AccountsFileManager.get_instance().get_loaded_account().add_wallet(wallet)
+            return {"walletType": wallet_type, "walletName": wallet_name, "walletAddress": wallet.address}, 200
 
 
         @socket.on('connect', ws_prefix+'/ws')
