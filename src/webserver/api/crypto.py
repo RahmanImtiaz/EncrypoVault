@@ -43,11 +43,11 @@ class CryptoRoutes:
 
 
         @socket.on('message', ws_prefix+'/ws')
-        def handle_message(message):
-            print('got message w/ message: {}'.format(message))
+        def handle_message(message=None):
+            if message is None:
+                self.send_socket_message("error", {"error": "got nothing in socket, bruh??"})
             if type(message) is not dict:
                 try:
-                    print("message not dict, trying to parse...")
                     data = json.loads(message)
                 except JSONDecodeError:
                     self.send_socket_message("server_error", {"error": "Malformed message"})
