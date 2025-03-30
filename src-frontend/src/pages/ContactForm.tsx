@@ -32,6 +32,20 @@ export const ContactForm = ({goToList} : {goToList: () => void}) => {
           // Here you would call your backend to register the account
           //const response = await window.pywebview.api.create_account(accountName, password, accountType)
           //console.log(response)
+
+          // Check if the contact already exists
+          const existingContacts = await api.getContacts();
+          const nameExists = existingContacts.some(
+              contact => contact.name.toLowerCase() === contactName.trim().toLowerCase()
+          );
+          const addressExists = existingContacts.some(
+              contact => contact.address.toLowerCase() === contactAddress.trim().toLowerCase()
+          );
+          if (addressExists && nameExists || addressExists) {
+              setConfirmMessage("A contact with this address and/or name already exists");
+              return;
+          }
+          
           setIsLoading(true);
             const response = await api.addContact(contactName, contactAddress);
             const data = await response.json();
