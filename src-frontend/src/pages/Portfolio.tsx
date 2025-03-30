@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Portfolio.css';
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 
 interface Holding {
   amount: number;
@@ -20,7 +20,7 @@ const Portfolio: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   useEffect(() => {
     fetchPortfolioData();
@@ -125,11 +125,18 @@ const Portfolio: React.FC = () => {
       <div className="quickActions">
         <h2>Quick Actions</h2>
         <div className="actionButtons">
+          <button className="actionButton">Buy Crypto</button>
+          <button className="actionButton">Sell Crypto</button>
+          <button className="actionButton">Send Crypto</button>
+          <button className="actionButton">Receive Crypto</button>
+        </div>
+        {/*}
+        <div className="actionButtons">
           <button className="actionButton" onClick={() => navigate("/buy")}>Buy Crypto</button>
           <button className="actionButton" onClick={() => navigate("/sell")}>Sell Crypto</button>
           <button className="actionButton" onClick={() => navigate("/send")}>Send Crypto</button>
           <button className="actionButton" onClick={() => navigate("/receive")}>Receive Crypto</button>
-        </div>
+        </div>*/}
       </div>
     </div>
   );

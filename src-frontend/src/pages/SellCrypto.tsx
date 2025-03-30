@@ -17,19 +17,23 @@ export const SellCrypto = () => {
     const sellAction = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        if (!amountToSell.trim()) {
-            setConfirmMessage("Please enter an amount to sell");
+        if (!selectedOption) {
+            setConfirmMessage("Please select a cryptocurrency to sell.");
             return;
         }
-        
-    
+
+        if (!amountToSell.trim() || parseFloat(amountToSell) <= 0) {
+            setConfirmMessage("Please enter a valid amount greater than 0.00001.");
+            return;
+        }
+
         try {
-          console.log("New contact added");
-          setConfirmMessage("New contact added");
-          // onRegister();
+            console.log("Crypto selling initiated.");
+            setConfirmMessage("Selling successful!");
+            // Implement the actual purchase logic here
         } catch (err) {
-            setConfirmMessage("Failed to add contact.");
-          console.error(err);
+            setConfirmMessage("Transaction failed. Please try again.");
+            console.error(err);
         }
       };
 
@@ -46,7 +50,7 @@ export const SellCrypto = () => {
                     <option value="Bitcoin Dogs">Bitcoin Dogs</option>
                     <option value="Hello">Hello</option>
                 </select>
-                <input type="text" onChange={(e) => setAmountToSell(e.target.value)} name="amount" id="amount" placeholder="Enter Amount" className="sellingInput"/>
+                <input type="text" min="0.00001" step="0.000001" onChange={(e) => setAmountToSell(e.target.value)} name="amount" id="amount" placeholder="Enter Amount" className="sellingInput"/>
             </div>
             <div className="information">
                 <p>Total Owned: ...</p>

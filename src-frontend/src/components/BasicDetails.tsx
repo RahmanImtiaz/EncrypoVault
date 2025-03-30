@@ -79,7 +79,7 @@ const BasicDetails: React.FC<BasicDetailsProps> = ({ cryptoId }) => {
     value !== undefined && value !== null ? value : "N/A";
 
   return (
-    <div>
+    <div className="basicDetails-container">
       <div className="crypto-header">
         <h1>
           {getValue(cryptoData?.name)} ({getValue(cryptoData?.symbol)?.toUpperCase()})

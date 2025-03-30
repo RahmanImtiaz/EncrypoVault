@@ -58,7 +58,7 @@ body {
 
 #contacts{
     margin-right: auto;
-    margin-top: 4rem;
+    margin-top: 2rem;
     margin-bottom: 0.5rem;
     text-align: left;
     width: 100%;
@@ -134,6 +134,24 @@ body {
     
 }
 
+.contact-option-button.active {
+    background-color: var(--primary); /* Active state color */
+    color: white; /* Text color when active */
+}
+
+
+#existing-contacts-dropdown{
+    margin-top: 1rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    font-size: 1.2rem;
+    border-radius: 12px;
+    height: 3rem;
+    width: 100%;
+    padding: 0 1rem;
+    color: var(--text-light);
+}
+
 .contact-option-button {
     background: var(--bg-input);
     border: 1px solid var(--border-color);
@@ -147,6 +165,15 @@ body {
     align-items: center;
     justify-content: center;
     width: 10rem; /* Ensures uniform button width */
+}
+
+.label-contact-selection{
+    margin-top: 1rem;
+    font-size: 1rem;
+}
+
+.buttons{
+    margin-top:1rem;
 }
 
 .goBack{
@@ -177,6 +204,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.error-message{
+    margin-top: 1rem;
+    margin-bottom: 0rem;
 }
 
 

@@ -1,6 +1,5 @@
-// Portfolio.tsx
 import React from 'react';
-import '../styles/Setting.css';
+// import '../styles/Setting.css';
 
 const Setting: React.FC = () => {
   return (

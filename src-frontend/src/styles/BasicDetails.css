@@ -9,6 +9,10 @@ body {
     min-height: 100vh;
 }
 
+.basicDetails-container{
+    margin-top: 20rem;
+}
+
 
 .informationBody{
     background-color: red;

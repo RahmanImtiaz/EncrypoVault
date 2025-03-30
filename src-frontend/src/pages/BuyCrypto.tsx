@@ -11,26 +11,30 @@ const BuyCrypto = () => {
   const [confirmMessage, setConfirmMessage] = useState("");
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-      setSelectedOption(event.target.value);
+        setSelectedOption(event.target.value);
   };
 
   const buyAction = async (e: React.FormEvent) => {
-      e.preventDefault();
-      
-      if (!amountToSell.trim()) {
-          setConfirmMessage("Please enter an amount to sell");
-          return;
-      }
-      
-  
-      try {
-        console.log("New contact added");
-        setConfirmMessage("New contact added");
-        // onRegister();
-      } catch (err) {
-          setConfirmMessage("Failed to add contact.");
-        console.error(err);
-      }
+        e.preventDefault();
+        
+        if (!selectedOption) {
+            setConfirmMessage("Please select a cryptocurrency to buy.");
+            return;
+        }
+
+        if (!amountToSell.trim() || parseFloat(amountToSell) <= 0) {
+            setConfirmMessage("Please enter a valid amount greater than £0.00.");
+            return;
+        }
+
+        try {
+            console.log("Crypto purchase initiated.");
+            setConfirmMessage("Purchase successful!");
+            // Implement the actual purchase logic here
+        } catch (err) {
+            setConfirmMessage("Transaction failed. Please try again.");
+            console.error(err);
+        }
     };
 
   return (
@@ -49,7 +53,7 @@ const BuyCrypto = () => {
               <p>Rate: £1 = ... {selectedOption}</p>
           </div>
           <label htmlFor="buy-amount" id="buy-amountLabel">Enter Amount</label>
-          <input type="text" onChange={(e) => setAmountToSell(e.target.value)} name="amount" id="buy-amount" placeholder="Enter Amount" className="buyingInput"/>
+          <input type="number" min="0.01" step="0.000001" onChange={(e) => setAmountToSell(e.target.value)} name="amount" id="buy-amount" placeholder="Enter Amount" className="buyingInput"/>
           <div id="buy-receive-amount">
               <p>Crypto Quantity you will receive: ...</p>
           </div>

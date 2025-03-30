@@ -1,6 +1,5 @@
 import '../styles/SendCrypto.css';
 import React, { useState } from 'react';
-
 import { useNavigate } from "react-router-dom";
 
 const SendCrypto = () => {
@@ -9,29 +8,68 @@ const SendCrypto = () => {
   const [amountToSend, setAmountToSend] = useState("");
   /*const [amountToReceive, setAmountToReceive] = useState("");*/
   const [confirmMessage, setConfirmMessage] = useState("");
+  const [newContact, setNewContact] = useState(false);
+  const [existingContactsList, setExistingContactsList] = useState(false);
+  const [qrCodeContact, setQrCodeContact] = useState(false);
+  const [contactChosen, setContactChosen] = useState("");
+  const [activeButton, setActiveButton] = useState<string | null>(null);
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
       setSelectedOption(event.target.value);
   };
 
+  const handleChangeContact = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setContactChosen(event.target.value);
+};
+
   const sellAction = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!amountToSend.trim()) {
-        setConfirmMessage("Please enter an amount to sell");
-        return;
-    }
-    
+        
+        if (!selectedOption) {
+            setConfirmMessage("Please select a cryptocurrency to send.");
+            return;
+        }
 
-    try {
-      console.log("New contact added");
-      setConfirmMessage("New contact added");
-      // onRegister();
-    } catch (err) {
-        setConfirmMessage("Failed to add contact.");
-      console.error(err);
-    }
+        if (!amountToSend.trim() || parseFloat(amountToSend) <= 0) {
+            setConfirmMessage("Please enter a valid amount greater than 0.00001.");
+            return;
+        }
+
+        if (!contactChosen){
+            setConfirmMessage("Please select a contact.");
+            return;
+        }
+
+        try {
+            console.log("Crypto sending initiated.");
+            setConfirmMessage("Sent successful!");
+            // Implement the actual purchase logic here
+        } catch (err) {
+            setConfirmMessage("Transaction failed. Please try again.");
+            console.error(err);
+        }
   };
+
+  const showNewContact = () => {
+    setNewContact(true);
+    setExistingContactsList(false);
+    setQrCodeContact(false);
+    setActiveButton('new'); // Set active button to 'new'
+  }
+
+  const showExistingContacts = () => {
+    setExistingContactsList(true);
+    setNewContact(false);
+    setQrCodeContact(false);
+    setActiveButton('existing'); // Set active button to 'existing'
+  }
+
+  const showQrCodeScan = () => {
+    setQrCodeContact(true);
+    setNewContact(false);
+    setExistingContactsList(false);
+    setActiveButton('qrCode'); // Set active button to 'qrCode'
+  }
 
   return (
     <div>
@@ -46,7 +84,7 @@ const SendCrypto = () => {
                     <option value="Bitcoin Dogs">Bitcoin Dogs</option>
                     <option value="Hello">Hello</option>
                 </select>
-                <input type="text" onChange={(e) => setAmountToSend(e.target.value)} name="amount" id="amount" placeholder="Enter Amount" className="sellingInput"/>
+                <input type="text" min="0.00001" step="0.000001" onChange={(e) => setAmountToSend(e.target.value)} name="amount" id="amount" placeholder="Enter Amount" className="sellingInput"/>
             </div>
             <div className="information">
                 <p>Total Owned: ...</p>
@@ -54,10 +92,22 @@ const SendCrypto = () => {
             </div>
             <label htmlFor="contact-options" id="contacts">Choose Contact</label>
             <div id="contact-options">
-                <button className="contact-option-button">New</button>
-                <button className="contact-option-button">Existing</button>
-                <button className="contact-option-button">QR code</button>
+                <button type="button" onClick={showNewContact} className={`contact-option-button ${activeButton === 'new' ? 'active' : ''}`}>New</button>
+                <button type="button" onClick={showExistingContacts} className={`contact-option-button ${activeButton === 'existing' ? 'active' : ''}`}>Existing</button>
+                <button type="button" onClick={showQrCodeScan} className={`contact-option-button ${activeButton === 'qrCode' ? 'active' : ''}`}>QR code</button>
             </div>
+            {newContact? "display new contact form here (to be added)": null}
+            {existingContactsList ? 
+                <select id="existing-contacts-dropdown" value={contactChosen} onChange={handleChangeContact}>
+                    <option value="">--Choose an option--</option>
+                    <option value="Steve">Steve</option>
+                    <option value="Lisa">Lisa</option>
+                    <option value="Fake 3">Fake 3</option>
+                    <option value="Fake 4">Fake 4</option>
+                </select>
+            : null}
+            {qrCodeContact? "display QR code scanner here (to be added)": null}
+            <p className="label-contact-selection">Contact selected: {contactChosen}</p>
             <div className="buttons">
                 <button type="button" className="goBack" onClick={() => navigate(-1)}>Cancel</button>
                 <button type="submit" className="send-button">Sell</button>
