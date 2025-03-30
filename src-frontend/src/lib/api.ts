@@ -94,6 +94,18 @@ async function getCryptoSocket() {
 }
 
 
+async function createWallet(walletName: string): Promise<Response> {
+    return fetch("/api/portfolio/wallets", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            wallet_name: walletName
+        })
+    });
+}
+
 async function addContact(name: string, address: string): Promise<Response> {
     return fetch("/api/contacts/add", {
         method: "POST",
@@ -124,5 +136,6 @@ export default {
     getPortfolioWallets,
     getCryptoSocket,
     addContact,
-    getContacts
+    getContacts,
+    createWallet
 }

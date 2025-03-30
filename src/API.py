@@ -7,6 +7,7 @@ from AccountsFileManager import AccountsFileManager
 from AuthenticationManager import AuthenticationManager
 from crypto_impl.BitcoinWalletHandler import BitcoinWalletHandler
 from Portfolio import Portfolio
+from crypto_impl.WalletType import WalletType
 
 class WebviewAPI:
     authentication_manager: AuthenticationManager
@@ -54,6 +55,15 @@ class WebviewAPI:
             return 'windows'
         else:
             return 'other'
+        
+    def create_wallet(self, wallet_name: str, wallet_type: WalletType = WalletType.BITCOIN):
+        """Create a new wallet in the portfolio"""
+        try:
+            wallet = self.portfolio.create_wallet(wallet_name, wallet_type)
+            return wallet.toJSON()
+        except Exception as e:
+            print(f"Error creating wallet: {str(e)}")
+            return None
 
     def authenticate_with_touch_id(self, account_name, password):
         """Authenticate specifically using Touch ID for macOS"""

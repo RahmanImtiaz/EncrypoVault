@@ -75,16 +75,23 @@ const Wallets: React.FC = () => {
     }
     
     try {
-      // Add API call to create wallet here
-      // await window.api.create_wallet(newWalletName);
+      const wallet = await window.api.createWallet(newWalletName);
+      if (!wallet) {
+        throw new Error('Failed to create wallet');
+      }
+
       alert(`New wallet "${newWalletName}" created`);
       setNewWalletName("");
       setIsCreatingWallet(false);
       fetchWallets(); // Refresh wallet list
+
+
     } catch (err) {
       console.error('Error creating wallet:', err);
       alert('Failed to create wallet');
     }
+    // Add API call to create wallet here
+    // await window.api.create_wallet(newWalletName);
   };
 
   const handleWalletClick = (wallet: Wallet) => {
