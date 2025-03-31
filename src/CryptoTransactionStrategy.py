@@ -19,7 +19,7 @@ class CryptoTransactionStrategy(ABC):
         pass
     
     
-    def generate_QR_code(self, wallet_name: str, wallet_address: str):
+    def generate_QR_code(self, wallet: Wallet):
         pass
 
 class RealTransaction(CryptoTransactionStrategy):
