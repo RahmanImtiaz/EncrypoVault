@@ -96,17 +96,18 @@ class AccountsFileManager:
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"Account file for {account_name} not found")
 
-        with open(file_path, "r") as f:
-            encrypted_bytes = f
+        with open(file_path, "rb") as f:
+            encrypted_bytes = f.read()
 
         iv = encrypted_bytes[:AES.block_size]
+        print(f"decrypt iv is: {iv}")
         ciphertext = encrypted_bytes[AES.block_size:]
 
         cipher = AES.new(decryption_key, AES.MODE_CBC, iv)
         try:
             decrypted_bytes = cipher.decrypt(ciphertext)
             return unpad(decrypted_bytes, AES.block_size).decode("utf-8")
-        except UnicodeDecodeError as e:
+        except (UnicodeDecodeError, ValueError) as e:
             print(f"Decryption failed with key length: {len(decryption_key)} bytes")
             print(f"Ex: {e}")
             raise ValueError(f"Decryption failed: {e}")
@@ -121,6 +122,7 @@ class AccountsFileManager:
         padded_data = pad(json.dumps(data).encode("utf-8"), AES.block_size)
         cipher = AES.new(encryption_key, AES.MODE_CBC)
         iv = cipher.iv
+        print(f"encrypted iv is: {iv}")
         ciphertext = cipher.encrypt(padded_data)
         encrypted_bytes = iv + ciphertext
         print(f"Writing file: {file_path}")
