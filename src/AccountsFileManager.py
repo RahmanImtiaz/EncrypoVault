@@ -100,7 +100,8 @@ class AccountsFileManager:
             encrypted_bytes = f.read()
 
         iv = encrypted_bytes[:AES.block_size]
-        print(f"decrypt iv is: {iv}")
+        print(f"decrypt iv is: {iv} and length is {len(iv)}")
+        print(f"decryption key is {decryption_key.hex()}")
         ciphertext = encrypted_bytes[AES.block_size:]
 
         cipher = AES.new(decryption_key, AES.MODE_CBC, iv)
@@ -119,10 +120,11 @@ class AccountsFileManager:
         file_path = os.path.join(file_destination_path, f"{account.get_account_name()}.enc")
         print(f"Encrypting file: {file_path}")
 
-        padded_data = pad(json.dumps(data).encode("utf-8"), AES.block_size)
+        padded_data = pad(data.encode("utf-8"), AES.block_size)
         cipher = AES.new(encryption_key, AES.MODE_CBC)
         iv = cipher.iv
         print(f"encrypted iv is: {iv}")
+        print(f"encryption key is {encryption_key.hex()}")
         ciphertext = cipher.encrypt(padded_data)
         encrypted_bytes = iv + ciphertext
         print(f"Writing file: {file_path}")
