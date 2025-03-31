@@ -16,20 +16,21 @@ class Portfolio:
     # changed the code to fit the new structure
     def load_wallets(self, filepath: str = 'wallets.json'):
         """Load wallets from JSON file"""
-        try:
-            with open(filepath) as f:
-                wallets = json.load(f)
-                for name, data in wallets.items():
-                    self.wallets[name] = Wallet(
-                        name=name,
-                        wallet_type=WalletType[data.get('type', 'BITCOIN')],
-                        address=data['address']
-                    )
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Note: Couldn't load wallets - {str(e)}")
-        except KeyError as e:
-            print(f"Error: Missing required field in wallet data - {str(e)}")
-            self.wallets = {}
+        # try:
+        #     with open(filepath) as f:
+        #         wallets = json.load(f)
+        #         for name, data in wallets.items():
+        #             self.wallets[name] = Wallet(
+        #                 name=name,
+        #                 wallet_type=WalletType[data.get('type', 'BITCOIN')],
+        #                 address=data['address']
+        #             )
+        # except (FileNotFoundError, json.JSONDecodeError) as e:
+        #     print(f"Note: Couldn't load wallets - {str(e)}")
+        # except KeyError as e:
+        #     print(f"Error: Missing required field in wallet data - {str(e)}")
+        #     self.wallets = {}
+        pass
     
     def create_wallet(self, 
                      name: str, 

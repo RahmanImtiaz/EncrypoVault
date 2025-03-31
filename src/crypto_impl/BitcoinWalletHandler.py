@@ -11,7 +11,8 @@ class BitcoinWalletHandler(HandlerInterface):
 
     def __init__(self, name):
         account = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account()
-        wallet = bitcoinlib.wallets.Wallet.create(name, keys=[account.get_secret_key()])
+        wallet = bitcoinlib.wallets.Wallet.create(name)
+        wallet.import_key(account.get_secret_key())
         self.wallet = wallet
 
 
@@ -24,11 +25,5 @@ class BitcoinWalletHandler(HandlerInterface):
 
 
     def toJSON(self):
-        return json.dumps({
-            "name": self.name,
-            "holdings": self.holdings,
-            "balance": self.balance,
-            "address": self.address,
-            "transactions": self.wallet.transactions()
-        })
+        return self.wallet.as_json()
 

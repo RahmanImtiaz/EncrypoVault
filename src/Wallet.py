@@ -21,7 +21,7 @@ class Wallet(CryptoObserver):
         self.holdings = {}
         match wallet_type:
             case WalletType.BITCOIN:
-                self.crypto_handler = BitcoinWalletHandler()
+                self.crypto_handler = BitcoinWalletHandler(self.name)
             # case WalletType.ETHEREUM:
             #     pass
             case _:

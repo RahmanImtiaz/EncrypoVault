@@ -7,7 +7,7 @@ import io
 from contextlib import redirect_stdout
 
 from Wallet import Wallet
-from Crypto import Crypto
+from CryptoCurrency import CryptoCurrency
 from ExchangeSocket import ExchangeSocket
 from Portfolio import Portfolio  # new import for Portfolio tests
 
@@ -81,7 +81,7 @@ class TestWallet(unittest.TestCase):
 class TestCrypto(unittest.TestCase):
     def setUp(self):
         """Create a new Crypto instance for each test."""
-        self.crypto = Crypto(name="BTC-USD")
+        self.crypto = CryptoCurrency(name="BTC-USD")
 
     def test_initial_state(self):
         """Test that the crypto initializes with correct default values."""

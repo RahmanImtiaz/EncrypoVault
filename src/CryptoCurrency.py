@@ -3,7 +3,7 @@ import datetime
 from ConcreteCryptoObserver import ConcreteCryptoObserver
 
 
-class Crypto:
+class CryptoCurrency:
     def __init__(self, crypto_id : str ):
         self.crypto_id = crypto_id
         self.name = None

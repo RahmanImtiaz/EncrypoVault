@@ -123,6 +123,7 @@ class AccountsFileManager:
             # Print more information for debugging
             print(f"Decryption failed with key length: {len(key)} bytes")
             print(f"Salt: {salt.hex()[:10]}..., Nonce: {nonce.hex()[:10]}...")
+            print(f"Ex: {e}")
             raise ValueError(f"Decryption failed: {e}")
 
     @staticmethod

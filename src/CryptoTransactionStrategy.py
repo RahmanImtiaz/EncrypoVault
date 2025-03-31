@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import datetime
 from typing import Optional
 from Wallet import Wallet
-from Crypto import Crypto
+from CryptoCurrency import CryptoCurrency
 
 class CryptoTransactionStrategy(ABC):
     @abstractmethod
@@ -131,14 +131,14 @@ class RealTransaction(CryptoTransactionStrategy):
         print(f"[{wallet.name}] Sent {amount} {crypto_name} to {recipient}")
         return True
 
-    def _get_crypto(self, crypto_name: str) -> Optional[Crypto]:
+    def _get_crypto(self, crypto_name: str) -> Optional[CryptoCurrency]:
         """Helper to get crypto from exchange"""
         for asset in self.exchange.watchedCrypto:
-            if isinstance(asset, Crypto) and asset.crypto_id == crypto_name:
+            if isinstance(asset, CryptoCurrency) and asset.crypto_id == crypto_name:
                 return asset
         return None
 
-    def _add_to_holdings(self, wallet: Wallet, crypto: Crypto, crypto_name: str, amount: float):
+    def _add_to_holdings(self, wallet: Wallet, crypto: CryptoCurrency, crypto_name: str, amount: float):
         """Add crypto to wallet's holdings"""
         if crypto_name in wallet.holdings:
             wallet.holdings[crypto_name]["amount"] += amount

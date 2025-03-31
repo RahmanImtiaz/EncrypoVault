@@ -1,7 +1,11 @@
 import json
+
+#import slip39
+
+from bip_utils import Bip39MnemonicGenerator, Bip39WordsNum, Bip39SeedGenerator
+
 from AccountType import AccountType, Beginner, Advanced, Tester
 from Wallet import Wallet
-
 
 class Account:
     def __init__(self, save_data=None, account_type=None):
@@ -43,6 +47,14 @@ class Account:
                     self._accountType = Beginner()
                 elif account_type_name == "tester":
                     self._accountType = Tester()
+
+
+    def get_recovery_phrases(self):
+        a = Bip39MnemonicGenerator().FromWordsNumber(Bip39WordsNum.WORDS_NUM_12)
+        return a
+        # Bip39SeedGenerator(a).Generate()
+
+        # return slip39.create(self._accountName, master_secret=self._secretKey, using_bip39=True)
        
     def get_account_name(self):
         """Get account name"""

@@ -1,4 +1,4 @@
-from Crypto import Crypto
+from CryptoCurrency import CryptoCurrency
 from ExchangeSocket import ExchangeSocket
 from Portfolio import Portfolio
 from CryptoTransactionStrategy import RealTransaction
@@ -52,8 +52,8 @@ async def main():
     await exchange.connect_to_exchange()
     
     # Create Crypto objects
-    bitcoin = Crypto("bitcoin")
-    ethereum = Crypto("ethereum")
+    bitcoin = CryptoCurrency("bitcoin")
+    ethereum = CryptoCurrency("ethereum")
     
     # Add to exchange
     exchange.add_crypto(bitcoin)
