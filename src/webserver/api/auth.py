@@ -1,6 +1,8 @@
 import sys
+import uuid
 
 import webauthn
+import hashlib
 from flask import Blueprint, request, jsonify
 from webauthn import options_to_json
 from webauthn.helpers.structs import UserVerificationRequirement
@@ -22,6 +24,10 @@ class AuthRoutes:
                 if 'biometrics' not in data or data['biometrics'] is None:
                     if sys.platform == 'darwin':
                         data['biometrics'] = AuthenticationManager.get_instance().prompt_for_biometrics()
+                if sys.platform == 'win32':
+                    mac_int = uuid.getnode()
+                    data["biometrics"] = hashlib.sha256(mac_int.to_bytes(length=48, byteorder="little")).digest()
+                    print(f"got login req on windows so used mac {mac_int} to make data.biometrics {data['biometrics']}")
                 AuthenticationManager.get_instance().authenticate_account(data['account_name'], data['password'],
                                                                           data['biometrics'])
                 return jsonify({"success": True}), 200
@@ -31,10 +37,16 @@ class AuthRoutes:
         @auth_bp.route('/register', methods=['POST'])
         def register():
             data = request.get_json()
+            if (data is None or
+                    'account_name' not in data or
+                    'password' not in data or
+                    'account_type' not in data):
+                return jsonify({"error": "No data"}), 400
             print(f"register data: {data}")
 
             # Convert use_touch_id to biometrics if needed
             if 'use_touch_id' in data and data['use_touch_id'] and 'biometrics' not in data:
+
                 if sys.platform == 'darwin':
                     try:
                         biometrics = AuthenticationManager.get_instance().prompt_for_biometrics()
@@ -43,12 +55,11 @@ class AuthRoutes:
                         data['biometrics'] = biometrics
                     except Exception as e:
                         return jsonify({"error": f"Biometric error: {str(e)}"}), 500
-            
-            if (data is None or
-                    'account_name' not in data or
-                    'password' not in data or
-                    'account_type' not in data):
-                return jsonify({"error": "No data"}), 400
+            if sys.platform == 'win32':
+                mac_int = uuid.getnode()
+                data["biometrics"] = hashlib.sha256(mac_int.to_bytes(length=48, byteorder="little")).digest()
+                print(f"got register req on windows so used mac {mac_int} to make data.biometrics {data['biometrics']}")
+
             try:
                 AccountsFileManager.get_instance().create_account(data['account_name'], data['account_type'],
                                                                   data['password'], data.get('biometrics'))
