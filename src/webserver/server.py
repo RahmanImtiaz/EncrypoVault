@@ -101,6 +101,7 @@ class FlaskServer:
     def run_server(self):
         if self.app.socketio:
             self.app.logger.setLevel(logging.INFO)
+            self.app.logger.propagate = True
             logging.getLogger('werkzeug').setLevel(logging.INFO)
             self.app.socketio.run(self.app, host='localhost', port=self.port)
             #self.app.run(host="localhost", port=self.port)
