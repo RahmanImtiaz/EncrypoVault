@@ -3,6 +3,7 @@ import datetime
 from typing import Optional
 from Wallet import Wallet
 from CryptoCurrency import CryptoCurrency
+import qrcode
 
 class CryptoTransactionStrategy(ABC):
     @abstractmethod
@@ -16,12 +17,32 @@ class CryptoTransactionStrategy(ABC):
     @abstractmethod
     async def send(self, wallet_name: str, recipient: str, crypto_name: str, amount: float) -> bool:
         pass
+    
+    
+    def generate_QR_code(self, wallet_name: str, wallet_address: str):
+        pass
 
 class RealTransaction(CryptoTransactionStrategy):
     def __init__(self, exchange, portfolio): 
         self.exchange = exchange
         self.portfolio = portfolio
         self.transaction_history = []
+        
+    def generate_QR_code(self, wallet: Wallet):
+        """Generate a QR code for the wallet address"""
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(wallet.address)
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="black", back_color="white")
+        img.save(f"{wallet.name}_QR.png")
+        print(f"QR code saved as {wallet.name}_QR.png")
+        
 
     async def buy(self, wallet_name: str, crypto_name: str, amount: float) -> bool:
         """Execute buy transaction for specified wallet"""
