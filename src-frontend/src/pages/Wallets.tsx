@@ -74,7 +74,13 @@ const Wallets: React.FC = () => {
       alert('Please enter a wallet name');
       return;
     }
-    
+
+    // Check if wallet name contains at least one letter - bitcoinlib requires it
+    if (!/[a-zA-Z]/.test(newWalletName)) {
+      alert('Wallet name must contain at least one letter character');
+      return;
+    }
+  
     try {
       // Add API call to create wallet here
       const response = await window.api.createWallet(newWalletName);
