@@ -95,13 +95,14 @@ async function getCryptoSocket() {
 
 
 async function createWallet(walletName: string): Promise<Response> {
-    return fetch("/api/portfolio/wallets", {
+    return fetch("/api/crypto/wallets", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            wallet_name: walletName
+            walletName: walletName,
+            walletType: "BTC"
         })
     });
 }

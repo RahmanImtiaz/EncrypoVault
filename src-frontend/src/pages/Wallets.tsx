@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Wallets.css';
+//import api from '../lib/api';
 
 interface Holding {
   amount: number;
@@ -75,23 +76,23 @@ const Wallets: React.FC = () => {
     }
     
     try {
-      const wallet = await window.api.createWallet(newWalletName);
-      if (!wallet) {
-        throw new Error('Failed to create wallet');
+      // Add API call to create wallet here
+      const response = await window.api.createWallet(newWalletName);
+      if (response.ok) {
+        const newWallet = await response.json();
+        setWallets([...wallets, newWallet]);
+        setFilteredWallets([...filteredWallets, newWallet]);
+        setNewWalletName("");
+        alert(`New wallet "${newWalletName}" created`);
+        setIsCreatingWallet(false);
+      } else {
+        alert('Failed to create wallet');
       }
-
-      alert(`New wallet "${newWalletName}" created`);
-      setNewWalletName("");
-      setIsCreatingWallet(false);
-      fetchWallets(); // Refresh wallet list
-
 
     } catch (err) {
       console.error('Error creating wallet:', err);
       alert('Failed to create wallet');
     }
-    // Add API call to create wallet here
-    // await window.api.create_wallet(newWalletName);
   };
 
   const handleWalletClick = (wallet: Wallet) => {
