@@ -130,6 +130,7 @@ export function Register({ toggleForm }: RegisterProps) {
                 >
                   <option value="Beginner">Beginner</option>
                   <option value="Advanced">Advanced</option>
+                  <option value="Tester">Tester</option>
                 </select>
 
               <label
