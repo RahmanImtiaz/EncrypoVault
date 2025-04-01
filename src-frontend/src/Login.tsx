@@ -75,8 +75,14 @@ export function Login({ onLogin, toggleForm }: LoginProps) {
       } else {
         const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
         const webauthnResponse = await startAuthentication({optionsJSON: authData, useBrowserAutofill: false})
-        await window.api.login(selectedAccount, password, webauthnResponse.response.authenticatorData)
-        onLogin();
+        const res = await window.api.login(selectedAccount, password, webauthnResponse.response.authenticatorData)
+
+        if(res.status === 200) {
+          onLogin();
+        } else {
+          setLoading(false)
+          setError("Invalid Password or biometrics!")
+        }
       }
     } catch (err) {
       console.error('Biometric auth error:', err);
