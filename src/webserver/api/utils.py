@@ -16,13 +16,13 @@ class UtilRoutes:
 
         @utils_bp.route('/shutdown', methods=['POST'])
         def shutdown():
-            """Shutdown route for macOS."""
+            """Shutdown route for the Flask server."""
             func = request.environ.get('werkzeug.server.shutdown')
             if func is None:
-                raise RuntimeError('Not running with the Werkzeug Server')
+                print("Not running with the Werkzeug Server. Attempting alternative shutdown.")
+                import os
+                os._exit(0)
             func()
             return jsonify({"message": "Server shutting down..."}), 200
-
-
 
         api_bp.register_blueprint(utils_bp)
