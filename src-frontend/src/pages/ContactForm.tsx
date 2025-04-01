@@ -41,8 +41,8 @@ export const ContactForm = ({goToList} : {goToList: () => void}) => {
           const addressExists = existingContacts.some(
               contact => contact.address.toLowerCase() === contactAddress.trim().toLowerCase()
           );
-          if (addressExists && nameExists || addressExists) {
-              setConfirmMessage("A contact with this address and/or name already exists");
+          if (addressExists && nameExists || addressExists || nameExists) {
+              setConfirmMessage("A contact with this address and/or name already exists - Both must be unique");
               return;
           }
           
@@ -59,7 +59,7 @@ export const ContactForm = ({goToList} : {goToList: () => void}) => {
               // Navigate back to list after delay
               setTimeout(() => {
                   goToList();
-              }, 1500);
+              }, 100);
           } else {
               setConfirmMessage(data.error || "Failed to add contact");
           }
