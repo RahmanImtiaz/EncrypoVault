@@ -1,5 +1,5 @@
-// Portfolio.tsx
-//import { useState } from 'react';
+
+
 import React from 'react';
 import '../styles/Market.css';
 import BasicDetails from '../components/BasicDetails';
@@ -14,7 +14,7 @@ interface Coin {
 
 //you need to use a ? to understand if a search value has been identified or not. Instead also, it can be that the user has a drop down showing all the current available crypto out there.
 //
-let searchValue: string | undefined = '';
+
 
 const Market: React.FC = () => {
   const [coins, setCoins] = useState<Coin[]>([]);
@@ -56,7 +56,7 @@ const Market: React.FC = () => {
     }
   };
 
-  // Update suggestions when searchInput or coins change
+
   useEffect(() => {
     if (selectedCoin && searchInput === selectedCoin.name) {
       setFilteredCoins([]);
@@ -106,13 +106,14 @@ const Market: React.FC = () => {
     setSearchInput("");
     setSelectedCoin(null);
     setFilteredCoins([]);
-    searchValue = ''; // Reset the searchValue
+
     setLoading(true); // Show loading state temporarily
     
     // Reset loading state after a brief delay
     setTimeout(() => {
       setLoading(false);
     }, 300);
+    console.log(selectedCoin)
   };
 
   return (
@@ -157,13 +158,16 @@ const Market: React.FC = () => {
           <div className="placeholder">
             <p>Loading cryptocurrencies...</p>
           </div>
-        ) : (
+        ) : selectedCoin ? (
           accountType === "Beginner" ? (
-            <BasicDetails cryptoId={selectedCoin?.id || searchValue || ""} />
-
+            <BasicDetails cryptoId={selectedCoin.id} />
           ) : (
-            <AdvancedDetails cryptoId={selectedCoin?.id || searchValue || ""} />
+            <AdvancedDetails cryptoId={selectedCoin.id} />
           )
+        ) : (
+          <div className="placeholder">
+            <p>Select a cryptocurrency to view details</p>
+          </div>
         )}
       </div>
     </div>

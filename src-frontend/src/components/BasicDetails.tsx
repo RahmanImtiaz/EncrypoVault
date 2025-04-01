@@ -19,39 +19,7 @@ import "../styles/BasicDetails.css";
 interface BasicDetailsProps {
   cryptoId: string;
 }
-/*
-interface CryptoData {
-  name?: string;
-  symbol?: string;
-  image?: {
-    small?: string;
-  };
-  market_data?: {
-    current_price?: {
-      gbp?: number;
-    };
-    price_change_percentage_24h?: number;
-    market_cap?: {
-      gbp?: number;
-    };
-    high_24h?: {
-      gbp?: number;
-    };
-    low_24h?: {
-      gbp?: number;
-    };
-  };
-  description?: {
-    en?: string;
-  };
-  market_cap_rank?: number;
-  links?: {
-    homepage?: string[];
-    blockchain_site?: string[];
-    official_forum_url?: string[];
-    chat_url?: string[];
-  };
-}*/
+
 
 const BasicDetails: React.FC<BasicDetailsProps> = ({ cryptoId }) => {
   const { cryptoData, isLoading, error } = useCryptoData(cryptoId);

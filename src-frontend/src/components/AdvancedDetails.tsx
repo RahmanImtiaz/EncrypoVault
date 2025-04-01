@@ -1,7 +1,9 @@
-//import React from "react";
+
  import useCryptoData from "./useCryptoData";
  import Candlestick from "./graphs/candlestick";
- import { useState } from "react";
+
+import { useState } from "react";
+
  
  // this is a functional component that will display both basic and advanced details of a cryptocurrency
  
@@ -16,95 +18,29 @@
 interface AdvancedDetailsProps {
     cryptoId: string;
 }
-/*
-interface MarketData {
-  current_price?: {
-    gbp?: number;
-  };
-  price_change_percentage_24h?: number;
-  market_cap?: {
-    gbp?: number;
-  };
-  high_24h?: {
-    gbp?: number;
-  };
-  low_24h?: {
-    gbp?: number;
-  };
-  ath?: {
-    gbp?: number;
-  };
-  ath_change_percentage?: {
-    gbp?: number;
-  };
-  ath_date?: {
-    gbp?: string;
-  };
-  atl?: {
-    gbp?: number;
-  };
-  atl_change_percentage?: {
-    gbp?: number;
-  };
-  atl_date?: {
-    gbp?: string;
-  };
-  price_change_24h_in_currency?: {
-    gbp?: number;
-  };
-  fully_diluted_valuation?: {
-    gbp?: number;
-  };
-  market_cap_change_24h_in_currency?: {
-    gbp?: number;
-  };
-  market_cap_change_percentage_24h?: number;
-  circulating_supply?: number;
-  total_supply?: number;
-  max_supply?: number;
-  total_volume?: {
-    gbp?: number;
-  };
-}*/
-
-/*
-interface CryptoData {
-  name?: string;
-  symbol?: string;
-  image?: {
-    small?: string;
-  };
-  market_data?: MarketData;
-  description?: {
-    en?: string;
-  };
-  market_cap_rank?: number;
-  links?: {
-    homepage?: string[];
-    blockchain_site?: string[];
-    official_forum_url?: string[];
-    chat_url?: string[];
-  };
-  hashing_algorithm?: string;
-  block_time_in_minutes?: number;
-  categories?: string[]; // Categories of the cryptocurrency
-}*/
 
 const AdvancedDetails = ({ cryptoId }: AdvancedDetailsProps) => {
      const { cryptoData, isLoading, error } = useCryptoData(cryptoId);
      const [timeRange, setTimeRange] = useState(30);
      const allowedDays = [1, 7, 14, 30, 90, 180, 365];
-     console.log(cryptoId);
-     console.log(cryptoData);
+     console.log("received cryptoid", cryptoId);
     
      // alert box when loading
      if (isLoading) {
-         alert("Loading...");
+          return (
+              <div className="loading">
+                  <p>Loading cryptocurrency data...</p>
+              </div>
+          );
      }
  
      // alert box when error
      if (error) {
-         alert("Error: {error.message}");
+          return (
+              <div className="error">
+                  <p>Error: {(error as Error).message}</p>
+              </div>
+          );
      }
  
      // Helper function to safely display nested data
@@ -148,7 +84,11 @@ const AdvancedDetails = ({ cryptoId }: AdvancedDetailsProps) => {
                  </div>
  
                  <div className="graph">
-                     <Candlestick crypto_id={cryptoId} time_range={timeRange}/>
+                 {cryptoId ? (
+                    <Candlestick crypto_id={cryptoId} time_range={timeRange} />
+                    ) : (
+                      <p>No cryptocurrency selected.</p>
+                    )}
                  </div>
              </div>
  
@@ -226,3 +166,5 @@ const AdvancedDetails = ({ cryptoId }: AdvancedDetailsProps) => {
  };
  
  export default AdvancedDetails;
+
+

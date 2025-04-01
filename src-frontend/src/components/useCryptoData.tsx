@@ -90,34 +90,30 @@ const useCryptoData = (crypto_id: string): useCryptoDataResult => {
     const[error, setError] = useState(null);
 
     useEffect(() => {
-        if (!crypto_id){
-            return;
+      if (!crypto_id) {
+        setIsLoading(false);
+        return;
+      }
+      const fetchCryptoData = async () => {
+        setIsLoading(true);
+        try {
+          const response = await fetch(
+            `https://api.coingecko.com/api/v3/coins/${crypto_id}?localization=false&tickers=false&developer_data=false&sparkline=false`
+          );
+          if (!response.ok) {
+            throw new Error('Failed to fetch data');
+          }
+          const data = await response.json();
+          setCryptoData(data);
+        } catch (error: any) {
+          setError(error);
+        } finally {
+          setIsLoading(false);
         }
-
-        const fetchCryptoData = async () => {
-            setIsLoading(true);
-            try{
-                const response= await fetch (`https://api.coingecko.com/api/v3/coins/${crypto_id}?localization=false&tickers=false&developer_data=false&sparkline=false`);
-                if (!response.ok){
-                    console.error("Error fetching cryptocurrency data:", response.statusText);
-                    throw new Error('Failed to fetch data');
-                }
-                const data = await response.json();
-                setCryptoData(data);
-                console.log(data);
-
-            }
-            catch(error: any){
-                console.error("Error fetching cryptocurrency data:", error);
-                setError(error);
-            }
-            finally{
-                setIsLoading(false);
-        }
-    }
-    fetchCryptoData();
-
-}, [crypto_id]);
+      };
+      fetchCryptoData();
+    }, [crypto_id]);
+    
 
     return { cryptoData, isLoading, error };
 };
