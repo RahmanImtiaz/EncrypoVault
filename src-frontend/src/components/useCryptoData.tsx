@@ -2,38 +2,76 @@ import { useState, useEffect } from "react";
 //These files were previously in jsx, now I converted them into tsx. I had to add props to this file and the others.
 
 interface CryptoData {
-    id?: string;
-    name?: string;
-    symbol?: string;
-    image?: {
-      small?: string;
+  id?: string;
+  name?: string;
+  symbol?: string;
+  image?: {
+    small?: string;
+  };
+  market_data?: {
+    current_price?: {
+      gbp?: number;
     };
-    market_data?: {
-      current_price?: {
-        gbp?: number;
-      };
-      price_change_percentage_24h?: number;
-      market_cap?: {
-        gbp?: number;
-      };
-      high_24h?: {
-        gbp?: number;
-      };
-      low_24h?: {
-        gbp?: number;
-      };
+    price_change_percentage_24h?: number;
+    market_cap?: {
+      gbp?: number;
     };
-    market_cap_rank?: number;
-    description?: {
-      en?: string;
+    high_24h?: {
+      gbp?: number;
     };
-    links?: {
-      homepage?: string[];
-      blockchain_site?: string[];
-      official_forum_url?: string[];
-      chat_url?: string[];
+    low_24h?: {
+      gbp?: number;
     };
-  }
+    ath?: {
+      gbp?: number;
+    };
+    ath_change_percentage?: {
+      gbp?: number;
+    };
+    ath_date?: {
+      gbp?: string;
+    };
+    atl?: {
+      gbp?: number;
+    };
+    atl_change_percentage?: {
+      gbp?: number;
+    };
+    atl_date?: {
+      gbp?: string;
+    };
+    price_change_24h_in_currency?: {
+      gbp?: number;
+    };
+    fully_diluted_valuation?: {
+      gbp?: number;
+    };
+    market_cap_change_24h_in_currency?: {
+      gbp?: number;
+    };
+    market_cap_change_percentage_24h?: number;
+    circulating_supply?: number;
+    total_supply?: number;
+    max_supply?: number;
+    total_volume?: {
+      gbp?: number;
+    };
+  };
+  market_cap_rank?: number;
+  description?: {
+    en?: string;
+  };
+  links?: {
+    homepage?: string[];
+    blockchain_site?: string[];
+    official_forum_url?: string[];
+    chat_url?: string[];
+  };
+  hashing_algorithm?: string;
+  block_time_in_minutes?: number;
+  categories?: string[];
+}
+
 
 
 interface useCryptoDataResult {
@@ -61,6 +99,7 @@ const useCryptoData = (crypto_id: string): useCryptoDataResult => {
             try{
                 const response= await fetch (`https://api.coingecko.com/api/v3/coins/${crypto_id}?localization=false&tickers=false&developer_data=false&sparkline=false`);
                 if (!response.ok){
+                    console.error("Error fetching cryptocurrency data:", response.statusText);
                     throw new Error('Failed to fetch data');
                 }
                 const data = await response.json();
@@ -69,6 +108,7 @@ const useCryptoData = (crypto_id: string): useCryptoDataResult => {
 
             }
             catch(error: any){
+                console.error("Error fetching cryptocurrency data:", error);
                 setError(error);
             }
             finally{

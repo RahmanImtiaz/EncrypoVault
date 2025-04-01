@@ -94,7 +94,9 @@ const AdvancedDetails = ({ cryptoId }: AdvancedDetailsProps) => {
      const { cryptoData, isLoading, error } = useCryptoData(cryptoId);
      const [timeRange, setTimeRange] = useState(30);
      const allowedDays = [1, 7, 14, 30, 90, 180, 365];
- 
+     console.log(cryptoId);
+     console.log(cryptoData);
+    
      // alert box when loading
      if (isLoading) {
          alert("Loading...");
@@ -165,7 +167,7 @@ const AdvancedDetails = ({ cryptoId }: AdvancedDetailsProps) => {
                  <p>Block Time (seconds): {(cryptoData as any)?.block_time_in_minutes ? (cryptoData as any).block_time_in_minutes * 60 : "N/A"}</p>
  
                  <div className="categories">
-                     <p>Categories: {(cryptoData as any)?.categories ? (cryptoData as any).categories.join(", ") : "N/A"}</p>
+                    <p>Categories: {Array.isArray(cryptoData?.categories) ? cryptoData.categories.join(", ") : "N/A"}</p>
                  </div>
  
              </div>
@@ -214,7 +216,7 @@ const AdvancedDetails = ({ cryptoId }: AdvancedDetailsProps) => {
  
  
              <div className="links">
-                 <p>Homepage: {cryptoData?.links?.homepage?.[0] || "N/A"}</p>
+                 <p>Homepage: {Array.isArray(cryptoData?.links?.homepage) && cryptoData.links.homepage.length > 0 ? cryptoData.links.homepage[0] : "N/A"}</p>
                  <p>Blockchain Site: {cryptoData?.links?.blockchain_site?.[0] || "N/A"}</p>
                  <p>Official Forum: {cryptoData?.links?.official_forum_url?.[0] || "N/A"}</p>
                  <p>Chat: {cryptoData?.links?.chat_url?.[0] || "N/A"}</p>

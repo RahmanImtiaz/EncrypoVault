@@ -4,6 +4,7 @@ import React from 'react';
 import '../styles/Market.css';
 import BasicDetails from '../components/BasicDetails';
 import { ChangeEvent } from 'react';
+import AdvancedDetails from '../components/AdvancedDetails';
 
 interface Coin {
   id: string;
@@ -21,11 +22,13 @@ const Market: React.FC = () => {
   const [searchInput, setSearchInput] = useState<string>("");
   const [filteredCoins, setFilteredCoins] = useState<Coin[]>([]);
   const [selectedCoin, setSelectedCoin] = useState<Coin | null>(null);
+  const [accountType, setAccountType] = useState<string>("");
 
   useEffect(() => {
     fetch("https://api.coingecko.com/api/v3/coins/list")
       .then((response) => response.json())
       .then((data: Coin[]) => {
+        console.log("Fetched coins:", data);
         setCoins(data);
         setLoading(false);
       })
@@ -34,6 +37,24 @@ const Market: React.FC = () => {
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    fetchAccountType();
+  }, []);
+
+
+  const fetchAccountType = async () => {
+    try {
+      const response = await fetch('/api/accounts/current');
+      const accountData = await response.json();
+      
+      if (accountData && accountData.accountType) {
+        setAccountType(accountData.accountType);
+      }
+    } catch (error) {
+      console.error("Failed to fetch account type:", error);
+    }
+  };
 
   // Update suggestions when searchInput or coins change
   useEffect(() => {
@@ -59,6 +80,7 @@ const Market: React.FC = () => {
   const handleSelectCoin = (coin: Coin) => {
     setSelectedCoin(coin);
     setSearchInput(coin.name);
+    console.log("Selected coin:", coin);
     setFilteredCoins([]);
   };
 
@@ -136,7 +158,12 @@ const Market: React.FC = () => {
             <p>Loading cryptocurrencies...</p>
           </div>
         ) : (
-          <BasicDetails cryptoId={selectedCoin?.id || searchValue || ""} />
+          accountType === "Beginner" ? (
+            <BasicDetails cryptoId={selectedCoin?.id || searchValue || ""} />
+
+          ) : (
+            <AdvancedDetails cryptoId={selectedCoin?.id || searchValue || ""} />
+          )
         )}
       </div>
     </div>
