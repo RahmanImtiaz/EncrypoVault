@@ -67,10 +67,10 @@ const Setting: React.FC = () => {
     
     try {
       // Google Form ID and field IDs - replace with your actual Google Form details
-      const GOOGLE_FORM_ID = '1FAIpQLSeMzPd_OmQ-MmL_zj-jJOJiJkw1SH_S1Vzz9JFsHFSWWHuLow';
-      const FEEDBACK_FIELD_ID = 'entry.839337160';
-      const RATING_FIELD_ID = 'entry.1390419240';
-      const EMAIL_FIELD_ID = 'entry.1045781291';
+      const GOOGLE_FORM_ID = '1FAIpQLSfxyY2wfsM53lvaWmQVqP4NrSrUGQDHVL6rpuJ_2-3xKanvwg';
+      const FEEDBACK_FIELD_ID = 'entry.1381303830';
+      const RATING_FIELD_ID = 'entry.676251229';
+      const EMAIL_FIELD_ID = 'entry.1708504892';
       
       // Create the form data for submission
       const formData = new URLSearchParams({
