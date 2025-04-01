@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Wallets.css';
+//import api from '../lib/api';
 
 interface Holding {
   amount: number;
@@ -73,25 +74,31 @@ const Wallets: React.FC = () => {
       alert('Please enter a wallet name');
       return;
     }
-    
+
+    // Check if wallet name contains at least one letter - bitcoinlib requires it
+    if (!/[a-zA-Z]/.test(newWalletName)) {
+      alert('Wallet name must contain at least one letter character');
+      return;
+    }
+  
     try {
-      const wallet = await window.api.createWallet(newWalletName);
-      if (!wallet) {
-        throw new Error('Failed to create wallet');
+      // Add API call to create wallet here
+      const response = await window.api.createWallet(newWalletName);
+      if (response.ok) {
+        const newWallet = await response.json();
+        setWallets([...wallets, newWallet]);
+        setFilteredWallets([...filteredWallets, newWallet]);
+        setNewWalletName("");
+        alert(`New wallet "${newWalletName}" created`);
+        setIsCreatingWallet(false);
+      } else {
+        alert('Failed to create wallet');
       }
-
-      alert(`New wallet "${newWalletName}" created`);
-      setNewWalletName("");
-      setIsCreatingWallet(false);
-      fetchWallets(); // Refresh wallet list
-
 
     } catch (err) {
       console.error('Error creating wallet:', err);
       alert('Failed to create wallet');
     }
-    // Add API call to create wallet here
-    // await window.api.create_wallet(newWalletName);
   };
 
   const handleWalletClick = (wallet: Wallet) => {

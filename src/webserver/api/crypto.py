@@ -30,7 +30,7 @@ class CryptoRoutes:
 
         ws_prefix = api_bp.url_prefix+crypto_bp.url_prefix
 
-        @crypto_bp.route("/create_wallet", methods=["POST"])
+        @crypto_bp.route("/wallets", methods=["POST"])
         def create_wallet():
             data = request.get_json()
             if not data:

@@ -90,12 +90,85 @@ html, body {
   width: 100%;
 }
 
-
-/*
-.actionButton{
-  transition: background-color 0.3s ease;
+/* Account type badge */
+.account-type-badge {
+  position: absolute;
+  top: 50px;
+  right: 20px;
+  background: linear-gradient(92.23deg, var(--primary) 21.43%, var(--primary-light) 119.36%);
+  color: var(--text-light);
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
 }
 
-.actionButton:hover{
-  background-color: #5F5C7D;
-}*/
+/* For Beginner/Advanced distinction */
+.account-type-badge[data-type="Beginner"] {
+  background: linear-gradient(92.23deg, #4FACFE 0%, #00F2FE 100%);
+}
+
+.account-type-badge[data-type="Advanced"] {
+  background: linear-gradient(92.23deg, #FF512F 0%, #DD2476 100%);
+}
+
+.account-type-badge[data-type="Tester"] {
+  background: linear-gradient(92.23deg, #8A2387 0%, #E94057 50%, #F27121 100%);
+}
+
+.holdingsList {
+  margin-top: 20px;
+}
+
+.holdingItem {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  padding: 10px;
+  background: #1a1a2e;
+  color: #fff;
+  cursor: pointer;
+}
+
+.holdingSummary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.holdingSummary h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.holdingSummary p {
+  margin: 0;
+  font-size: 14px;
+  color: #b0b0b0;
+}
+
+.holdingDetails {
+  margin-top: 10px;
+  padding: 10px;
+  background: #2a2a3e;
+  border-radius: 8px;
+}
+
+.holdingDetails h4 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.holdingDetails ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.holdingDetails li {
+  font-size: 14px;
+  color: #d0d0d0;
+  margin-bottom: 5px;
+}
