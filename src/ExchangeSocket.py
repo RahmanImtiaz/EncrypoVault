@@ -1,9 +1,8 @@
 import abc
 import asyncio
 from abc import abstractmethod
-
 import aiohttp
-
+import requests
 
 class CryptoWatch(abc.ABC):
     def __init__(self):
@@ -29,6 +28,7 @@ class CryptoWatch(abc.ABC):
 
 class ExchangeSocket(CryptoWatch):
     COINGECKO_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=gbp&ids={crypto_ids}"
+    API_KEY = "CG-DkGqhTNQFPWTVnNub51H8q6t\t"
     _ExchangeSocket = None
 
     def __new__(cls):
@@ -96,3 +96,66 @@ class ExchangeSocket(CryptoWatch):
             await self.session.close()
             self.session = None
         print("Disconnected from the exchange")
+        
+        
+                
+    async def coins_list(self):
+        headers = {
+            "accept": "application/json",
+            "x-cg-demo-api-key": self.API_KEY
+        }
+        
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            data = response.json()
+            return data
+
+        else:
+            print(f"Error fetching coins list: {response.status_code}")
+            return None
+
+    async def coin_data(self, coin_id: str):
+        url = f"https://api.coingecko.com/api/v3/coins/{coin_id}"
+        headers = {
+            "accept": "application/json",
+            "x-cg-demo-api-key":  self.API_KEY
+        }
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            data = response.json()
+            self.notify_observers(coin_id, data)
+            return data
+        else:
+            print(f"Error fetching coin data: {response.status_code}")
+            return None
+        
+        
+    async def linegraph_data(self, coin_id: str, time_range: int):
+        url = "https://api.coingecko.com/api/v3/coins/${coin_id}/ohlc?vs_currency=gbp&days=${time_range}"
+        
+        headers = {
+            "accept": "application/json",
+            "x-cg-demo-api-key":  self.API_KEY
+        }
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            data = response.json()
+            return data
+        else:
+            print(f"Error fetching line graph data: {response.status_code}")
+            return None
+        
+    async def candlestick_data(self, coin_id:str, time_range: int):
+        url = "https://api.coingecko.com/api/v3/coins/${coin_id}/ohlc?vs_currency=gbp&days=${time_range}"
+        
+        headers = {
+            "accept": "application/json",
+            "x-cg-demo-api-key":  self.API_KEY
+        }
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            data = response.json()
+            return data
+        else:
+            print(f"Error fetching candlestick data: {response.status_code}")
+            return None
