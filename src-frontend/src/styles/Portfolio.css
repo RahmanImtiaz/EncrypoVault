@@ -118,11 +118,57 @@ html, body {
   background: linear-gradient(92.23deg, #8A2387 0%, #E94057 50%, #F27121 100%);
 }
 
-/*
-.actionButton{
-  transition: background-color 0.3s ease;
+.holdingsList {
+  margin-top: 20px;
 }
 
-.actionButton:hover{
-  background-color: #5F5C7D;
-}*/
+.holdingItem {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  padding: 10px;
+  background: #1a1a2e;
+  color: #fff;
+  cursor: pointer;
+}
+
+.holdingSummary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.holdingSummary h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.holdingSummary p {
+  margin: 0;
+  font-size: 14px;
+  color: #b0b0b0;
+}
+
+.holdingDetails {
+  margin-top: 10px;
+  padding: 10px;
+  background: #2a2a3e;
+  border-radius: 8px;
+}
+
+.holdingDetails h4 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.holdingDetails ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.holdingDetails li {
+  font-size: 14px;
+  color: #d0d0d0;
+  margin-bottom: 5px;
+}
