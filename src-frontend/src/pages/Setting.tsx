@@ -46,13 +46,10 @@ const Setting: React.FC = () => {
       const result = await response.json();
       
       if (response.ok) {
-        setAccountType(result.newType);
+        setAccountType(result.accountType);
         setMessage(result.message);
         
-        // Reload the page after a short delay to reflect changes
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        
       } else {
         setMessage(result.error || "Failed to switch account type");
       }
