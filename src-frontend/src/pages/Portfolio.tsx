@@ -23,10 +23,25 @@ const Portfolio: React.FC = () => {
   const [aggregatedHoldings, setAggregatedHoldings] = useState<AggregatedHolding[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [accountType, setAccountType] = useState<string>("");
 
   useEffect(() => {
     fetchPortfolioData();
+    fetchAccountType();
   }, []);
+
+  const fetchAccountType = async () => {
+    try {
+      const response = await fetch('/api/accounts/current');
+      const accountData = await response.json();
+
+      if (accountData && accountData.accountType) {
+        setAccountType(accountData.accountType);
+      }
+    } catch (error) {
+      console.error("Failed to fetch account type:", error);
+    }
+  };
 
   const fetchPortfolioData = async () => {
     try {
@@ -112,7 +127,12 @@ const Portfolio: React.FC = () => {
         <h2 className="balanceHeading">Total Balance</h2>
         <p className="total">£{balance.toFixed(2)}</p>
       </div>
-
+      {/* Account Type Badge */}
+      {accountType && (
+        <div className="account-type-badge" data-type={accountType}>
+          {accountType} Mode
+        </div>
+      )}
       {/* Portfolio Composition Section */}
       <div className="portfolioComposition">
         <h2>Portfolio Composition</h2>
