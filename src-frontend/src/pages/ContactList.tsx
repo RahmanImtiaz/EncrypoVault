@@ -54,12 +54,11 @@ const ContactList = ({goToForm} : {goToForm: () => void}) => {
     }
   };
 
-
   return (
     <div className="contactsListContainer">
       <div className="contactsListHeading">
         <h1>Contacts</h1>
-        <button onClick={goToForm}>add contact</button>
+        <button onClick={goToForm}>Add Contact</button>
       </div>
       <div className="contactsList-list">
         {loading ? (
@@ -70,8 +69,11 @@ const ContactList = ({goToForm} : {goToForm: () => void}) => {
           <ul className="contacts-list">
             {contacts.map((contact, index) => (
               <li key={index} className="contact-item">
-                <div className="contact-name">{contact.name}</div>
-                <div className="contact-address">{contact.address}</div>
+                <div className="contact-icon">{contact.name.charAt(0).toUpperCase()}</div>
+                <div className="contact-details">
+                  <div className="contact-name">{contact.name}</div>
+                  <div className="contact-address">{contact.address}</div>
+                </div>
               </li>
             ))}
           </ul>
