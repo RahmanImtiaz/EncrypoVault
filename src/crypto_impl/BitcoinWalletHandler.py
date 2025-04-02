@@ -5,6 +5,9 @@ from crypto_impl.HandlerInterface import HandlerInterface
 
 
 class BitcoinWalletHandler(HandlerInterface):
+    def get_address(self):
+        return self.wallet.get_key().address
+
     wallet: bitcoinlib.wallets.Wallet
 
     def __init__(self, name):
@@ -17,7 +20,7 @@ class BitcoinWalletHandler(HandlerInterface):
     @staticmethod
     def create_wallet(name) -> bitcoinlib.wallets.Wallet:
         account = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account()
-        wallet = bitcoinlib.wallets.Wallet.create(name=name, keys=[account.get_private_key()], db_uri='sqlite:///:memory:')
+        wallet = bitcoinlib.wallets.Wallet.create(name=name, keys=[account.get_private_key()])
 
         return wallet
 

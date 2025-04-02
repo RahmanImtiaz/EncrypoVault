@@ -6,3 +6,7 @@ class HandlerInterface(abc.ABC):
     @abc.abstractmethod
     def create_wallet(self):
         pass
+
+    @abc.abstractmethod
+    def get_address(self):
+        pass

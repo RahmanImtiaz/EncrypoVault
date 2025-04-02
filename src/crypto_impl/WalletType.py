@@ -15,3 +15,12 @@ class WalletType(Enum):
             case _:
                 return WalletType.UNKNOWN
 
+    def __str__(self):
+        match self.value:
+            case 1:
+                return "BTC"
+            case 2:
+                return "ETH"
+            case _:
+                return "UNKNOWN"
+

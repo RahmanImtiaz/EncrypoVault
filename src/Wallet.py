@@ -8,6 +8,7 @@ import os
 from typing import Optional
 
 from crypto_impl.BitcoinWalletHandler import BitcoinWalletHandler
+from crypto_impl.HandlerInterface import HandlerInterface
 from crypto_impl.WalletType import WalletType
 
 
@@ -18,6 +19,7 @@ class Wallet(CryptoObserver):
                  address: Optional[str] = None):
         self.name = name
         self.wallet_type = wallet_type
+        self.crypto_handler: HandlerInterface
         self.holdings = {}
         match wallet_type:
             case WalletType.BITCOIN:
@@ -26,7 +28,7 @@ class Wallet(CryptoObserver):
             #     pass
             case _:
                 print("Current impl does not support wallet type {}".format(wallet_type))
-        self.address = address or self.crypto_handler.create_wallet(name)
+        self.address = address or self.crypto_handler.get_address()
         self.observer = ConcreteCryptoObserver(on_update=self.update)
 
     def toJSON(self):

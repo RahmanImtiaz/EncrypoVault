@@ -45,7 +45,7 @@ class CryptoRoutes:
             wallet_name = data["walletName"]
             wallet = Wallet(wallet_name, wallet_type)
             AccountsFileManager.get_instance().get_loaded_account().add_wallet(wallet)
-            return {"walletType": wallet_type, "walletName": wallet_name, "walletAddress": wallet.address}, 200
+            return {"walletType": str(wallet_type), "walletName": wallet_name, "walletAddress": wallet.address}, 200
 
 
         @socket.on('connect', ws_prefix+'/ws')
