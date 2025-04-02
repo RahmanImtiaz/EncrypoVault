@@ -122,7 +122,7 @@ const useCryptoData = (crypto_id: string): useCryptoDataResult => {
     
     fetchCryptoData();
     
-    const interval = setInterval(fetchCryptoData, 30000); // Fetch data every 30 seconds
+    const interval = setInterval(fetchCryptoData, 60000); // API updates every 60 seconds
 
     return () => {
       console.log("interval cleared");
