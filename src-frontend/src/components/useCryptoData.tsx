@@ -96,11 +96,12 @@ const useCryptoData = (crypto_id: string): useCryptoDataResult => {
         return;
       }
       
+      let socket: Socket;
       setIsLoading(true);
     
       async function fetchCryptoData(){
         try{
-          const socket = await window.api.getCryptoSocket() as Socket;
+          socket = await window.api.getCryptoSocket() as Socket;
           socket.on("coin_data_response", (data: CryptoData) => {
             console.log("Received crypto data via socket:", data);
             setCryptoData(data);
@@ -119,8 +120,18 @@ const useCryptoData = (crypto_id: string): useCryptoDataResult => {
         }
       }
     
-      fetchCryptoData();
+    fetchCryptoData();
     
+    const interval = setInterval(fetchCryptoData, 60000); // API updates every 60 seconds
+
+    return () => {
+      console.log("interval cleared");
+      clearInterval(interval);
+      if (socket) {
+        socket.off("coin_data_response");
+      }
+    };
+
 
     }, [crypto_id]);
     

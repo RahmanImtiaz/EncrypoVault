@@ -26,28 +26,28 @@ const Wallets: React.FC = () => {
   const [isCreatingWallet, setIsCreatingWallet] = useState<boolean>(false);
   const [newWalletName, setNewWalletName] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  
+
   useEffect(() => {
     fetchWallets();
   }, []);
-  
+
   useEffect(() => {
     // Filter wallets based on search query
     if (searchQuery.trim() === '') {
       setFilteredWallets(wallets);
     } else {
-      const filtered = wallets.filter(wallet => 
+      const filtered = wallets.filter(wallet =>
         wallet.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         wallet.coin_symbol.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredWallets(filtered);
     }
   }, [searchQuery, wallets]);
-  
+
   const fetchWallets = async () => {
     try {
       setLoading(true);
-      const wallets = await window.api.getPortfolioWallets();
+      const wallets = await window.api.getWallets();
       setWallets(wallets);
       setFilteredWallets(wallets);
     } catch (err) {
@@ -56,20 +56,20 @@ const Wallets: React.FC = () => {
       setLoading(false);
     }
   };
-  
+
   const toggleCreateForm = () => {
     setIsCreatingWallet(!isCreatingWallet);
     setNewWalletName("");
   };
-  
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     // Search is already handled by the useEffect
   };
-  
+
   const createNewWallet = async (event: React.FormEvent) => {
     event.preventDefault();
-    
+
     if (!newWalletName.trim()) {
       alert('Please enter a wallet name');
       return;
@@ -80,12 +80,22 @@ const Wallets: React.FC = () => {
       alert('Wallet name must contain at least one letter character');
       return;
     }
-  
+
     try {
       // Add API call to create wallet here
       const response = await window.api.createWallet(newWalletName);
       if (response.ok) {
-        const newWallet = await response.json();
+        const walletData = await response.json();
+
+        // Transform the API response to match the expected wallet interface
+        const newWallet: Wallet = {
+          name: walletData.walletName || newWalletName,
+          address: walletData.walletAddress || "",
+          balance: 0,  // Initialize with zero balance
+          coin_symbol: walletData.walletType || "BTC",
+          holdings: {}  // Initialize with empty holdings
+        };
+        //await fetchWallets();
         setWallets([...wallets, newWallet]);
         setFilteredWallets([...filteredWallets, newWallet]);
         setNewWalletName("");
@@ -125,13 +135,13 @@ const Wallets: React.FC = () => {
           + Add New Wallet
         </button>
       </div>
-      
+
       <div className="wallets-toolbar">
         {isCreatingWallet ? (
           <form onSubmit={createNewWallet} className="create-form">
             <span className="create-label">Create new wallet:</span>
-            <input 
-              type="text" 
+            <input
+              type="text"
               className="create-input"
               placeholder="Enter wallet name"
               value={newWalletName}
@@ -143,8 +153,8 @@ const Wallets: React.FC = () => {
           </form>
         ) : (
           <form onSubmit={handleSearch} className="search-form">
-            <input 
-              type="text" 
+            <input
+              type="text"
               className="search-input"
               placeholder="Search wallets by name or type..."
               value={searchQuery}
@@ -154,7 +164,7 @@ const Wallets: React.FC = () => {
           </form>
         )}
       </div>
-      
+
       {filteredWallets.length === 0 ? (
         <div className="empty-state">
           <p>No wallets found. Create a wallet to get started.</p>
@@ -165,9 +175,9 @@ const Wallets: React.FC = () => {
       ) : (
         <div className="wallets-list">
           {filteredWallets.map((wallet, index) => (
-            <div 
-              key={index} 
-              className="wallet-item" 
+            <div
+              key={index}
+              className="wallet-item"
               onClick={() => handleWalletClick(wallet)}
             >
               <div className="wallet-header">
@@ -191,7 +201,7 @@ const Wallets: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                
+
                 <button className="wallet-view-btn" title="View wallet details">
                   →
                 </button>

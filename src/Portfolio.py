@@ -47,14 +47,15 @@ class Portfolio:
             address=address,
         )
         self.wallets[name] = wallet
-        self._save_wallets()
+        self.add_wallet(wallet)
+        #self._save_wallets()
         return wallet
     
     def remove_wallet(self, name: str) -> bool:
         """Remove wallet from portfolio"""
         if name in self.wallets:
             del self.wallets[name]
-            self._save_wallets()
+            #self._save_wallets()
             return True
         return False
     
@@ -97,7 +98,7 @@ class Portfolio:
         if wallet.name in self.wallets:
             raise ValueError(f"Wallet {wallet.name} already exists in portfolio")
         self.wallets[wallet.name] = wallet
-        self._save_wallets()
+        #self._save_wallets()
     
     def to_dict(self) -> dict:
         """Convert portfolio to dictionary"""

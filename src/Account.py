@@ -36,6 +36,7 @@ class Account:
             self._bip_seed = data["bipSeed"]
             self._contacts = data.get("contacts", {})
             self._mnemonic = data["mnemonic"]
+
             # Convert encryption key from hex string back to bytes if it's a string
             if isinstance(data["encryptionKey"], str):
                 self._encryption_key = bytes.fromhex(data["encryptionKey"])
@@ -52,6 +53,45 @@ class Account:
                     self._accountType = Beginner()
                 elif account_type_name == "tester":
                     self._accountType = Tester()
+
+            if "wallets" in data and data["wallets"]:
+                from crypto_impl.WalletType import WalletType
+                from crypto_impl.BitcoinWalletHandler import BitcoinWalletHandler  # Import wallet handler
+
+                serialized_wallets = data["wallets"]
+                for name, wallet_data in serialized_wallets.items():
+                    # Skip if already loaded from portfolio
+                    if name in self._wallets:
+                        continue
+
+                    # Create wallet with saved properties
+                    wallet_type_str = wallet_data.get('type', 'BTC')
+                    wallet_type = WalletType.from_str(wallet_type_str)
+
+                    wallet = Wallet(
+                        name=wallet_data.get('name', name),
+                        wallet_type=wallet_type,
+                        address=wallet_data.get('address')
+                    )
+
+                    # Restore wallet balance
+                    wallet.balance = wallet_data.get('balance', 0.0)
+
+                    # Restore wallet holdings if they exist
+                    if 'holdings' in wallet_data:
+                        for crypto_id, holding_data in wallet_data['holdings'].items():
+                            wallet.holdings[crypto_id] = {
+                                "amount": holding_data.get("amount", 0)
+                            }
+
+                    # Add wallet to account's wallets dict
+                    self._wallets[name] = wallet
+
+                    # Recreate wallet file (if needed)
+                    try:
+                        BitcoinWalletHandler.create_wallet(name)  # Recreate wallet file
+                    except Exception as e:
+                        print(f"Error recreating wallet file for {name}: {e}")
 
             # Restore portfolio if it exists
             if "portfolio" in data and data["portfolio"]:
@@ -194,26 +234,6 @@ class Account:
         """
         encryption_key_str = self._encryption_key.hex() if isinstance(self._encryption_key, bytes) else self._encryption_key
 
-        # Convert portfolio to dictionary if it exists
-        portfolio_data = None
-        if self.portfolio:
-            portfolio_data = {
-                'name': self.portfolio.name,
-                'wallets': {
-                    name: {
-                        'name': wallet.name,
-                        'address': wallet.address,
-                        'coin_symbol': wallet.coin_symbol,
-                        'balance': wallet.balance,
-                        'holdings': {
-                            crypto_id: {"amount": data["amount"]} 
-                            for crypto_id, data in wallet.holdings.items()
-                        }
-                    }
-                    for name, wallet in self.portfolio.wallets.items()
-                }
-            }
-
         # Convert transaction log to dictionary if it exists
         transactions_data = None
         if self.transactionLog:
@@ -229,6 +249,20 @@ class Account:
                 for tx in self.transactionLog._log
             ]
 
+        # Convert wallets to dictionaries
+        wallets_data = {}
+        for name, wallet in self._wallets.items():
+            wallets_data[name] = {
+                'name': wallet.name,
+                'type': str(wallet.wallet_type),
+                'address': wallet.address,
+                'balance': getattr(wallet, 'balance', 0.0),
+                'holdings': {
+                    crypto_id: {"amount": data.get("amount", 0)} 
+                    for crypto_id, data in wallet.holdings.items()
+                }
+            }
+
         data = {
             "accountName": self._accountName,
             "bipSeed": self._bip_seed,
@@ -236,8 +270,8 @@ class Account:
             "contacts": self._contacts,
             "accountType": self._accountType.get_type_name(),
             "encryptionKey": encryption_key_str,
-            "portfolio": portfolio_data,
-            "transactions": transactions_data
+            "transactions": transactions_data,
+            "wallets": wallets_data
             
         }
         return json.dumps(data)

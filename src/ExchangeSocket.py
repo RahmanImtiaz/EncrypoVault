@@ -29,6 +29,11 @@ class CryptoWatch(abc.ABC):
 class ExchangeSocket(CryptoWatch):
     COINGECKO_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=gbp&ids={crypto_ids}"
     API_KEY = "CG-DkGqhTNQFPWTVnNub51H8q6t\t"
+    headers = {
+        "accept": "application/json",
+        "x-cg-demo-api-key":  API_KEY,
+        "Connection": "close" 
+    }
     _ExchangeSocket = None
 
     def __new__(cls):
@@ -100,14 +105,11 @@ class ExchangeSocket(CryptoWatch):
         
                 
     async def coins_list(self):
-        headers = {
-            "accept": "application/json",
-            "x-cg-demo-api-key": self.API_KEY
-        }
+
         
         url = "https://api.coingecko.com/api/v3/coins/list"
         
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=self.headers)
         if response.status_code == 200:
             data = response.json()
             return data
@@ -118,11 +120,8 @@ class ExchangeSocket(CryptoWatch):
 
     async def coin_data(self, coin_id: str):
         url = f"https://api.coingecko.com/api/v3/coins/{coin_id}"
-        headers = {
-            "accept": "application/json",
-            "x-cg-demo-api-key":  self.API_KEY
-        }
-        response = requests.get(url, headers=headers)
+        
+        response = requests.get(url, headers=self.headers)
         if response.status_code == 200:
             data = response.json()
             self.notify_observers(coin_id, data)
@@ -135,12 +134,9 @@ class ExchangeSocket(CryptoWatch):
     async def linegraph_data(self, coin_id: str, time_range: int):
         url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency=gbp&days={time_range}"
         
-        headers = {
-            "accept": "application/json",
-            "x-cg-demo-api-key":  self.API_KEY
-        }
+
         
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=self.headers)
         if response.status_code == 200:
             data = response.json()
 
@@ -151,11 +147,8 @@ class ExchangeSocket(CryptoWatch):
         
     async def candlestick_data(self, coin_id:str, time_range: int):
         url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/ohlc?vs_currency=gbp&days={time_range}"
-        headers = {
-            "accept": "application/json",
-            "x-cg-demo-api-key":  self.API_KEY
-        }
-        response = requests.get(url, headers=headers)
+ 
+        response = requests.get(url, headers=self.headers)
         if response.status_code == 200:
             data = response.json()
             return data
