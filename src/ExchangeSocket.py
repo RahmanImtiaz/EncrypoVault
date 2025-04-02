@@ -102,7 +102,8 @@ class ExchangeSocket(CryptoWatch):
     async def coins_list(self):
         headers = {
             "accept": "application/json",
-            "x-cg-demo-api-key": self.API_KEY
+            "x-cg-demo-api-key":  self.API_KEY,
+            "Connection": "close" 
         }
         
         url = "https://api.coingecko.com/api/v3/coins/list"
@@ -120,7 +121,8 @@ class ExchangeSocket(CryptoWatch):
         url = f"https://api.coingecko.com/api/v3/coins/{coin_id}"
         headers = {
             "accept": "application/json",
-            "x-cg-demo-api-key":  self.API_KEY
+            "x-cg-demo-api-key":  self.API_KEY,
+            "Connection": "close" 
         }
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
@@ -137,7 +139,8 @@ class ExchangeSocket(CryptoWatch):
         
         headers = {
             "accept": "application/json",
-            "x-cg-demo-api-key":  self.API_KEY
+            "x-cg-demo-api-key":  self.API_KEY,
+            "Connection": "close" 
         }
         
         response = requests.get(url, headers=headers)
@@ -153,7 +156,8 @@ class ExchangeSocket(CryptoWatch):
         url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/ohlc?vs_currency=gbp&days={time_range}"
         headers = {
             "accept": "application/json",
-            "x-cg-demo-api-key":  self.API_KEY
+            "x-cg-demo-api-key":  self.API_KEY,
+            "Connection": "close" 
         }
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
