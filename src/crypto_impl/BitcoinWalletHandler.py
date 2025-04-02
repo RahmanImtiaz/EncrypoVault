@@ -1,30 +1,62 @@
-import bitcoinlib
+import json
+
+from pycoin.symbols.xtn import network
 
 import AccountsFileManager
 from crypto_impl.HandlerInterface import HandlerInterface
+from crypto_impl.WalletType import WalletType
 
 
 class BitcoinWalletHandler(HandlerInterface):
-    def get_address(self):
-        return self.wallet.get_key().address
 
-    wallet: bitcoinlib.wallets.Wallet
+    _pycoin_key = None
+    _name: str = ""
 
     def __init__(self, name):
-        account = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account()
-        wallet = bitcoinlib.wallets.Wallet.create(name)
-        wallet.import_key(account.get_private_key())
-        self.wallet = wallet
-
+        self._name = name
+        self._pycoin_key = network.keys.private(secret_exponent=self._get_secret_exponent())
 
     @staticmethod
-    def create_wallet(name) -> bitcoinlib.wallets.Wallet:
-        account = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account()
-        wallet = bitcoinlib.wallets.Wallet.create(name=name, keys=[account.get_private_key()])
+    def create_wallet(name):
+       return BitcoinWalletHandler(name)
 
-        return wallet
+    def _get_secret_exponent(self):
+        ctx = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account().get_bip32_ctx()
+        ind = self.account_name_to_index(self._name, self.get_wallet_type())
+        key = ctx.ChildKey(ind)
+        secret_exponent = int.from_bytes(key.PrivateKey().Raw().ToBytes(), byteorder="big")
+        return secret_exponent
 
+    def send_tx(self, amount, destination_address):
+        pass
+
+    def get_tx_info(self, tx_id):
+        pass
+
+    def get_tx(self):
+        pass
+
+    @staticmethod
+    def load_wallet(data: dict):
+        return BitcoinWalletHandler(data["name"])
+
+    def get_address(self):
+        return self._pycoin_key.address()
 
     def toJSON(self):
-        return self.wallet.as_json()
+        return json.dumps({
+            "name": self._name,
+            "type": str(self.get_wallet_type()),
+        })
+
+    @staticmethod
+    def get_wallet_type() -> WalletType:
+        return WalletType.BITCOIN
+
+
+
+
+
+    # def toJSON(self):
+    #     return self.wallet.as_json()
 

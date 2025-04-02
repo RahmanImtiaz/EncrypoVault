@@ -137,12 +137,10 @@ class Account:
     
     def get_private_key(self):
         """Get secret key"""
-        print(f"get priv key seed: {self._bip_seed}")
-        base = base64.b64decode(self._bip_seed)
-        ctx = Bip32Slip10Secp256k1.FromSeed(base)
-        print("CTX:")
-        print(ctx)
-        return Bip32Slip10Secp256k1.FromSeed(base).PrivateKey().ToExtended()
+        return self.get_bip32_ctx().PrivateKey()
+
+    def get_bip32_ctx(self) -> Bip32Slip10Secp256k1:
+        return Bip32Slip10Secp256k1.FromSeed(base64.b64decode(self._bip_seed))
     
     def get_contacts(self):
         """Get contacts"""
