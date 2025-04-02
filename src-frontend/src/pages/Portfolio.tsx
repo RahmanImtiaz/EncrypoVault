@@ -51,7 +51,7 @@ const Portfolio: React.FC = () => {
       const balance = await window.api.getPortfolioBalance();
 
       // Fetch wallets and their holdings
-      const wallets: Wallet[] = await window.api.getPortfolioWallets();
+      const wallets: Wallet[] = await window.api.getWallets();
 
       // Aggregate holdings across all wallets
       const holdings: { [key: string]: AggregatedHolding } = {};

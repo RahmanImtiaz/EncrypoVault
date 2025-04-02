@@ -69,11 +69,6 @@ async function getPortfolioBalance() {
     }
 }
 
-async function getPortfolioWallets() {
-    const wallets = await fetch("/api/portfolio/wallets")
-    return (await wallets.json()).wallets
-}
-
 let cryptoSocket: Socket|null = null
 async function getCryptoSocket() {
     if(!cryptoSocket) {
@@ -107,6 +102,27 @@ async function createWallet(walletName: string): Promise<Response> {
     });
 }
 
+async function getWallets() {
+    try {
+      const response = await fetch("/api/crypto/getwallets");
+      const data = await response.json();
+      
+      // Transform the API response to match the Wallet interface
+      const wallets = (data.wallets || data || []).map((wallet: any) => ({
+        name: wallet.name,
+        address: wallet.address || "",
+        balance: wallet.balance || 0,
+        coin_symbol: wallet.coin_symbol || "BTC",
+        holdings: wallet.holdings || {}
+      }));
+      
+      return wallets;
+    } catch (error) {
+      console.error('Error fetching wallets:', error);
+      return [];
+    }
+  }
+
 async function addContact(name: string, address: string): Promise<Response> {
     return fetch("/api/contacts/add", {
         method: "POST",
@@ -134,9 +150,9 @@ export default {
     getWebauthnLoginOpts,
     getWebauthnRegOpts,
     getPortfolioBalance,
-    getPortfolioWallets,
     getCryptoSocket,
     addContact,
     getContacts,
-    createWallet
+    createWallet,
+    getWallets
 }
