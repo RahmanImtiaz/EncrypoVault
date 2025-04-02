@@ -47,7 +47,7 @@ const AdvancedDetails = ({ cryptoId }: AdvancedDetailsProps) => {
      const getValue = (value: any) => value !== undefined && value !== null ? value : "N/A";
  
      return (
-         <div>
+         <div className="advancedDetails-container">
              <div className="crypto-header">
                  <h1>
                      {getValue(cryptoData?.name)} ({getValue(cryptoData?.symbol)?.toUpperCase()})
