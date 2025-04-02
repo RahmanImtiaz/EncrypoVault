@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Chart from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
+import {Socket} from 'socket.io-client';
 
 interface LineGraphProps {
   crypto_id: string;
@@ -17,6 +18,11 @@ interface SeriesData {
   data: PriceData[];
 }
 
+interface socket_response{
+  prices : number[][];
+  market_caps : number[][];
+  total_volumes : number[][];
+}
 
 const LineGraph: React.FC<LineGraphProps> = ({ crypto_id, time_range }) => {
   const [series, setSeries] = useState<SeriesData[]>([]);
@@ -24,36 +30,43 @@ const LineGraph: React.FC<LineGraphProps> = ({ crypto_id, time_range }) => {
   const [maxDate, setMaxDate] = useState<number | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchData() {
       try {
-        const fetchOptions = {
-          method: 'GET',
-          headers: {
-            accept: 'application/json',
-            'x-cg-demo-api-key': '	CG-E46h8ehSNZFLW8b3zrv1xzyP'
-          }
+        const socket = await window.api.getCryptoSocket() as Socket;
+        console.log("Connecting to socket...");
+        socket.emit("message", {
+          command: "proxy_data",
+          type: "linegraph",
+          coin_id: crypto_id,
+          days: time_range,
+        });
+        
+        const handle_response = (socket_data: socket_response) => {
+          console.log("Received line graph data via socket:", socket_data);
+
+          const formattedData: PriceData[] = socket_data.prices.map((entry) => ({
+            x: new Date(entry[0]),
+            y: entry[1],
+          }));
+
+          const dates = formattedData.map((entry) => entry.x.getTime());
+          const computedMinDate = Math.min(...dates);
+          const computedMaxDate = Math.max(...dates);
+
+          setSeries([{ name: 'Price', data: formattedData }]);
+          setMinDate(computedMinDate);
+          setMaxDate(computedMaxDate);
         };
 
-        const response = await fetch(`https://api.coingecko.com/api/v3/coins/${crypto_id}/market_chart?vs_currency=gbp&days=${time_range}`, fetchOptions);
-        const data = await response.json();
+        socket.on("linegraph_response", handle_response);
+        return () => {
+          socket.off("linegraph_response", handle_response);
+        };
 
-        const prices = data.prices.map((price: [number, number]) => ({
-          x: new Date(price[0]),
-          y: price[1],
-        }));
-
-        const dates = prices.map((entry: PriceData) => entry.x.getTime());
-        const minDate = Math.min(...dates);
-        const maxDate = Math.max(...dates);
-
-        setSeries([{ name: 'Price', data: prices }]);
-        setMinDate(minDate);
-        setMaxDate(maxDate);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
-    };
-
+    }
     fetchData();
   }, [crypto_id, time_range]);
 

@@ -105,6 +105,8 @@ class ExchangeSocket(CryptoWatch):
             "x-cg-demo-api-key": self.API_KEY
         }
         
+        url = "https://api.coingecko.com/api/v3/coins/list"
+        
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             data = response.json()
@@ -131,23 +133,24 @@ class ExchangeSocket(CryptoWatch):
         
         
     async def linegraph_data(self, coin_id: str, time_range: int):
-        url = "https://api.coingecko.com/api/v3/coins/${coin_id}/ohlc?vs_currency=gbp&days=${time_range}"
+        url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency=gbp&days={time_range}"
         
         headers = {
             "accept": "application/json",
             "x-cg-demo-api-key":  self.API_KEY
         }
+        
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             data = response.json()
+
             return data
         else:
             print(f"Error fetching line graph data: {response.status_code}")
             return None
         
     async def candlestick_data(self, coin_id:str, time_range: int):
-        url = "https://api.coingecko.com/api/v3/coins/${coin_id}/ohlc?vs_currency=gbp&days=${time_range}"
-        
+        url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/ohlc?vs_currency=gbp&days={time_range}"
         headers = {
             "accept": "application/json",
             "x-cg-demo-api-key":  self.API_KEY

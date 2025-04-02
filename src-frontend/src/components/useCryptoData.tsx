@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import {Socket} from "socket.io-client";
 //These files were previously in jsx, now I converted them into tsx. I had to add props to this file and the others.
 
 interface CryptoData {
@@ -87,31 +88,40 @@ interface useCryptoDataResult {
 const useCryptoData = (crypto_id: string): useCryptoDataResult => {
     const[cryptoData, setCryptoData] = useState<CryptoData | null>(null);
     const[isLoading, setIsLoading] = useState(true);
-    const[error, setError] = useState(null);
+    const[error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
       if (!crypto_id) {
         setIsLoading(false);
         return;
       }
-      const fetchCryptoData = async () => {
-        setIsLoading(true);
-        try {
-          const response = await fetch(
-            `https://api.coingecko.com/api/v3/coins/${crypto_id}?localization=false&tickers=false&developer_data=false&sparkline=false`
-          );
-          if (!response.ok) {
-            throw new Error('Failed to fetch data');
-          }
-          const data = await response.json();
-          setCryptoData(data);
-        } catch (error: any) {
-          setError(error);
-        } finally {
+      
+      setIsLoading(true);
+    
+      async function fetchCryptoData(){
+        try{
+          const socket = await window.api.getCryptoSocket() as Socket;
+          socket.on("coin_data_response", (data: CryptoData) => {
+            console.log("Received crypto data via socket:", data);
+            setCryptoData(data);
+            setIsLoading(false);
+          });
+          socket.emit("message", {
+            command: "proxy_data",
+            type: "coin_data",
+            coin_id: crypto_id,
+          });
+        } catch (error) {
+          console.error("Error fetching crypto data:", error);
+          const errorMessage = error instanceof Error ? error : new Error("An unknown error occurred");
+          setError(errorMessage);
           setIsLoading(false);
         }
-      };
+      }
+    
       fetchCryptoData();
+    
+
     }, [crypto_id]);
     
 

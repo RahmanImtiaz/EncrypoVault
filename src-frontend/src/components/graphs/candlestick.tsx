@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Chart from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
+import {Socket} from 'socket.io-client';
 
 interface CandlestickProps {
   crypto_id: string;
@@ -18,38 +19,53 @@ const Candlestick: React.FC<CandlestickProps> = ({ crypto_id, time_range }) => {
   const [maxDate, setMaxDate] = useState<number | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchData() {
       try {
-        const options = {
-          method: 'GET',
-          headers: {
-            accept: 'application/json',
-            'x-cg-demo-api-key': 'CG-E46h8ehSNZFLW8b3zrv1xzyP',
-          },
+        const socket = (await window.api.getCryptoSocket()) as Socket;
+  
+
+        socket.emit("message", {
+          command: "proxy_data",
+          type: "candlestick",
+          coin_id: crypto_id,
+          days: time_range,
+        });
+  
+        const handle_response = (socketData: number[][]) => {
+          console.log("Received candlestick data via socket:", socketData);
+  
+
+          const formattedData: DataPoint[] = socketData.map((entry) => ({
+            x: new Date(entry[0]),
+            y: [entry[1], entry[2], entry[3], entry[4]],
+          }));
+  
+          const dates = formattedData.map((entry) => entry.x.getTime());
+          const computedMinDate = Math.min(...dates);
+          const computedMaxDate = Math.max(...dates);
+  
+
+          setSeries([{ data: formattedData }]);
+          setMinDate(computedMinDate);
+          setMaxDate(computedMaxDate);
         };
+  
 
-        const response = await fetch(`https://api.coingecko.com/api/v3/coins/${crypto_id}/ohlc?vs_currency=gbp&days=${time_range}`, options);
-        const data: number[][] = await response.json();
+        socket.on("candlestick_response", handle_response);
+  
 
-        const formattedData: DataPoint[] = data.map(entry => ({
-          x: new Date(entry[0]),
-          y: [entry[1], entry[2], entry[3], entry[4]],
-        }));
-
-        const dates = formattedData.map(entry => entry.x.getTime());
-        const computedMinDate = Math.min(...dates);
-        const computedMaxDate = Math.max(...dates);
-
-        setSeries([{ data: formattedData }]);
-        setMinDate(computedMinDate);
-        setMaxDate(computedMaxDate);
+        return () => {
+          socket.off("candlestick_response", handle_response);
+        };
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching candlestick data:", error);
       }
-    };
-
+    }
+  
     fetchData();
   }, [crypto_id, time_range]);
+  
+
 
   const options: ApexOptions = {
     chart: {

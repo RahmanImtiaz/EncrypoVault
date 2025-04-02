@@ -5,6 +5,7 @@ import '../styles/Market.css';
 import BasicDetails from '../components/BasicDetails';
 import { ChangeEvent } from 'react';
 import AdvancedDetails from '../components/AdvancedDetails';
+import { Socket } from 'socket.io-client';
 
 interface Coin {
   id: string;
@@ -25,18 +26,29 @@ const Market: React.FC = () => {
   const [accountType, setAccountType] = useState<string>("");
 
   useEffect(() => {
-    fetch("https://api.coingecko.com/api/v3/coins/list")
-      .then((response) => response.json())
-      .then((data: Coin[]) => {
-        console.log("Fetched coins:", data);
-        setCoins(data);
-        setLoading(false);
-      })
-      .catch((error) => {
+    async function fetchCoins() {
+      try {
+        const socket = await window.api.getCryptoSocket() as Socket;
+        socket.on("coins_list_response", (data: Coin[]) => {
+          console.log("Received coins list via socket:", data);
+          setCoins(data);
+          setLoading(false);
+        });
+
+
+        socket.emit("message", {
+          command: "proxy_data",
+          type: "coins_list"
+        });
+      } catch (error) {
         console.error("Error fetching coins:", error);
         setLoading(false);
-      });
+      }
+    }
+
+    fetchCoins();
   }, []);
+  
 
   useEffect(() => {
     fetchAccountType();

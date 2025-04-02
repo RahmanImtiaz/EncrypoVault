@@ -5,16 +5,6 @@ import LineGraph from "./graphs/linegraph";
 import "../styles/BasicDetails.css";
 
 
-// This is a functional component that will be shown to beginner users whenever they search for a certain cryptocurrency.
-// The component will display basic information about the cryptocurrency, such as its name, symbol, description, current price, market cap, and 24-hour price change.
-
-// The technical and more advanced details of the cryptocurrency will be displayed in a separate component called CryptoDetailsAdvanced.
-
-// You will need to implement the function that will switch between the basic and advanced details of the cryptocurrency when the user clicks on a button.
-
-// This will also provide the linegraph for the cryptocurrency and will allow the user to enter a time range to view the price history of the cryptocurrency.
-
-//This time range will between 1 - 365 days.
 
 interface BasicDetailsProps {
   cryptoId: string;
