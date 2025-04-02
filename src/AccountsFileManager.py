@@ -1,10 +1,15 @@
+import json
+import os
+from typing import List
+
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad, pad
+from bip_utils import Bip39MnemonicGenerator, Bip39SeedGenerator
+import base64
+
+from bip_utils.bip.bip32 import Bip32Base
 
 from Account import Account
-from typing import List
-import os
-import json
 
 
 class AccountsFileManager:
@@ -65,11 +70,20 @@ class AccountsFileManager:
             # Generate the encryption key
             encryption_key = auth_manager._generate_key(password, biometrics)
 
+            mnemonic = Bip39MnemonicGenerator().FromWordsNumber(12)
+
+            seed = Bip39SeedGenerator(mnemonic).Generate()
+
+            print(f"acc creation time seed: {base64.b64encode(seed).decode('utf-8')}")
+
+
+
             # Create the account with proper initialization
             account = Account(save_data=json.dumps({
                 "accountName": account_name,
                 "encryptionKey": encryption_key.hex(),
-                "secretKey": "123",
+                "bipSeed": base64.b64encode(seed).decode('utf-8'),
+                "mnemonic": str(mnemonic),
                 "contacts": {},
                 "accountType": account_type
             }), account_type=account_type)

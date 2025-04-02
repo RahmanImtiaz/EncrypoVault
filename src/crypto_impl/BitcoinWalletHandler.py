@@ -1,5 +1,3 @@
-import json
-
 import bitcoinlib
 
 import AccountsFileManager
@@ -12,14 +10,14 @@ class BitcoinWalletHandler(HandlerInterface):
     def __init__(self, name):
         account = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account()
         wallet = bitcoinlib.wallets.Wallet.create(name)
-        wallet.import_key(account.get_secret_key())
+        wallet.import_key(account.get_private_key())
         self.wallet = wallet
 
 
     @staticmethod
     def create_wallet(name) -> bitcoinlib.wallets.Wallet:
         account = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account()
-        wallet = bitcoinlib.wallets.Wallet.create(name=name, keys=[account.get_secret_key()])
+        wallet = bitcoinlib.wallets.Wallet.create(name=name, keys=[account.get_private_key()], db_uri='sqlite:///:memory:')
 
         return wallet
 

@@ -1,8 +1,9 @@
+import base64
 import json
 
 #import slip39
 
-from bip_utils import Bip39MnemonicGenerator, Bip39WordsNum, Bip39SeedGenerator
+from bip_utils.bip.bip32 import Bip32Slip10Secp256k1
 
 from AccountType import AccountType, Beginner, Advanced, Tester
 from Wallet import Wallet
@@ -17,7 +18,8 @@ class Account:
         """
         # Initialize basic properties
         self._accountName = ""
-        self._secretKey = ""
+        self._bip_seed: bytes = b""
+        self._mnemonic = ""
         self._contacts = {}
         self._wallets = {}
         self._encryption_key = ""
@@ -31,8 +33,9 @@ class Account:
         if save_data is not None:
             data = json.loads(save_data)
             self._accountName = data["accountName"]
-            self._secretKey = data["secretKey"] 
+            self._bip_seed = data["bipSeed"]
             self._contacts = data.get("contacts", {})
+            self._mnemonic = data["mnemonic"]
             # Convert encryption key from hex string back to bytes if it's a string
             if isinstance(data["encryptionKey"], str):
                 self._encryption_key = bytes.fromhex(data["encryptionKey"])
@@ -116,8 +119,7 @@ class Account:
                     self.transactionLog.add_to_transaction_log(tx)
 
     def get_recovery_phrases(self):
-        a = Bip39MnemonicGenerator().FromWordsNumber(Bip39WordsNum.WORDS_NUM_12)
-        return a
+        return self._mnemonic
         # Bip39SeedGenerator(a).Generate()
 
         # return slip39.create(self._accountName, master_secret=self._secretKey, using_bip39=True)
@@ -133,9 +135,14 @@ class Account:
     def add_wallet(self, wallet: Wallet):
         self._wallets[wallet.name] = wallet
     
-    def get_secret_key(self):
+    def get_private_key(self):
         """Get secret key"""
-        return self._secretKey
+        print(f"get priv key seed: {self._bip_seed}")
+        base = base64.b64decode(self._bip_seed)
+        ctx = Bip32Slip10Secp256k1.FromSeed(base)
+        print("CTX:")
+        print(ctx)
+        return Bip32Slip10Secp256k1.FromSeed(base).PrivateKey().ToExtended()
     
     def get_contacts(self):
         """Get contacts"""
@@ -164,14 +171,16 @@ class Account:
     def set_account_name(self, name):
         """Set account name"""
         self._accountName = name
-        
-    def set_secret_key(self, key):
-        """Set secret key"""
-        self._secretKey = key
-    
-    def set_encryption_key(self, key):
-        """Set the encryption key"""
-        self._encryption_key = key
+
+    # we shouldnt allow any function to overwrite the key or else the user will loose their funds
+    # def set_secret_key(self, key):
+    #     """Set secret key"""
+    #     self._bip_seed = key
+
+    # same as above
+    # def set_encryption_key(self, key):
+    #     """Set the encryption key"""
+    #     self._encryption_key = key
         
     def add_contact(self, name, address):
         """Add a contact"""
@@ -224,7 +233,8 @@ class Account:
 
         data = {
             "accountName": self._accountName,
-            "secretKey": self._secretKey,
+            "bipSeed": self._bip_seed,
+            "mnemonic": self._mnemonic,
             "contacts": self._contacts,
             "accountType": self._accountType.get_type_name(),
             "encryptionKey": encryption_key_str,
