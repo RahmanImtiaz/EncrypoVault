@@ -13,12 +13,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 14px 16px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
   animation: toast-slide-in 0.3s ease-out forwards;
   overflow: hidden;
   width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .toast-content {
@@ -30,38 +31,89 @@
 .toast-message {
   font-size: 14px;
   color: var(--text-light);
-  font-weight: 500;
+  font-weight: 600;
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .toast-close {
   background: none;
   border: none;
   color: var(--text-light);
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
   margin-left: 10px;
-  opacity: 0.7;
+  opacity: 0.8;
   transition: opacity 0.2s;
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .toast-close:hover {
   opacity: 1;
 }
 
+/* Updated toast type backgrounds to match theme */
 .toast-success {
-  background: linear-gradient(92.23deg, var(--accent) 21.43%, rgba(74, 227, 181, 0.8) 119.36%);
+  background: var(--bg-card);
+  border-left: 4px solid var(--accent);
+}
+
+.toast-success::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(92.23deg, rgba(74, 227, 181, 0.15) 0%, rgba(74, 227, 181, 0.05) 100%);
+  z-index: -1;
 }
 
 .toast-error {
-  background: linear-gradient(92.23deg, var(--danger) 21.43%, rgba(244, 63, 94, 0.8) 119.36%);
+  background: var(--bg-card);
+  border-left: 4px solid var(--danger);
+}
+
+.toast-error::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(92.23deg, rgba(244, 63, 94, 0.15) 0%, rgba(244, 63, 94, 0.05) 100%);
+  z-index: -1;
 }
 
 .toast-info {
-  background: linear-gradient(92.23deg, var(--primary) 21.43%, var(--primary-light) 119.36%);
+  background: var(--bg-card);
+  border-left: 4px solid var(--primary);
+}
+
+.toast-info::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(92.23deg, rgba(54, 113, 233, 0.15) 0%, rgba(54, 113, 233, 0.05) 100%);
+  z-index: -1;
 }
 
 .toast-warning {
-  background: linear-gradient(92.23deg, #F59E0B 21.43%, #F59E0B 119.36%);
+  background: var(--bg-card);
+  border-left: 4px solid #F59E0B;
+}
+
+.toast-warning::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(92.23deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%);
+  z-index: -1;
 }
 
 @keyframes toast-slide-in {
