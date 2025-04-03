@@ -36,8 +36,15 @@ class HandlerInterface(abc.ABC):
     def get_wallet_type() -> WalletType:
         pass
 
+    @abc.abstractmethod
+    def get_balance(self):
+        pass
+
     @staticmethod
-    def account_name_to_index(account_name: str, wallet_type: WalletType) -> int:  # Hash the account name using SHA-256
+    def account_name_to_index(account_name: str, wallet_type: WalletType) -> int:
+        """
+        account_name-wallet_type -> sha256 sum, take first 8 bytes, parse from the hex and then modulo it by 2^31
+        """
         h = hashlib.sha256(f"{account_name}-{str(wallet_type)}".encode(
-            "utf-8")).hexdigest()  # Use the first 8 characters (4 bytes) of the hash to create an integer # Then take modulo 231 to ensure it fits in the range for hardened indices.
+            "utf-8")).hexdigest()
         return int(h[:8], 16) % (2**31)

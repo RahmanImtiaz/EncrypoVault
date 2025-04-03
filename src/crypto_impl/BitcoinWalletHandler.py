@@ -21,14 +21,17 @@ class BitcoinWalletHandler(HandlerInterface):
        return BitcoinWalletHandler(name)
 
     def _get_secret_exponent(self):
-        ctx = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account().get_bip32_ctx()
-        ind = self.account_name_to_index(self._name, self.get_wallet_type())
-        key = ctx.ChildKey(ind)
+        key = self._get_child_key()
         secret_exponent = int.from_bytes(key.PrivateKey().Raw().ToBytes(), byteorder="big")
         return secret_exponent
 
+    def _get_child_key(self):
+        ctx = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account().get_bip32_ctx()
+        ind = self.account_name_to_index(self._name, self.get_wallet_type())
+        return ctx.ChildKey(ind)
+
     def send_tx(self, amount, destination_address):
-        pass
+        self._pycoin_key
 
     def get_tx_info(self, tx_id):
         pass
@@ -43,20 +46,17 @@ class BitcoinWalletHandler(HandlerInterface):
     def get_address(self):
         return self._pycoin_key.address()
 
+    def get_balance(self):
+
+
     def toJSON(self):
         return json.dumps({
             "name": self._name,
             "type": str(self.get_wallet_type()),
+            "balance": self.get_balance()
         })
 
     @staticmethod
     def get_wallet_type() -> WalletType:
         return WalletType.BITCOIN
-
-
-
-
-
-    # def toJSON(self):
-    #     return self.wallet.as_json()
 
