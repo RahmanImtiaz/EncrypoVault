@@ -26,6 +26,7 @@ const Wallets: React.FC = () => {
   const [isCreatingWallet, setIsCreatingWallet] = useState<boolean>(false);
   const [newWalletName, setNewWalletName] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [copiedAddresses, setCopiedAddresses] = useState<{[key: string]: boolean}>({});
 
   useEffect(() => {
     fetchWallets();
@@ -43,6 +44,20 @@ const Wallets: React.FC = () => {
       setFilteredWallets(filtered);
     }
   }, [searchQuery, wallets]);
+
+  const copyToClipboard = (text: string, walletIndex: number) => {
+    navigator.clipboard.writeText(text).then(() => {
+      // Set copied state for this specific wallet
+      setCopiedAddresses(prev => ({...prev, [walletIndex]: true}));
+      
+      // Reset copied state after 2 seconds
+      setTimeout(() => {
+        setCopiedAddresses(prev => ({...prev, [walletIndex]: false}));
+      }, 2000);
+    }).catch(err => {
+      console.error('Failed to copy address:', err);
+    });
+  };
 
   const fetchWallets = async () => {
     try {
@@ -189,6 +204,31 @@ const Wallets: React.FC = () => {
                   <div className="wallet-detail-row">
                     <span className="wallet-detail-label">Address:</span>
                     <span className="wallet-detail-value">{wallet.address.substring(0, 20)}...</span>
+                    <button
+                      className={`copy-btn ${copiedAddresses[index] ? 'copied' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        copyToClipboard(wallet.address, index);
+                      }}
+                      title="Copy address"
+                    >
+                      {copiedAddresses[index] ? (
+                        <>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                          <span>Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1-2 2v1"></path>
+                          </svg>
+                          <span>Copy</span>
+                        </>
+                      )}
+                    </button>
                   </div>
                   <div className="wallet-detail-row">
                     <span className="wallet-detail-label">Type:</span>

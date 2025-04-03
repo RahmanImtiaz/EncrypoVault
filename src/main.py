@@ -99,6 +99,9 @@ class MainWindow(QMainWindow):
         self.browser = QWebEngineView(self)
         self.setCentralWidget(self.browser)
 
+        self.browser.settings().setAttribute(QWebEngineSettings.JavascriptCanAccessClipboard, True)
+        self.browser.settings().setAttribute(QWebEngineSettings.JavascriptCanPaste, True)
+
         # Build path to your React app's index.html.
         # For example, if your React build folder is in the same directory:
         # local_url = QUrl.fromLocalFile(file_path)
