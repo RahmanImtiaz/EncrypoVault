@@ -54,78 +54,11 @@ class Account:
                 elif account_type_name == "tester":
                     self._accountType = Tester()
 
-            if "wallets" in data and data["wallets"]:
-                from crypto_impl.WalletType import WalletType
-                from crypto_impl.BitcoinWalletHandler import BitcoinWalletHandler  # Import wallet handler
-
-                serialized_wallets = data["wallets"]
-                for name, wallet_data in serialized_wallets.items():
-                    # Skip if already loaded from portfolio
-                    if name in self._wallets:
-                        continue
-
-                    # Create wallet with saved properties
-                    wallet_type_str = wallet_data.get('type', 'BTC')
-                    wallet_type = WalletType.from_str(wallet_type_str)
-
-                    wallet = Wallet(
-                        name=wallet_data.get('name', name),
-                        wallet_type=wallet_type,
-                        address=wallet_data.get('address')
-                    )
-
-                    # Restore wallet balance
-                    wallet.balance = wallet_data.get('balance', 0.0)
-
-                    # Restore wallet holdings if they exist
-                    if 'holdings' in wallet_data:
-                        for crypto_id, holding_data in wallet_data['holdings'].items():
-                            wallet.holdings[crypto_id] = {
-                                "amount": holding_data.get("amount", 0)
-                            }
-
-                    # Add wallet to account's wallets dict
-                    self._wallets[name] = wallet
-
-                    # Recreate wallet file (if needed)
-                    try:
-                        BitcoinWalletHandler.create_wallet(name)  # Recreate wallet file
-                    except Exception as e:
-                        print(f"Error recreating wallet file for {name}: {e}")
-
-            # Restore portfolio if it exists
-            if "portfolio" in data and data["portfolio"]:
-                from Portfolio import Portfolio
-                portfolio_data = data["portfolio"]
-                
-                # Create portfolio with saved name
-                self.portfolio = Portfolio(api_key="", name=portfolio_data.get('name', 'MainPortfolio'))
-                
-                # Restore wallets to portfolio
-                if 'wallets' in portfolio_data:
-                    from crypto_impl.WalletType import WalletType
-                    
-                    for name, wallet_data in portfolio_data['wallets'].items():
-                        # Create wallet with saved properties
-                        wallet = Wallet(
-                            name=wallet_data.get('name', name),
-                            wallet_type=WalletType.BITCOIN,  # Default to Bitcoin
-                            address=wallet_data.get('address')
-                        )
-                        
-                        # Restore wallet balance
-                        wallet.balance = wallet_data.get('balance', 0.0)
-                        
-                        # Restore wallet holdings if they exist
-                        if 'holdings' in wallet_data:
-                            for crypto_id, holding_data in wallet_data['holdings'].items():
-                                wallet.holdings[crypto_id] = {
-                                    "amount": holding_data.get("amount", 0)
-                                }
-                        
-                        # Add wallet to both the portfolio and the account's wallets dict
-                        self.portfolio.wallets[name] = wallet
-                        self._wallets[name] = wallet
+            
+            # Initialize portfolio if needed 
+            from Portfolio import Portfolio
+            api_key = "fdade57267b549538799a94164f3db43"  
+            self.portfolio = Portfolio(api_key, f"{self._accountName}'s Portfolio")
             
             # Restore transaction log if it exists
             if "transactions" in data and data["transactions"]:
@@ -158,11 +91,70 @@ class Account:
                     # Add to transaction log
                     self.transactionLog.add_to_transaction_log(tx)
 
+
+    def recover_wallets_from_save_data(self, save_data):
+
+        if isinstance(save_data, str):
+            data = json.loads(save_data)
+        else:
+            data = save_data
+
+        if "wallets" in data and data["wallets"]:
+            from crypto_impl.WalletType import WalletType
+            from crypto_impl.BitcoinWalletHandler import BitcoinWalletHandler  # Import wallet handler
+
+            serialized_wallets = data["wallets"]
+            for name, wallet_data in serialized_wallets.items():
+                # Skip if already loaded from portfolio
+                if name in self._wallets:
+                    continue
+
+                # Create wallet with saved properties
+                wallet_type_str = wallet_data.get('type', 'BTC')
+                wallet_type = WalletType.from_str(wallet_type_str)
+
+                wallet = Wallet(
+                    name=wallet_data.get('name', name),
+                    wallet_type=wallet_type,
+                    address=wallet_data.get('address')
+                )
+
+                # Restore wallet balance
+                wallet.balance = wallet_data.get('balance', 0.0)
+
+                # Restore wallet holdings if they exist
+                if 'holdings' in wallet_data:
+                    for crypto_id, holding_data in wallet_data['holdings'].items():
+                        wallet.holdings[crypto_id] = {
+                            "amount": holding_data.get("amount", 0)
+                        }
+
+                # Add wallet to account's wallets dict
+                self._wallets[name] = wallet
+
+                # Recreate wallet file (if needed)
+                try:
+                    BitcoinWalletHandler.create_wallet(name)  # Recreate wallet file
+                except Exception as e:
+                    print(f"Error recreating wallet file for {name}: {e}")
+
     def get_recovery_phrases(self):
         return self._mnemonic
         # Bip39SeedGenerator(a).Generate()
 
         # return slip39.create(self._accountName, master_secret=self._secretKey, using_bip39=True)
+
+
+    def get_bip32_ctx(self):
+        """Get BIP32 context for wallet derivation"""
+        if isinstance(self._bip_seed, str):
+            # If the seed is stored as a base64 string, decode it
+            base = base64.b64decode(self._bip_seed)
+        else:
+            # If it's already bytes, use it directly
+            base = self._bip_seed
+        # Create and return the BIP32 context
+        return Bip32Slip10Secp256k1.FromSeed(base)
        
     def get_account_name(self):
         """Get account name"""
@@ -177,10 +169,12 @@ class Account:
     
     def get_private_key(self):
         """Get secret key"""
-        return self.get_bip32_ctx().PrivateKey()
-
-    def get_bip32_ctx(self) -> Bip32Slip10Secp256k1:
-        return Bip32Slip10Secp256k1.FromSeed(base64.b64decode(self._bip_seed))
+        print(f"get priv key seed: {self._bip_seed}")
+        base = base64.b64decode(self._bip_seed)
+        ctx = Bip32Slip10Secp256k1.FromSeed(base)
+        print("CTX:")
+        print(ctx)
+        return Bip32Slip10Secp256k1.FromSeed(base).PrivateKey().ToExtended()
     
     def get_contacts(self):
         """Get contacts"""

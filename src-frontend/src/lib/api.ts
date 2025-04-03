@@ -1,4 +1,4 @@
-import {AccountType, Wallet} from "../index";
+import {AccountType} from "../index";
 import {io, Socket} from "socket.io-client"
 
 async function getAccountNames(): Promise<string[]> {
@@ -107,19 +107,18 @@ async function getWallets() {
       const response = await fetch("/api/crypto/wallets/details");
       const data = await response.json();
       
-      // Transform the API response to match the Wallet interface
-        return (data.wallets || data || []).map((wallet: Wallet) => ({
+      return (data.data || []).map((wallet: any) => ({
           name: wallet.name,
           address: wallet.address || "",
           balance: wallet.balance || 0,
-          coin_symbol: wallet.type.toString(),
-          holdings: {}
+          coin_symbol: wallet.type || 'BTC',
+          holdings: wallet.holdings || {}
       }));
     } catch (error) {
       console.error('Error fetching wallets:', error);
       return [];
     }
-  }
+}
 
 async function addContact(name: string, address: string): Promise<Response> {
     return fetch("/api/contacts/add", {

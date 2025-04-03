@@ -47,6 +47,7 @@ class AccountsFileManager:
         account = Account(fileData)
         account._encryption_key = decryption_key
         self.loaded_account = account
+        self.loaded_account.recover_wallets_from_save_data(fileData)
         return account
 
     def get_loaded_account(self) -> Account:
