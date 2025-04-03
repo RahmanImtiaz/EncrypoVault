@@ -36,12 +36,8 @@ class Wallet(CryptoObserver):
         return json.dumps({
             "name": self.name,
             "address": self.address,
-            "type": self.wallet_type,
-            "balance": self.balance,
-            "holdings": {
-                crypto_id: {"amount": data["amount"]} 
-                for crypto_id, data in self.holdings.items()
-            }
+            "type": str(self.wallet_type),
+            "balance": self.crypto_handler.get_balance(),
         }, indent=4)
 
     def update(self, crypto_id: str, crypto_data: dict):

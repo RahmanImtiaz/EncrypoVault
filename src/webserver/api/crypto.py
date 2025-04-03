@@ -8,6 +8,7 @@ from AccountsFileManager import AccountsFileManager
 from ConcreteCryptoObserver import ConcreteCryptoObserver
 from ExchangeSocket import ExchangeSocket
 from Wallet import Wallet
+from crypto_impl.BitcoinWalletHandler import BitcoinWalletHandler
 from crypto_impl.WalletType import WalletType
 
 
@@ -29,6 +30,17 @@ class CryptoRoutes:
         app.socketio = socket
 
         ws_prefix = api_bp.url_prefix+crypto_bp.url_prefix
+
+        @crypto_bp.route("/wallets/details", methods=["GET"])
+        def get_wallets():
+            acc = AccountsFileManager.get_instance().get_loaded_account()
+            wallets = []
+            for wallet in acc.get_wallets():
+
+                wallets.append(
+                    json.loads(acc.get_wallets()[wallet].toJSON())
+                )
+            return {"data": wallets}, 200
 
         @crypto_bp.route("/wallets", methods=["POST"])
         def create_wallet():
@@ -58,27 +70,13 @@ class CryptoRoutes:
             wallet = Wallet(wallet_name, wallet_type)
             try:
                 AccountsFileManager.get_instance().get_loaded_account().add_wallet(wallet)
+                print(f"at time of wallet saving, decryption key is {AccountsFileManager.get_instance().get_loaded_account().get_encryption_key().hex()}")
                 AccountsFileManager.get_instance().save_account(AccountsFileManager.get_instance().get_loaded_account())
             except Exception as e:
                 return {"error": str(e)}, 500
             
             return {"walletType": str(wallet_type), "walletName": wallet_name, "walletAddress": wallet.address}, 200
-        
-        @crypto_bp.route("/getwallets", methods=["GET"])
-        def get_wallets():
-            account = AccountsFileManager.get_instance().get_loaded_account()
-            if account is None:
-                return {"error": "No loaded account"}, 400
-            wallets = account.get_wallets()
-            print("Wallets: ", wallets)
-            wallets_list = []
-            for wallet in wallets.values():
-                wallets_list.append({
-                    "name": wallet.name,
-                    "type": str(wallet.wallet_type),
-                    "address": wallet.address
-                })
-            return {"wallets": wallets_list}, 200
+
 
 
         @socket.on('connect', ws_prefix+'/ws')

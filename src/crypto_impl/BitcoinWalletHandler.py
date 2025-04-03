@@ -1,5 +1,7 @@
 import json
 
+import bitcoinlib
+from bitcoinlib.keys import HDKey
 from pycoin.symbols.xtn import network
 
 import AccountsFileManager
@@ -14,6 +16,7 @@ class BitcoinWalletHandler(HandlerInterface):
 
     def __init__(self, name):
         self._name = name
+
         self._pycoin_key = network.keys.private(secret_exponent=self._get_secret_exponent())
 
     @staticmethod
@@ -39,6 +42,8 @@ class BitcoinWalletHandler(HandlerInterface):
     def get_tx(self):
         pass
 
+
+
     @staticmethod
     def load_wallet(data: dict):
         return BitcoinWalletHandler(data["name"])
@@ -47,7 +52,9 @@ class BitcoinWalletHandler(HandlerInterface):
         return self._pycoin_key.address()
 
     def get_balance(self):
-
+        svc = bitcoinlib.services.services.Service(network="testnet")
+        bal: int = svc.getbalance(addresslist=[self.get_address()])
+        return bal
 
     def toJSON(self):
         return json.dumps({

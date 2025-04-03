@@ -48,7 +48,7 @@ hdkey_mainnet = HDKey(import_key=ctx.PrivateKey().ToExtended())
 hdkey_mainnet.network_change("testnet")
 
 # wallet = bitcoinlib.wallets.Wallet.create( "TestNetWallet", keys=[testnet_xprv], network='testnet', witness_type='segwit', db_uri='sqlite:///./tmp')
-wallet = bitcoinlib
+
 print(f"btlib address : {hdkey_mainnet.address()}")
 print(f"pycoin address: {pycoin_key.address()}")
 

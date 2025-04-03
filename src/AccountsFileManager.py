@@ -45,6 +45,7 @@ class AccountsFileManager:
             return None
         fileData = self._decrypt_file(self.current_directory, decryption_key, account_name)
         account = Account(fileData)
+        account._encryption_key = decryption_key
         self.loaded_account = account
         return account
 
@@ -130,7 +131,10 @@ class AccountsFileManager:
     @staticmethod
     def _encrypt_file(file_destination_path, encryption_key, account):
         """Encrypt file and write to file"""
-        data = account.toJSON()
+        if not isinstance(account, str):
+            data = account.toJSON()
+        else:
+            data = account
         file_path = os.path.join(file_destination_path, f"{account.get_account_name()}.enc")
         print(f"Encrypting file: {file_path}")
 
