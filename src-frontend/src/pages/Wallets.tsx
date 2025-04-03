@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Wallets.css';
-//import api from '../lib/api';
+import { useToast } from '../contexts/ToastContext';
 
 interface Holding {
   amount: number;
@@ -27,6 +27,7 @@ const Wallets: React.FC = () => {
   const [newWalletName, setNewWalletName] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [copiedAddresses, setCopiedAddresses] = useState<{[key: string]: boolean}>({});
+  const { showToast } = useToast();
 
   useEffect(() => {
     fetchWallets();
@@ -86,13 +87,13 @@ const Wallets: React.FC = () => {
     event.preventDefault();
 
     if (!newWalletName.trim()) {
-      alert('Please enter a wallet name');
+      showToast('Please enter a wallet name', 'error');
       return;
     }
 
     // Check if wallet name contains at least one letter - bitcoinlib requires it
     if (!/[a-zA-Z]/.test(newWalletName)) {
-      alert('Wallet name must contain at least one letter character');
+      showToast('Wallet name must contain at least one letter character', 'error');
       return;
     }
 
@@ -114,15 +115,15 @@ const Wallets: React.FC = () => {
         setWallets([...wallets, newWallet]);
         setFilteredWallets([...filteredWallets, newWallet]);
         setNewWalletName("");
-        alert(`New wallet "${newWalletName}" created`);
+        showToast(`New wallet "${newWalletName}" created`, 'success');
         setIsCreatingWallet(false);
       } else {
-        alert('Failed to create wallet');
+        showToast('Failed to create wallet', 'error');
       }
 
     } catch (err) {
       console.error('Error creating wallet:', err);
-      alert('Failed to create wallet');
+      showToast('Failed to create wallet', 'error');
     }
   };
 

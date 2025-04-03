@@ -1,10 +1,12 @@
-import React, {useState} from "react";
-import "./Login.css";
-import {PublicKeyCredentialCreationOptionsJSON, startRegistration} from "@simplewebauthn/browser";
-import type { AccountType } from "./index";
+import React, { useState } from 'react';
+import './Login.css';
+import { AccountType } from './index';
+import { startRegistration } from '@simplewebauthn/browser';
+import { PublicKeyCredentialCreationOptionsJSON } from '@simplewebauthn/typescript-types';
+import { useToast } from './contexts/ToastContext';
 
 interface RegisterProps {
-  toggleForm: () => void; // Add toggleForm prop
+  toggleForm: () => void;
 }
 
 export function Register({ toggleForm }: RegisterProps) {
@@ -13,17 +15,20 @@ export function Register({ toggleForm }: RegisterProps) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const { showToast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!accountName.trim()) {
       setError("Account name is required");
+      showToast("Account name is required", "error");
       return;
     }
     
     if (password !== confirmPassword) {
       setError("Passwords do not match");
+      showToast("Passwords do not match", "error");
       return;
     }
 
@@ -32,6 +37,7 @@ export function Register({ toggleForm }: RegisterProps) {
       const accounts = await window.api.getAccountNames();
       if (accounts.includes(accountName)) {
           setError("Account already exists. Please choose a different account name.");
+          showToast("Account already exists. Please choose a different account name.", "error");
           return;
       }
 
@@ -64,6 +70,7 @@ export function Register({ toggleForm }: RegisterProps) {
         }
         
         console.log("Account created successfully with Touch ID");
+        showToast("Account created successfully with Touch ID", "success");
         setError("Account created successfully");
       } else {
         // For Windows and other platforms: Use WebAuthn
@@ -82,11 +89,13 @@ export function Register({ toggleForm }: RegisterProps) {
         
         console.log(response);
         console.log("Account created successfully with WebAuthn");
+        showToast("Account created successfully with WebAuthn", "success");
         setError("Account created successfully");
       }
       // onRegister(); // Uncomment if you want to automatically log in after registration
     } catch (err) {
       setError("Registration failed. Please try again.");
+      showToast("Registration failed. Please try again.", "error");
       console.error(err);
     }
   };

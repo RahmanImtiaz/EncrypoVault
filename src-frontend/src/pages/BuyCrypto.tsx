@@ -1,14 +1,14 @@
 import '../styles/BuyCrypto.css';
 import React, { useState } from 'react';
-
 import { useNavigate } from "react-router-dom";
+import { useToast } from '../contexts/ToastContext';
 
 const BuyCrypto = () => {
   const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState("");
   const [amountToSell, setAmountToSell] = useState("");
-  /*const [amountToReceive, setAmountToReceive] = useState("");*/
   const [confirmMessage, setConfirmMessage] = useState("");
+  const { showToast } = useToast();
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedOption(event.target.value);
@@ -19,20 +19,24 @@ const BuyCrypto = () => {
         
         if (!selectedOption) {
             setConfirmMessage("Please select a cryptocurrency to buy.");
+            showToast("Please select a cryptocurrency to buy.", "error");
             return;
         }
 
         if (!amountToSell.trim() || parseFloat(amountToSell) <= 0) {
             setConfirmMessage("Please enter a valid amount greater than £0.00.");
+            showToast("Please enter a valid amount greater than £0.00.", "error");
             return;
         }
 
         try {
             console.log("Crypto purchase initiated.");
             setConfirmMessage("Purchase successful!");
+            showToast("Purchase successful!", "success");
             // Implement the actual purchase logic here
         } catch (err) {
             setConfirmMessage("Transaction failed. Please try again.");
+            showToast("Transaction failed. Please try again.", "error");
             console.error(err);
         }
     };

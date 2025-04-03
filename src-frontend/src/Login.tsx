@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {PublicKeyCredentialRequestOptionsJSON, startAuthentication} from '@simplewebauthn/browser';
+import { PublicKeyCredentialRequestOptionsJSON, startAuthentication } from '@simplewebauthn/browser';
 import "./Login.css";
+import { useToast } from './contexts/ToastContext';
 
 interface LoginProps {
   onLogin: () => void;
@@ -13,6 +14,7 @@ export function Login({ onLogin, toggleForm }: LoginProps) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [accounts, setAccounts] = useState<string[]>([]);
+  const { showToast } = useToast();
 
   // Check biometric support when component mounts
   useEffect(() => {
@@ -65,11 +67,13 @@ export function Login({ onLogin, toggleForm }: LoginProps) {
         
         if (!response.ok) {
           if (data.error === 'TOUCHID_UNAVAILABLE') {
+            showToast("Touch ID is unavailable. Please use your password to log in.", 'error');
             setError("Touch ID is unavailable. Please use your password to log in.");
           } else {
             throw new Error(data.error || 'Authentication failed');
           }
         } else {
+          showToast('Login successful!', 'success');
           onLogin();
         }
       } else {
@@ -78,14 +82,17 @@ export function Login({ onLogin, toggleForm }: LoginProps) {
         const res = await window.api.login(selectedAccount, password, webauthnResponse.response.authenticatorData)
 
         if(res.status === 200) {
+          showToast('Login successful!', 'success');
           onLogin();
         } else {
           setLoading(false)
+          showToast('Invalid Password or biometrics!', 'error');
           setError("Invalid Password or biometrics!")
         }
       }
     } catch (err) {
       console.error('Biometric auth error:', err);
+      showToast('You closed the OS login prompt!', 'error');
       setError("You closed the OS login prompt!");
     } finally {
       setLoading(false);
