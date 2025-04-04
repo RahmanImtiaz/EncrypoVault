@@ -28,6 +28,20 @@ export function App() {
   const handleLogin = () => {
     setIsAuthenticated(true);
   };
+  
+  const handleLogout = async () => {
+    try {
+      // Call the API logout endpoint to clear backend session
+      await window.api.logout();
+      
+      // Reset the frontend state
+      setIsAuthenticated(false);
+    } catch (error) {
+      console.error("Error logging out:", error);
+      // Even if there's an error, log the user out of the frontend
+      setIsAuthenticated(false);
+    }
+  };
 
   return (
     <ToastProvider>
@@ -42,7 +56,7 @@ export function App() {
           ) : (
             <>
               {/* Navbar (header) is always here once authenticated */}
-              <Navbar />
+              <Navbar onLogout={handleLogout} />
               {/* Routes for different pages */}
               <Routes>
                 {/*Routes for navigation*/}

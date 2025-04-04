@@ -2,7 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/navbar.css';
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  onLogout: () => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
     return (
       <nav className="navbar">
         <ul className="navList">
@@ -46,10 +50,18 @@ const Navbar: React.FC = () => {
               </div>
             </Link>
           </li>
+          {/* Logout Button */}
+          <li className="navItem">
+            <button onClick={onLogout} className="navLink logoutButton">
+              <div className="navButton">
+                <img src="/icons8-logout-50.png" alt="logout" className="logoutIcon"/>
+                <span className="navLabel">Logout</span>
+              </div>
+            </button>
+          </li>
         </ul>
       </nav>
     );
   };
-
 
 export default Navbar;

@@ -83,3 +83,19 @@ body {
 .navButton:hover .navLabel {
   display: block;
 }
+
+/* Styles for the logout button */
+.logoutButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoutButton:hover .navButton {
+  background-color: #e74c3c; /* Red color on hover for logout */
+}

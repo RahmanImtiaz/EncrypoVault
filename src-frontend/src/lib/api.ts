@@ -157,6 +157,19 @@ async function getContacts(): Promise<{name: string, address: string}[]> {
     return data.contacts || [];
 }
 
+async function logout(): Promise<void> {
+    try {
+        await fetch("/api/auth/logout", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    } catch (error) {
+        console.error("Error during logout:", error);
+    }
+}
+
 export default {
     getAccountNames,
     login,
@@ -170,5 +183,6 @@ export default {
     getContacts,
     createWallet,
     getWallets,
-    sendCrypto
+    sendCrypto,
+    logout
 }
