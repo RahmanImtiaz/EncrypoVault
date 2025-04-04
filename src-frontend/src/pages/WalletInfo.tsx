@@ -1,4 +1,5 @@
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { QRCodeComponent } from '../components/generateQR';
 import '../styles/WalletInfo.css';
@@ -24,6 +25,7 @@ const WalletInfo = () => {
   const location = useLocation();
   const wallet = location.state?.wallet as Wallet;
   const [showQR, setShowQR] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log('WalletInfo received:', wallet);
@@ -75,6 +77,12 @@ const WalletInfo = () => {
         <div className='wallet-coin-symbol'>
           <h4 className='smaller'>Coin Symbol: {wallet.coin_symbol}</h4>
         </div>
+        <div className="buttons">
+          <button className="wallet-button" onClick={() => setShowQR(true)}>Receive {wallet.coin_symbol}</button>
+          <button className="wallet-button" onClick={() => navigate("/send")}>Send {wallet.coin_symbol}</button>
+          <button className="wallet-button" onClick={() => navigate("/buy")}>Buy {wallet.coin_symbol}</button>
+          <button className="wallet-button" onClick={() => navigate("/sell")}>Sell {wallet.coin_symbol}</button>
+        </div>
         <div className='wallet-holdings'>
           <h3>Holdings:</h3>
           {Object.keys(wallet.holdings).length > 0 ? (
@@ -90,12 +98,7 @@ const WalletInfo = () => {
           )}
         </div>
 
-        <div className="buttons">
-          <button className="wallet-button" onClick={() => setShowQR(true)}>Receive {wallet.coin_symbol}</button>
-          <button className="wallet-button">Send {wallet.coin_symbol}</button>
-          <button className="wallet-button">Buy {wallet.coin_symbol}</button>
-          <button className="wallet-button">Sell {wallet.coin_symbol}</button>
-        </div>
+        
 
       </div>
     </div>
