@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Wallets.css';
 import { useToast } from '../contexts/ToastContext';
+import { useNavigate } from 'react-router-dom';
 
 interface Holding {
   amount: number;
@@ -28,11 +29,27 @@ const Wallets: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [copiedAddresses, setCopiedAddresses] = useState<{[key: string]: boolean}>({});
   const { showToast } = useToast();
+  const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);  
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchWallets();
   }, []);
 
+
+
+  const handleWalletClick = (wallet: Wallet) => {
+    setSelectedWallet(wallet);
+    console.log('Selected wallet:', wallet);
+    navigate('/WalletInfo', { state: { wallet } });
+  }
+
+  useEffect(() => {
+    if (selectedWallet) {
+      console.log('Selected wallet:', selectedWallet);
+    }
+  }
+  , [selectedWallet]);
   useEffect(() => {
     // Filter wallets based on search query
     if (searchQuery.trim() === '') {
@@ -127,11 +144,7 @@ const Wallets: React.FC = () => {
     }
   };
 
-  const handleWalletClick = (wallet: Wallet) => {
-    // Go to wallet details page
-    console.log(`Navigating to wallet: ${wallet.name}`);
-    // its empty for now
-  };
+
 
   if (loading) {
     return (
