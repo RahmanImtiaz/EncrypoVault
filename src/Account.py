@@ -82,10 +82,10 @@ class Account:
                     tx = Transaction(
                         timestamp=timestamp,
                         amount=tx_data.get('amount', 0),
-                        tx_hash=tx_data.get('hash', ''),
+                        hash=tx_data.get('hash', ''),
                         receiver=tx_data.get('receiver', ''),
                         sender=tx_data.get('sender', ''),
-                        tx_type=tx_data.get('type', 'unknown')
+                        name=tx_data.get('name', 'unknown')
                     )
                     
                     # Add to transaction log
@@ -229,19 +229,7 @@ class Account:
         encryption_key_str = self._encryption_key.hex() if isinstance(self._encryption_key, bytes) else self._encryption_key
 
         # Convert transaction log to dictionary if it exists
-        transactions_data = None
-        if self.transactionLog:
-            transactions_data = [
-                {
-                    'timestamp': tx.timestamp.isoformat() if hasattr(tx.timestamp, 'isoformat') else str(tx.timestamp),
-                    'amount': tx.amount,
-                    'hash': tx.hash,
-                    'receiver': tx.receiver,
-                    'sender': tx.sender,
-                    'type': tx.type
-                }
-                for tx in self.transactionLog._log
-            ]
+        transactions_data = json.loads(self.transactionLog.toJSON())
 
         # Convert wallets to dictionaries
         wallets_data = {}

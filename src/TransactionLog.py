@@ -1,7 +1,11 @@
 import datetime
+import json
+from typing import List
+
 from Transaction import Transaction
 
 class TransactionLog:
+    _log: List[Transaction]
     def __init__(self):
         self._log = []
         
@@ -13,3 +17,6 @@ class TransactionLog:
     
     def add_to_transaction_log(self, transaction: Transaction):
         self._log.append(transaction)
+
+    def toJSON(self):
+        return json.dumps(self._log)
