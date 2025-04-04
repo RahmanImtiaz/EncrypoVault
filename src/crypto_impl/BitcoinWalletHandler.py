@@ -50,10 +50,13 @@ class BitcoinWalletHandler(HandlerInterface):
         return ctx.ChildKey(ind)
 
     def send_tx(self, amount, destination_address):
-        tx = self.wallet.send_to(destination_address, amount)
-        return tx
+        if amount < 0:
+            amount = amount * 100000000
+        tx = self.wallet.send_to(destination_address, amount, broadcast=True)
+        return tx.txid
 
     def get_tx_info(self, tx_id):
+        self.wallet.transactions()
         pass
 
     def get_tx(self):
