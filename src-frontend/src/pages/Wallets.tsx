@@ -127,11 +127,7 @@ const Wallets: React.FC = () => {
     }
   };
 
-  const handleWalletClick = (wallet: Wallet) => {
-    // Go to wallet details page
-    console.log(`Navigating to wallet: ${wallet.name}`);
-    // its empty for now
-  };
+
 
   if (loading) {
     return (

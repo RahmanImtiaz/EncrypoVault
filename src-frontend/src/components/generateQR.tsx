@@ -6,7 +6,7 @@ interface QRCodeProps {
     value: string;
     size?: number;
     level?: "L" | "M" | "Q" | "H";
-    bigColor?: string;
+    bgColor?: string;
     fgColor?: string;
     className?: string;
 }
@@ -16,7 +16,7 @@ export const QRCodeComponent: FC<QRCodeProps> = ({
     value,
     size = 128,
     level = 'Q',
-    bigColor = '#ffffff',
+    bgColor = '#ffffff',
     fgColor = '#000000',
     className = ''
 
@@ -31,7 +31,7 @@ export const QRCodeComponent: FC<QRCodeProps> = ({
                 value={value}
                 size={size}
                 level={level}
-                bgColor={bigColor}
+                bgColor={bgColor}
                 fgColor={fgColor}
                 style={{ width: size, height: size }}
             />

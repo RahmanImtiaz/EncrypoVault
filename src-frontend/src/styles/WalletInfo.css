@@ -1,136 +1,140 @@
-  body {
-    background: linear-gradient(135deg, #13183F, #3A3F92, #726FBA);
-    /*background: linear-gradient(135deg, #13183F, #2B3A67, #5A7EBB);*/
-    /*background: linear-gradient(135deg, #13183F, #2B3A67, #5A7EBB, #203A4B 92.81%);*/
-    /*background: linear-gradient(135deg, #1A2157, #33467C, #5A7EBB, #4F7699, #2F4F66);*/
-   /* background: linear-gradient(135deg, #1A2157, #3A4F7A, #5A7EBB, #3C6078);*/
-    margin: 0;
-    padding: 0;
-    /*display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    overflow-x: hidden;
-    box-sizing: border-box;*/
-  }
-  
-  html, body {
-    overflow-x: hidden; /* Prevent horizontal scrolling */
-  }
-  
-  .WalletInfo-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 20px;
-    height: clamp(35em, 40vh, 45em);
-    width: clamp(60em, 80vw, 90em);
-    gap: 4rem;
-    box-sizing: border-box; /* Include padding in width/height calculations */
-    overflow: hidden; 
-  }
-  
-  .balanceContainer-wallet {
-    position: relative;
-    border-radius: 34px;
-    background: linear-gradient(135deg, rgba(117, 66, 142, 0.6), rgba(53, 181, 255, 0.4)); /* Soft purple gradient */
-    box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.15); /* Softer shadow */
-    width: 30rem;
-    height: 10rem;
-    display: flex;  /* Items such as text are set to flex */
-    flex-direction: column;
-    justify-content: center; /* Vertical alignment */
-    /*align-items: center; Horizontal alignment */
-    padding: 10px;
-    overflow: hidden; /* Ensures that content doesn't overflow */
-    backdrop-filter: blur(10px); /* Adds a soft blur effect for transparency */
-  }
-  
-  .balanceContainer-wallet::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: inherit;
-    filter: blur(5px);
-    z-index: -1;
-  }
-
-  .balanceContainer-heading{
-    display: flex;
-    justify-content: flex-start;
-    margin-top: 1rem;
-  }
-
-  .balanceContainer-heading h2{
-    margin-left: 1rem;
-    font-size: 1rem;
-  }
-
-  .balanceContainer-amount{
-    display: flex;
-    justify-content: flex-start;
-  }
-
-  .balanceContainer-amount p{
-    margin-left: 1rem;
-    font-size: 2.5rem;
-  }
-
-  .balanceContainer-currency{
-    display: flex;
-    justify-content: flex-end;
-    margin-right: 1rem;
-  }
-  
-  #currency-dropdown{
-    border: none;
-    font-size: 1rem;
-    border-radius: 12px;
-    height: 3rem;
-    width: 30%;
-    padding: 0 1rem;
-  }
+body{
+  background: linear-gradient(135deg, #13183F, #3A3F92, #726FBA);
+}
+.info-container {
+  padding: 80px 2rem 2rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  color: var(--text-light);
+}
 
 
-  .actionButtons{
-    display: flex;
-    gap: 1rem;
-  }
-  
-  
-  .actionButton {
-    background: linear-gradient(92.23deg, var(--primary) 21.43%, var(--primary-light) 119.36%);
-    border: none;
-    color: var(--text-light);
-    padding: 12px 20px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 15px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-  }
-  
-  .actionButton:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px -10px rgba(54, 113, 233, 0.5);
-  }
+.wallet-name {
+  margin-bottom: 1rem;
+}
 
-  .more-info-buttons{
-    width: 30rem;
-  }
-  
-  /*
-  .actionButton{
-    transition: background-color 0.3s ease;
-  }
-  
-  .actionButton:hover{
-    background-color: #5F5C7D;
-  }*/
+.wallet-name h2 {
+  font-size: 2rem;
+  margin: 0;
+  color: var(--text-light);
+}
+
+
+.wallet-details {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  text-align: center;
+}
+
+.wallet-details h3 {
+  margin: 0.5rem 0;
+  color: var(--text-light);
+}
+
+
+.holdings-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  color: var(--text-dim);
+}
+
+.holdings-list li {
+  margin-bottom: 0.5rem;
+}
+
+
+.buttons {
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  gap: 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.wallet-button {
+  background: linear-gradient(92.23deg, var(--primary) 21.43%, var(--primary-light) 119.36%);
+  border: none;
+  color: var(--text-light);
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.wallet-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -10px rgba(54, 113, 233, 0.5);
+}
+
+.qr-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+
+.qr-modal-content {
+  background: var(--bg-card);
+  padding: 2rem;
+  border-radius: 16px;
+  position: relative;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+
+.modal-header {
+  margin-bottom: 1rem;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: var(--text-light);
+}
+
+
+.address-text {
+  margin: 1rem 0;
+  color: var(--text-dim);
+  word-break: break-all;   
+  overflow-wrap: anywhere; 
+}
+
+
+.close-button {
+  background: transparent;
+  border: none;
+  color: var(--text-light);
+  font-size: 1.5rem;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.close-button:hover {
+  color: var(--primary);
+}

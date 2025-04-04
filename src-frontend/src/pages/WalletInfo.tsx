@@ -1,54 +1,102 @@
-// Portfolio.tsx
-import React from 'react';
-//import '../styles/Setting.css';
+import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { QRCodeComponent } from '../components/generateQR';
 import '../styles/WalletInfo.css';
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 
-const Setting: React.FC = () => {
-  const navigate = useNavigate();
-  const [cryptoDetailsDisplay, setCryptoDetailsDisplay] = useState(false);
-  const [transactionDetails, setTransactionDetails] = useState(false);
+interface Holding {
+  amount: number;
+  name: string;
+  symbol: string;
+  value: number;
+}
 
-  const showCryptoDetails = () => {
-    setCryptoDetailsDisplay(!cryptoDetailsDisplay);
+interface Wallet {
+  name: string;
+  balance: number;
+  address: string;
+  coin_symbol: string;
+  holdings: {
+    [key: string]: Holding;
+  };
+}
+
+const WalletInfo = () => {
+  const location = useLocation();
+  const wallet = location.state?.wallet as Wallet;
+  const [showQR, setShowQR] = useState(false);
+
+  useEffect(() => {
+    console.log('WalletInfo received:', wallet);
+  }, [wallet]);
+
+  if (!wallet) {
+    return <div className="wallet-info-container">No wallet selected</div>;
   }
 
-  const showCryptoTransactions = () => {
-    setTransactionDetails(!transactionDetails);
+  if (showQR) {
+    return (
+      <div className="qr-modal-overlay">
+        <div className="qr-modal-content">
+          <div className="modal-header">
+            <h2>{wallet.name}</h2>
+          </div>
+          <QRCodeComponent
+            value={wallet.address}
+            size={256}
+            level="Q"
+            bgColor="#FFFFFF"
+            fgColor="#000000"
+          />
+          <p className="address-text"> Wallet Address: {wallet.address}</p>
+            <button 
+              className="close-button"
+              onClick={() => setShowQR(false)}
+            >
+              ×
+            </button>
+        </div>
+      </div>
+    );
   }
-
-
 
   return (
-    <div className="WalletInfo-container">
-      <div className="balanceContainer-wallet">
-        <div className="balanceContainer-heading">
-          <h2>Wallet Name</h2> {/*To be changed later and replaced with the name of the wallet*/}
-        </div>
-        <div className="balanceContainer-amount">
-          <p>£53.00</p> {/*To be changed later and replaced with the amount of money*/}
-        </div>
-        <div className="balanceContainer-currency">
-          <select id="currency-dropdown">
-            <option value="GBP">GBP</option>
-            <option value="USD">USD</option>
-            <option value="Yuan">Yuan</option>
-          </select>
-        </div>
+    <div className='info-container'>
+      <div className='wallet-name'>
+        <h2>{wallet.name} Details</h2>
       </div>
-      <div className="actionButtons">
-          <button className="actionButton" onClick={() => navigate("/buy")}>Buy Crypto</button>
-          <button className="actionButton" onClick={() => navigate("/sell")}>Sell Crypto</button>
-          <button className="actionButton" onClick={() => navigate("/send")}>Send Crypto</button>
-          <button className="actionButton" onClick={() => navigate("/receive")}>Receive Crypto</button>
+
+      <div className='wallet-details'>
+        <div className='wallet-balance'>
+          <h3>Balance: {wallet.balance} {wallet.coin_symbol}</h3>
+        </div>
+        <div className='wallet-address'>
+          <h3>Address: {wallet.address}</h3>
+        </div>
+        <div className='wallet-holdings'>
+          <h3>Holdings:</h3>
+          {Object.keys(wallet.holdings).length > 0 ? (
+            <ul className="holdings-list">
+              {Object.entries(wallet.holdings).map(([key, holding]) => (
+                <li key={key}>
+                  {holding.name}: {holding.amount} ({holding.symbol}) - £{holding.value.toFixed(2)}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No holdings available</p>
+          )}
+        </div>
+
+        <div className="buttons">
+          <button className="wallet-button" onClick={() => setShowQR(true)}>Receive {wallet.coin_symbol}</button>
+          <button className="wallet-button">Send {wallet.coin_symbol}</button>
+          <button className="wallet-button">Buy {wallet.coin_symbol}</button>
+          <button className="wallet-button">Sell {wallet.coin_symbol}</button>
+        </div>
+
       </div>
-      <button onClick={showCryptoDetails} className="more-info-buttons">Crypto Assets</button>
-      {cryptoDetailsDisplay? "Information to be added" : null}
-      <button onClick={showCryptoTransactions} className="more-info-buttons">Recent Transactions</button>
-      {transactionDetails? "Information to be added" : null}
     </div>
   );
 };
 
-export default Setting;
+export default WalletInfo;

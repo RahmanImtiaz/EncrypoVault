@@ -52,16 +52,17 @@ export function App() {
                 <Route path="/market" element={<Market />} />
                 <Route path="/settings" element={<Setting />} />
 
-                {/* Routes for crypto transaction actions */}
-                <Route path="/buy" element={<BuyCrypto />} />
-                <Route path="/sell" element={<SellCrypto />} />
-                <Route path="/send" element={<SendCrypto />} />
-                <Route path="/receive" element={<ReceiveCrypto />} />
-              </Routes>
-            </>
-          )}
-        </div>
-      </Router>
+              {/* Routes for crypto transaction actions */}
+              <Route path="/buy" element={<BuyCrypto />} />
+              <Route path="/sell" element={<SellCrypto />} />
+              <Route path="/send" element={<SendCrypto />} />
+              <Route path="/receive" element={<ReceiveCrypto />} />
+
+            </Routes>
+          </>
+        )}
+      </div>
+    </Router>
     </ToastProvider>
   );
 }
