@@ -1,3 +1,6 @@
+import json
+
+
 class Transaction:
     def __init__(self, timestamp, amount, hash, sender, receiver, name):
         self.timestamp = timestamp
@@ -11,6 +14,16 @@ class Transaction:
         
     def __str__(self):
         return f"Transaction({self.timestamp}, {self.amount}, {self.hash}, {self.sender}, {self.receiver}, {self.name})"
+
+    def toJSON(self):
+        return json.dumps({
+            "timestamp": self.timestamp,
+            "amount": self.amount,
+            "hash": self.hash,
+            "sender": self.sender,
+            "receiver": self.receiver,
+            "name": self.name,
+        })
     
     
     
