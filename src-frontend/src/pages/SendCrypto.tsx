@@ -1,18 +1,19 @@
 import '../styles/SendCrypto.css';
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { useToast } from '../contexts/ToastContext';
 
 const SendCrypto = () => {
   const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState("");
   const [amountToSend, setAmountToSend] = useState("");
-  /*const [amountToReceive, setAmountToReceive] = useState("");*/
   const [confirmMessage, setConfirmMessage] = useState("");
   const [newContact, setNewContact] = useState(false);
   const [existingContactsList, setExistingContactsList] = useState(false);
   const [qrCodeContact, setQrCodeContact] = useState(false);
   const [contactChosen, setContactChosen] = useState("");
   const [activeButton, setActiveButton] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
       setSelectedOption(event.target.value);
@@ -20,34 +21,39 @@ const SendCrypto = () => {
 
   const handleChangeContact = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setContactChosen(event.target.value);
-};
+  };
 
   const sellAction = async (e: React.FormEvent) => {
     e.preventDefault();
         
-        if (!selectedOption) {
-            setConfirmMessage("Please select a cryptocurrency to send.");
-            return;
-        }
+    if (!selectedOption) {
+        setConfirmMessage("Please select a cryptocurrency to send.");
+        showToast("Please select a cryptocurrency to send.", "error");
+        return;
+    }
 
-        if (!amountToSend.trim() || parseFloat(amountToSend) <= 0) {
-            setConfirmMessage("Please enter a valid amount greater than 0.00001.");
-            return;
-        }
+    if (!amountToSend.trim() || parseFloat(amountToSend) <= 0) {
+        setConfirmMessage("Please enter a valid amount greater than 0.00001.");
+        showToast("Please enter a valid amount greater than 0.00001.", "error");
+        return;
+    }
 
-        if (!contactChosen){
-            setConfirmMessage("Please select a contact.");
-            return;
-        }
+    if (!contactChosen){
+        setConfirmMessage("Please select a contact.");
+        showToast("Please select a contact.", "error");
+        return;
+    }
 
-        try {
-            console.log("Crypto sending initiated.");
-            setConfirmMessage("Sent successful!");
-            // Implement the actual purchase logic here
-        } catch (err) {
-            setConfirmMessage("Transaction failed. Please try again.");
-            console.error(err);
-        }
+    try {
+        console.log("Crypto sending initiated.");
+        setConfirmMessage("Sent successful!");
+        showToast("Sent successful!", "success");
+        // Implement the actual purchase logic here
+    } catch (err) {
+        setConfirmMessage("Transaction failed. Please try again.");
+        showToast("Transaction failed. Please try again.", "error");
+        console.error(err);
+    }
   };
 
   const showNewContact = () => {

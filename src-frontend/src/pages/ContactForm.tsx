@@ -1,38 +1,31 @@
 import { useState } from 'react';
 import '../styles/ContactForm.css';
 import api from '../lib/api';
-
+import { useToast } from '../contexts/ToastContext';
 
 export const ContactForm = ({goToList} : {goToList: () => void}) => {
     const [contactName, setContactName] = useState("");
     const [contactAddress, setContactAddress] = useState("");
     const [confirmMessage, setConfirmMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const { showToast } = useToast();
 
     const handleAddContact = async (e: React.FormEvent) => {
         e.preventDefault();
         
         if (!contactName.trim()) {
             setConfirmMessage("Please enter contact name");
+            showToast("Please enter contact name", "error");
             return;
         }
         
         if (!contactAddress.trim()) {
             setConfirmMessage("Please enter an address");
+            showToast("Please enter an address", "error");
             return;
         }
     
         try {
-          // Check if the account already exists
-          //const accounts = await window.pywebview.api.get_accounts();
-          //if (accounts.includes(accountName)) {
-            //  setError("Account already exists. Please choose a different account name.");
-            //  return;
-          //}
-          // Here you would call your backend to register the account
-          //const response = await window.pywebview.api.create_account(accountName, password, accountType)
-          //console.log(response)
-
           // Check if the contact already exists
           const existingContacts = await api.getContacts();
           const nameExists = existingContacts.some(
@@ -43,35 +36,37 @@ export const ContactForm = ({goToList} : {goToList: () => void}) => {
           );
           if (addressExists && nameExists || addressExists || nameExists) {
               setConfirmMessage("A contact with this address and/or name already exists - Both must be unique");
+              showToast("A contact with this address and/or name already exists - Both must be unique", "error");
               return;
           }
           
           setIsLoading(true);
-            const response = await api.addContact(contactName, contactAddress);
-            const data = await response.json();
+          const response = await api.addContact(contactName, contactAddress);
+          const data = await response.json();
 
-            if (response.ok) {
-              console.log("New contact added");
-              setConfirmMessage("Contact added successfully!");
-              // Clear form
-              setContactName("");
-              setContactAddress("");
-              // Navigate back to list after delay
-              setTimeout(() => {
-                  goToList();
-              }, 100);
+          if (response.ok) {
+            console.log("New contact added");
+            setConfirmMessage("Contact added successfully!");
+            showToast("Contact added successfully!", "success");
+            // Clear form
+            setContactName("");
+            setContactAddress("");
+            // Navigate back to list after delay
+            setTimeout(() => {
+                goToList();
+            }, 100);
           } else {
               setConfirmMessage(data.error || "Failed to add contact");
+              showToast(data.error || "Failed to add contact", "error");
           }
-          // onRegister();
         } catch (err) {
           setConfirmMessage("Failed to add contact.");
+          showToast("Failed to add contact", "error");
           console.error(err);
         } finally {
           setIsLoading(false);
         }
-      };
-
+    };
 
     return(
       <form onSubmit={handleAddContact} className="contact-form">
@@ -110,6 +105,5 @@ export const ContactForm = ({goToList} : {goToList: () => void}) => {
   </form>
     )
 }
-
 
 export default ContactForm;

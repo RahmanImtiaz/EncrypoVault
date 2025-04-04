@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Setting.css';
+import { useToast } from '../contexts/ToastContext';
 
 const Setting: React.FC = () => {
   const [accountType, setAccountType] = useState<string>("");
@@ -12,6 +13,7 @@ const Setting: React.FC = () => {
   const [rating, setRating] = useState<string>("5");
   const [email, setEmail] = useState<string>("");
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState<boolean>(false);
+  const { showToast } = useToast();
   
   // Fetch current account type on mount
   useEffect(() => {
@@ -25,11 +27,12 @@ const Setting: React.FC = () => {
         }
       } catch (error) {
         console.error("Failed to fetch account info:", error);
+        showToast("Failed to fetch account info", "error");
       }
     };
     
     fetchAccountInfo();
-  }, []);
+  }, [showToast]);
   
   const handleSwitchAccountType = async () => {
     try {
@@ -48,14 +51,15 @@ const Setting: React.FC = () => {
       if (response.ok) {
         setAccountType(result.accountType);
         setMessage(result.message);
-        
-        
+        showToast(`Account type switched to ${result.accountType}`, "success");
       } else {
         setMessage(result.error || "Failed to switch account type");
+        showToast(result.error || "Failed to switch account type", "error");
       }
     } catch (error) {
       console.error("Error switching account type:", error);
       setMessage("An error occurred while switching account type");
+      showToast("An error occurred while switching account type", "error");
     } finally {
       setIsLoading(false);
     }
@@ -92,6 +96,7 @@ const Setting: React.FC = () => {
       // Since we use no-cors, we can't actually check response status
       // So we'll just assume success
       setFeedbackMessage("Thank you for your feedback!");
+      showToast("Thank you for your feedback!", "success");
       setFeedback("");
       setRating("5");
       setEmail("");
@@ -103,6 +108,7 @@ const Setting: React.FC = () => {
     } catch (error) {
       console.error('Failed to submit feedback:', error);
       setFeedbackMessage("Error submitting feedback. Please try again.");
+      showToast("Error submitting feedback. Please try again.", "error");
     } finally {
       setIsSubmittingFeedback(false);
     }
