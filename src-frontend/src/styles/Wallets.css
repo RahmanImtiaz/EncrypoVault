@@ -212,9 +212,9 @@ body {
 }
 
 .wallet-item {
-  width: calc(33.33% - 14px);
-  min-width: 300px;
-  max-width: 400px;
+  width: calc(50% - 14px);
+  min-width: 400px; 
+  max-width: 600px;
   flex: 0 0 auto;
   background: var(--bg-card);
   border-radius: 16px;
