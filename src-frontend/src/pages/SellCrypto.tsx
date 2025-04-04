@@ -1,5 +1,5 @@
 import '../styles/SellCrypto.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
 
@@ -9,6 +9,15 @@ export const SellCrypto = () => {
     const [amountToSell, setAmountToSell] = useState("");
     const [confirmMessage, setConfirmMessage] = useState("");
     const { showToast } = useToast();
+    const savedTheme = localStorage.getItem('theme');
+
+    useEffect(() => {
+        if (savedTheme === 'light')
+        document.body.classList.add('light-mode');
+        else 
+        document.body.classList.remove('light-mode');
+    }, [savedTheme]);
+
 
     const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedOption(event.target.value);

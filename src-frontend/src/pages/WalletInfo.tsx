@@ -57,6 +57,14 @@ const WalletInfo = () => {
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
   const navigate = useNavigate();
   const {priceData} = fetchPrice(); 
+  const savedTheme = localStorage.getItem('theme');
+
+  useEffect(() => {
+    if (savedTheme === 'light')
+      document.body.classList.add('light-mode');
+    else 
+      document.body.classList.remove('light-mode');
+  }, [savedTheme]);
 
   // Mock transaction data
   const transactions = useState<Transaction[]>([

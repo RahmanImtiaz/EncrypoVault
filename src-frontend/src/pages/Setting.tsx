@@ -14,21 +14,20 @@ const Setting: React.FC = () => {
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState<boolean>(false);
   const { showToast } = useToast();
   
-  const savedTheme = localStorage.getItem("theme");
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(savedTheme === "dark");
+  const savedTheme = localStorage.getItem('theme');
+
   useEffect(() => {
-    if (isDarkMode){
-      document.body.classList.add('dark-mode');
-    }
-    else {
-      document.body.classList.remove('dark-mode');
-    }
-    
-    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
-  }, [isDarkMode]);
+    if (savedTheme === 'light')
+      document.body.classList.add('light-mode');
+    else 
+      document.body.classList.remove('light-mode');
+  }, [savedTheme]);
+
   
   const handleThemeToggle = () : void => {
-    setIsDarkMode(!isDarkMode);
+    const currentTheme = localStorage.getItem('theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    localStorage.setItem('theme', newTheme);
   }
   
   // Fetch current account type on mount
@@ -169,7 +168,7 @@ const Setting: React.FC = () => {
 
           <button className = "theme-toggle-button"
           onClick={handleThemeToggle}>
-            Toggle {isDarkMode ? "Light" : "Dark"} Mode
+            Toggle {savedTheme} Mode
           </button>
         </div>
         
