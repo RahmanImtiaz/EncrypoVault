@@ -42,6 +42,28 @@ class CryptoRoutes:
                 )
             return {"data": wallets}, 200
 
+        @crypto_bp.route("/wallets/send_crypto", methods=["POST"])
+        def send_crypto_from_wallet():
+            data = json.loads(request.data)
+            required_values = ["walletName", "amount", "destinationAddress"]
+
+            for required_value in required_values:
+                if required_value not in data:
+                    return {"error": f"{required_value} not found"}, 400
+
+            wallet_name = data["walletName"]
+            amount = data["amount"]
+            destination = data["destinationAddress"]
+            account = AccountsFileManager.get_instance().get_loaded_account()
+            wallet = account.get_wallets()[wallet_name]
+
+            if wallet is None:
+                return {"error": f"{wallet_name} not found"}, 404
+
+            txid = wallet.crypto_handler.send_tx(amount, destination)
+            return {"success": True, "txid": txid}, 200
+
+
         @crypto_bp.route("/wallets", methods=["POST"])
         def create_wallet():
 

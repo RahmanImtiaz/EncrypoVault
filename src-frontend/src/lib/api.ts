@@ -120,6 +120,24 @@ async function getWallets() {
     }
 }
 
+async function sendCrypto(walletName: string, amount: number, destinationAddress: string) {
+    try {
+        await fetch("/api/crypto/wallets/send_crypto", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                walletName,
+                amount,
+                destinationAddress
+            })
+        })
+    } catch (e) {
+        console.error(`Error trying to send crypto: ${e}`)
+    }
+}
+
 async function addContact(name: string, address: string): Promise<Response> {
     return fetch("/api/contacts/add", {
         method: "POST",
@@ -151,5 +169,6 @@ export default {
     addContact,
     getContacts,
     createWallet,
-    getWallets
+    getWallets,
+    sendCrypto
 }
