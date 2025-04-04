@@ -14,6 +14,7 @@ import BuyCrypto from './pages/BuyCrypto';
 import SellCrypto from './pages/SellCrypto';
 import SendCrypto from './pages/SendCrypto';
 import ReceiveCrypto from './pages/ReceiveCrypto';
+import WalletInfo  from './pages/WalletInfo';
 import { ToastProvider } from './contexts/ToastContext';
 
 export function App() {
@@ -57,6 +58,9 @@ export function App() {
               <Route path="/sell" element={<SellCrypto />} />
               <Route path="/send" element={<SendCrypto />} />
               <Route path="/receive" element={<ReceiveCrypto />} />
+
+              {/* Route for WalletInfo */}
+              <Route path="/walletInfo" element={<WalletInfo />} />
 
             </Routes>
           </>
