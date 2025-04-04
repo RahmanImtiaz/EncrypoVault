@@ -70,7 +70,7 @@ class BitcoinWalletHandler(HandlerInterface):
 
     def get_balance(self):
         self.wallet.scan()
-        return self.wallet.balance(network="testnet")
+        return self.wallet.balance(network="testnet")/100000000
 
     def toJSON(self):
         return json.dumps({
