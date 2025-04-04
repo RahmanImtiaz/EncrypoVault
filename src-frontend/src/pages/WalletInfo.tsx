@@ -67,10 +67,13 @@ const WalletInfo = () => {
 
       <div className='wallet-details'>
         <div className='wallet-balance'>
-          <h3>Balance: {wallet.balance} {wallet.coin_symbol}</h3>
+          <h3 className='big'>Balance: {wallet.balance} {wallet.coin_symbol}</h3>
         </div>
         <div className='wallet-address'>
           <h3>Address: {wallet.address}</h3>
+        </div>
+        <div className='wallet-coin-symbol'>
+          <h4 className='smaller'>Coin Symbol: {wallet.coin_symbol}</h4>
         </div>
         <div className='wallet-holdings'>
           <h3>Holdings:</h3>
