@@ -13,6 +13,7 @@ export function Login({ onLogin, toggleForm }: LoginProps) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [accounts, setAccounts] = useState<string[]>([]);
+  localStorage.setItem("theme", "dark");
   const { showToast } = useToast();
 
   // Check biometric support when component mounts

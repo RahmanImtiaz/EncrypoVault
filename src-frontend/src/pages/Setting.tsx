@@ -7,13 +7,29 @@ const Setting: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [feedbackMessage, setFeedbackMessage] = useState<string>("");
-  
   // Form states for feedback
   const [feedback, setFeedback] = useState<string>("");
   const [rating, setRating] = useState<string>("5");
   const [email, setEmail] = useState<string>("");
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState<boolean>(false);
   const { showToast } = useToast();
+  
+  const savedTheme = localStorage.getItem("theme");
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(savedTheme === "dark");
+  useEffect(() => {
+    if (isDarkMode){
+      document.body.classList.add('dark-mode');
+    }
+    else {
+      document.body.classList.remove('dark-mode');
+    }
+    
+    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+  }, [isDarkMode]);
+  
+  const handleThemeToggle = () : void => {
+    setIsDarkMode(!isDarkMode);
+  }
   
   // Fetch current account type on mount
   useEffect(() => {
@@ -142,14 +158,20 @@ const Setting: React.FC = () => {
             <p>Tester accounts are for development and testing purposes only.</p>
           )}
         </div>
-        
-        <button 
-          className="switch-type-button"
-          onClick={handleSwitchAccountType}
-          disabled={isLoading || accountType === "Tester"}
-        >
-          {isLoading ? "Switching..." : getButtonText()}
-        </button>
+        <div className='settings-buttons'>
+          <button 
+            className="switch-type-button"
+            onClick={handleSwitchAccountType}
+            disabled={isLoading || accountType === "Tester"}
+          >
+            {isLoading ? "Switching..." : getButtonText()}
+          </button>
+
+          <button className = "theme-toggle-button"
+          onClick={handleThemeToggle}>
+            Toggle {isDarkMode ? "Light" : "Dark"} Mode
+          </button>
+        </div>
         
         {message && <p className="settings-message">{message}</p>}
       </div>
