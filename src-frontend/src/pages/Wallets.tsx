@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Wallets.css';
+import fetchPrice from '../components/fetchPrice';
 import { useToast } from '../contexts/ToastContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -27,6 +28,7 @@ const Wallets: React.FC = () => {
   const [isCreatingWallet, setIsCreatingWallet] = useState<boolean>(false);
   const [newWalletName, setNewWalletName] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const {priceData} = fetchPrice();
   const [copiedAddresses, setCopiedAddresses] = useState<{[key: string]: boolean}>({});
   const { showToast } = useToast();
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);  
@@ -36,8 +38,7 @@ const Wallets: React.FC = () => {
     fetchWallets();
   }, []);
 
-
-
+  console.log('Price data:', priceData);
   const handleWalletClick = (wallet: Wallet) => {
     setSelectedWallet(wallet);
     console.log('Selected wallet:', wallet);
@@ -81,6 +82,7 @@ const Wallets: React.FC = () => {
     try {
       setLoading(true);
       const wallets = await window.api.getWallets();
+      console.log('Fetched wallets:', wallets);
       setWallets(wallets);
       setFilteredWallets(wallets);
     } catch (err) {
@@ -211,7 +213,18 @@ const Wallets: React.FC = () => {
             >
               <div className="wallet-header">
                 <h3 className="wallet-name">{wallet.name}</h3>
-                <span className="wallet-balance">£{wallet.balance.toFixed(2)}</span>
+                <span className="wallet-balance">
+                  {(() => {
+                  const priceKey = wallet.coin_symbol === "BTC" ? "BTC-GBP" : "ETH-GBP";
+                  const price = priceData?.[priceKey];
+                  
+                  if (price !== undefined) {
+                    return `£${(wallet.balance * Number(price)).toFixed(2)}`;
+                  } else {
+                    return `£${wallet.balance.toFixed(2)}`;
+                  }
+                  })()}
+                </span>
               </div>
               <div className="wallet-content">
                 <div className="wallet-details">
@@ -251,7 +264,7 @@ const Wallets: React.FC = () => {
                   <div className="wallet-detail-row">
                     <span className="wallet-detail-label">Holdings:</span>
                     <span className="wallet-detail-value">
-                      {Object.keys(wallet.holdings).length} assets
+                        {wallet.balance} {wallet.coin_symbol}
                     </span>
                   </div>
                 </div>

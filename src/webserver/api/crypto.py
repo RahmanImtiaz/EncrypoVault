@@ -7,6 +7,7 @@ import asyncio
 from AccountsFileManager import AccountsFileManager
 from ConcreteCryptoObserver import ConcreteCryptoObserver
 from ExchangeSocket import ExchangeSocket
+from ExchangeSocketCR import PriceSocket
 from Wallet import Wallet
 from crypto_impl.BitcoinWalletHandler import BitcoinWalletHandler
 from crypto_impl.WalletType import WalletType
@@ -187,6 +188,22 @@ class CryptoRoutes:
                     finally:
                         loop.close()
                     self.send_socket_message(response_event, result)
+                    
+                case 'get_price':
+                    price_socket = PriceSocket()
+                    # if the price socket is not connected then pull from the price.json else if it is connected then pull from 
+                    # pricesocket.price_cache
+                    
+                    if not price_socket.is_connected():
+                        # load the price cache from the file
+                        with open(price_socket.price_file, 'r') as f:
+                            price_socket.price_cache = json.load(f)
+                    
+                    
+                    # send the whole price cache front end can deal with it
+                    
+                    self.send_socket_message("price_cache", price_socket.price_cache)
+                    
 
         self.socket = socket
         self.ws_prefix = ws_prefix

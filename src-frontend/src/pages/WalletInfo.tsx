@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { QRCodeComponent } from '../components/generateQR';
+import fetchPrice from '../components/fetchPrice';
 import '../styles/WalletInfo.css';
 
 interface Holding {
@@ -26,6 +27,7 @@ const WalletInfo = () => {
   const wallet = location.state?.wallet as Wallet;
   const [showQR, setShowQR] = useState(false);
   const navigate = useNavigate();
+  const {priceData} = fetchPrice(); 
 
   useEffect(() => {
     console.log('WalletInfo received:', wallet);
@@ -68,8 +70,19 @@ const WalletInfo = () => {
       </div>
 
       <div className='wallet-details'>
-        <div className='wallet-balance'>
-          <h3 className='big'>Balance: {wallet.balance} {wallet.coin_symbol}</h3>
+        <div className="wallet-balance">
+          <h3 className='big'>Balance:
+            {(() => {
+            const priceKey = wallet.coin_symbol === "BTC" ? "BTC-GBP" : "ETH-GBP";
+            const price = priceData?.[priceKey];
+            
+            if (price !== undefined) {
+              return `£${(wallet.balance * Number(price)).toFixed(2)}`;
+            } else {
+              return `£${wallet.balance.toFixed(2)}`;
+            }
+            })()}
+          </h3>
         </div>
         <div className='wallet-address'>
           <h3>Address: {wallet.address}</h3>
@@ -85,17 +98,7 @@ const WalletInfo = () => {
         </div>
         <div className='wallet-holdings'>
           <h3>Holdings:</h3>
-          {Object.keys(wallet.holdings).length > 0 ? (
-            <ul className="holdings-list">
-              {Object.entries(wallet.holdings).map(([key, holding]) => (
-                <li key={key}>
-                  {holding.name}: {holding.amount} ({holding.symbol}) - £{holding.value.toFixed(2)}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No holdings available</p>
-          )}
+            <p className="balance-display">{wallet.balance} {wallet.coin_symbol}</p>
         </div>
 
         

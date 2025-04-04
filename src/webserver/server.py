@@ -4,13 +4,13 @@ import signal
 import sys
 import threading
 import atexit
-
+import asyncio
 from flask import Flask, send_from_directory, request, jsonify
 
 from AccountsFileManager import AccountsFileManager
 from webserver.api.api import ApiRoutes
 from API import WebviewAPI
-
+from ExchangeSocketCR import PriceSocket
 
 class FlaskServer:
 
@@ -22,6 +22,8 @@ class FlaskServer:
         self.app = Flask(__name__)
         self.port = 9209
         self.api = WebviewAPI()
+        self.price_socket = PriceSocket()
+        self.start_price_socket()
 
 
         # register api routes (the ones starting from /api)
@@ -68,6 +70,14 @@ class FlaskServer:
             except Exception as e:
                 print(f"Error getting wallets: {str(e)}")
                 return jsonify({"error": str(e)}), 500
+            
+    def start_price_socket(self):
+        def run_socket():
+            asyncio.set_event_loop(asyncio.new_event_loop())
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(self.price_socket.connect_to_exchange())
+            loop.run_forever()
+        threading.Thread(target=run_socket, daemon=True).start()
             
     def register_contacts_routes(self):
         """Register contact-related routes with the Flask app"""
