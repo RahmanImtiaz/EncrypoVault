@@ -69,7 +69,8 @@ class BitcoinWalletHandler(HandlerInterface):
         return self.wallet.get_key().address
 
     def get_balance(self):
-        return self.wallet.balance()
+        self.wallet.scan()
+        return self.wallet.balance(network="testnet")
 
     def toJSON(self):
         return json.dumps({
