@@ -91,7 +91,6 @@ class PriceSocket:
             while self.session:
                 await asyncio.sleep(9)
                 await self.save_price_cache()
-                print("Price cache saved.")
         except asyncio.CancelledError:
             print("Periodic price saving task cancelled.")
         except Exception as e:

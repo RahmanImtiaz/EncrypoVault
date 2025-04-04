@@ -38,7 +38,7 @@ const Wallets: React.FC = () => {
     fetchWallets();
   }, []);
 
-  console.log('Price data:', priceData);
+
   const handleWalletClick = (wallet: Wallet) => {
     setSelectedWallet(wallet);
     console.log('Selected wallet:', wallet);
