@@ -39,6 +39,8 @@ body {
   background-color: var(--bg-card);
   border-radius: 16px;
   box-shadow: var(--shadow-md);
+  max-height: 92vh; 
+  overflow-y: auto; 
 }
 
 /* Search Section */
