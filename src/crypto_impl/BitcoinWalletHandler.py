@@ -4,6 +4,7 @@ import bitcoinlib
 import pycoin
 from bitcoinlib.keys import HDKey
 from bitcoinlib.networks import Network
+from bitcoinlib.services.bitcoind import BitcoindClient
 from pycoin.networks.bitcoinish import create_bitcoinish_network
 
 #from pycoin.symbols.xtn import network
@@ -21,7 +22,7 @@ class BitcoinWalletHandler(HandlerInterface):
     def __init__(self, name):
         self._name = name
 
-        self.localDev = True
+        self.localDev = False
 
         if self.localDev:
             REGTEST_PARAMS = dict(
@@ -56,7 +57,8 @@ class BitcoinWalletHandler(HandlerInterface):
 
     def get_service(self):
         if self.localDev:
-            return bitcoinlib.services.services.Service(network='regtest', providers=['my_auth_proxy'])
+            return BitcoindClient(base_url='http://testuser:testpass@localhost:18443')
+            #return bitcoinlib.services.services.Service(network='regtest', rpc_url)
         else:
             return bitcoinlib.services.services.Service(network="testnet")
 
@@ -146,7 +148,7 @@ class BitcoinWalletHandler(HandlerInterface):
         return self._pycoin_key.address()
 
     def get_balance(self):
-        svc = bitcoinlib.services.services.Service(network="testnet")
+        svc = self.get_service()
         bal: int = svc.getbalance(addresslist=[self.get_address()])
         return bal
 
@@ -160,79 +162,3 @@ class BitcoinWalletHandler(HandlerInterface):
     @staticmethod
     def get_wallet_type() -> WalletType:
         return WalletType.BITCOIN
-
-
-from bitcoinlib.services.authproxy import AuthServiceProxy
-from bitcoinlib.services.baseclient import BaseClient
-from bitcoinlib.services.bitcoind import BitcoindClient
-
-
-class MyAuthProxyService(BitcoindClient):
-    """
-    Custom service using AuthServiceProxy for all RPC calls
-    """
-
-    def __init__(self, network, base_url, denominator, *args, **kwargs):
-        super().__init__(network, base_url, denominator, *args, **kwargs)
-
-        # Set up AuthServiceProxy connection
-        rpc_user = kwargs.get('rpc_user', 'testuser')
-        rpc_password = kwargs.get('rpc_password', 'testpass')
-        rpc_host = kwargs.get('rpc_host', '127.0.0.1')
-        rpc_port = kwargs.get('rpc_port', 18443)  # Default regtest port
-
-        # Create the RPC URL
-        self.rpc_url = f'http://{rpc_user}:{rpc_password}@{rpc_host}:{rpc_port}'
-        self.rpc = AuthServiceProxy(self.rpc_url)
-
-    # Override necessary methods to use the AuthServiceProxy
-    def getbalance(self, addresslist):
-        balance = 0
-        for address in addresslist:
-            try:
-                address_unspent = self.rpc.listunspent(0, 99999, [address])
-                for unsp in address_unspent:
-                    balance += unsp['amount']
-            except Exception as e:
-                self.errors.append(f"Error retrieving balance: {e}")
-        return int(balance * self.units)
-
-    def getutxos(self, address, after_txid='', max_txs=999999999):
-        try:
-            address_unspent = self.rpc.listunspent(0, 99999, [address])
-            utxos = []
-            for unsp in address_unspent:
-                utxos.append({
-                    'address': address,
-                    'txid': unsp['txid'],
-                    'confirmations': unsp['confirmations'],
-                    'output_n': unsp['vout'],
-                    'input_n': 0,
-                    'block_height': 0,  # You may need to get this separately
-                    'fee': 0,
-                    'size': 0,
-                    'value': int(unsp['amount'] * self.units),
-                    'script': unsp['scriptPubKey'],
-                    'date': None  # You can add transaction date if needed
-                })
-            return utxos
-        except Exception as e:
-            self.errors.append(f"Error retrieving UTXOs: {e}")
-            return []
-
-    def sendrawtransaction(self, rawtx):
-        try:
-            return self.rpc.sendrawtransaction(rawtx)
-        except Exception as e:
-            self.errors.append(f"Error sending raw transaction: {e}")
-            return False
-
-    # Implement any other methods you need that use the RPC connection
-    # For example:
-    def gettransaction(self, txid):
-        try:
-            raw_tx = self.rpc.getrawtransaction(txid, 1)
-            return self._convert_to_transaction(raw_tx)
-        except Exception as e:
-            self.errors.append(f"Error retrieving transaction: {e}")
-            return None
