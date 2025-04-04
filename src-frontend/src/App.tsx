@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import './App.css';
 import Login from './Login';
 import Register from './Register';
@@ -20,6 +20,38 @@ import { ToastProvider } from './contexts/ToastContext';
 export function App() {
   const [isLogin, setIsLogin] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [lastClicked, setLastClicked] = useState<string | null>(null);
+
+  const handleClick = () => {
+    const currentTime = new Date().toISOString();
+    setLastClicked(currentTime);
+  }
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const checkInActivity = setInterval(() => {
+      if (lastClicked){
+        const currentTime = new Date();
+        const lastClick = new Date(lastClicked);
+
+        // CHANGE THE TIME HERE !!!!!!!!!!!!!!!!!!!!!!
+        if (currentTime.getTime() - lastClick.getTime() > 1000 * 60 * 10){
+          handleLogout();
+        }
+      }
+    }, 1000 * 10); // Check every 10 seconds
+    
+    return () => clearInterval(checkInActivity);
+  }, [lastClicked, isAuthenticated]);
+
+
+  useEffect(() => {
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('click', handleClick);
+    }
+  }, []);
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
