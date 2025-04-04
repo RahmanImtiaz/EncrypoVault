@@ -71,7 +71,11 @@ export function Register({ toggleForm }: RegisterProps) {
         
         console.log("Account created successfully with Touch ID");
         showToast("Account created successfully with Touch ID", "success");
-        setError("Account created successfully");
+        
+        // Redirect to login page after 2 seconds
+        setTimeout(() => {
+          toggleForm();
+        }, 2000);
       } else {
         // For Windows and other platforms: Use WebAuthn
         console.log("Using WebAuthn for registration");
@@ -90,9 +94,12 @@ export function Register({ toggleForm }: RegisterProps) {
         console.log(response);
         console.log("Account created successfully with WebAuthn");
         showToast("Account created successfully with WebAuthn", "success");
-        setError("Account created successfully");
+        
+        // Redirect to login page after 2 seconds
+        setTimeout(() => {
+          toggleForm();
+        }, 2000);
       }
-      // onRegister(); // Uncomment if you want to automatically log in after registration
     } catch (err) {
       setError("Registration failed. Please try again.");
       showToast("Registration failed. Please try again.", "error");
@@ -174,7 +181,8 @@ export function Register({ toggleForm }: RegisterProps) {
                 aria-label="Confirm Password input"
               />
 
-              {error && <p className="error-message">{error}</p>}
+              {/* Only show error messages for validation errors, not success */}
+              {error && !error.includes("success") && <p className="error-message">{error}</p>}
 
               <button type="submit" className="login-button">
                 Register
