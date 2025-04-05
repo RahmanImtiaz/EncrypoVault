@@ -1,10 +1,12 @@
 import json
+from datetime import datetime
 
 import bitcoinlib
 from bitcoinlib.keys import HDKey
 from bitcoinlib.wallets import wallet_create_or_open
 
 import AccountsFileManager
+from Transaction import Transaction
 from crypto_impl.HandlerInterface import HandlerInterface
 from crypto_impl.WalletType import WalletType
 
@@ -50,9 +52,20 @@ class BitcoinWalletHandler(HandlerInterface):
         return ctx.ChildKey(ind)
 
     def send_tx(self, amount, destination_address):
-        if amount < 0:
+        if amount < 1:
             amount = amount * 100000000
         tx = self.wallet.send_to(destination_address, amount, broadcast=True)
+        acc = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account()
+        if tx is not None and tx.txid is not None:
+            transaction_entry = Transaction(
+                timestamp=datetime.now(),
+                amount=amount,
+                hash=tx.txid,
+                sender=self.wallet.get_key().address,
+                receiver=destination_address,
+                name=self._name
+            )
+            acc.transactionLog.add_to_transaction_log(transaction_entry)
         return tx.txid
 
     def get_tx_info(self, tx_id):
