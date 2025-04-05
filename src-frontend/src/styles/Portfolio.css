@@ -256,3 +256,63 @@ html, body {
 .transactionHistory .transactionList li p strong {
   color: #4facfe; /* Highlighted text in gradient blue */
 }
+
+body.light-mode {
+  background: #f4f4f4; 
+  color: #333; 
+}
+
+
+body.light-mode .portfolioContainer {
+  background: #ffffff; 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+body.light-mode .balanceContainer {
+  background: linear-gradient(135deg, rgba(220, 220, 220, 0.7), rgba(245, 245, 245, 0.9));
+  box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.1);
+}
+
+
+body.light-mode .actionButton {
+  background: linear-gradient(92.23deg, var(--primary-light) 21.43%, var(--primary) 119.36%);
+  color: white; 
+  transition: all 0.3s ease;
+}
+
+body.light-mode .actionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -10px rgba(54, 113, 233, 0.3);
+}
+
+
+body.light-mode .account-type-badge {
+  color: #333;
+}
+
+
+body.light-mode .account-type-badge[data-type="Beginner"] {
+  background: linear-gradient(92.23deg, #a1c4fd 0%, #c2e9fb 100%);
+}
+
+body.light-mode .account-type-badge[data-type="Advanced"] {
+  background: linear-gradient(92.23deg, #fbc2eb 0%, #a6c1ee 100%);
+}
+
+body.light-mode .account-type-badge[data-type="Tester"] {
+  background: linear-gradient(92.23deg, #fda085 0%, #f6d365 100%);
+}
+
+
+body.light-mode .holdingItem {
+  background: #fff;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+body.light-mode .holdingDetails {
+  background: #fafafa;
+  color: #333;
+  border: 1px solid #eee;
+}
