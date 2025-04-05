@@ -69,6 +69,22 @@ async function getPortfolioBalance() {
     }
 }
 
+async function getPortfolioWallets() {
+    try {
+        const response = await fetch("/api/portfolio/wallets");
+        const data = await response.json();
+
+        // Process and structure the wallet data
+        return (data.wallets || []).map((wallet: any) => ({
+            name: wallet.name,
+            address: wallet.address || "",
+            holdings: wallet.holdings || {}, // Holdings for each cryptocurrency
+        }));
+    } catch (error) {
+        console.error("Error fetching portfolio wallets:", error);
+        return [];
+    }
+}
 
 let cryptoSocket: Socket|null = null
 async function getCryptoSocket() {
@@ -179,6 +195,7 @@ export default {
     getWebauthnLoginOpts,
     getWebauthnRegOpts,
     getPortfolioBalance,
+    getPortfolioWallets,
     getCryptoSocket,
     addContact,
     getContacts,

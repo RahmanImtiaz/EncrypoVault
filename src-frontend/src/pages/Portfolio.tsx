@@ -91,7 +91,6 @@ const Portfolio: React.FC = () => {
     try {
       const balance = await window.api.getPortfolioBalance();
 
-
       const wallets: Wallet[] = await window.api.getWallets();
       setWallets(wallets);
 
@@ -272,7 +271,7 @@ const Portfolio: React.FC = () => {
 
   return (
     <div className="portfolioContainer">
-      <div className="balanceSection">
+      <div className="balanceContainer">
         <h2 className="balanceHeading">Total Balance</h2>
         <p className="total">£{balance.toFixed(2)}</p>
       </div>
