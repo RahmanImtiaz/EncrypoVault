@@ -155,20 +155,20 @@ const Portfolio: React.FC = () => {
     setTransactionType(transaction);
   };
 
-  const handleWalletClick = (wallet: Wallet) => {
+  const handleWalletSelect = (wallet: Wallet) => {
     setChosenWallet(wallet);
     switch (transactionType) {
       case "receive":
         setShowQR(true);
         break;
       case "send":
-        navigate('/SendCrypto', { state: { wallet } });
+        navigate('/send', { state: { wallet } });
         break;
       case "buy":
-        navigate('/BuyCrypto', { state: { wallet } });
+        navigate('/buy', { state: { wallet } });
         break;
       case "sell":
-        navigate('/SellCrypto', { state: { wallet } });
+        navigate('/sell', { state: { wallet } });
         break;
       default:
         console.warn('Unknown transaction type');
@@ -232,7 +232,7 @@ const Portfolio: React.FC = () => {
                 <div
                   key={index}
                   className="wallet-item"
-                  onClick={() => handleWalletClick(wallet)}
+                  onClick={() => handleWalletSelect(wallet)}
                 >
                   <div className="wallet-header">
                     <h3 className="wallet-name">{wallet.name}</h3>
