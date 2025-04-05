@@ -1,20 +1,13 @@
-
- import useCryptoData from "./useCryptoData";
- import Candlestick from "./graphs/candlestick";
-
+import useCryptoData from "./useCryptoData";
+import Candlestick from "./graphs/candlestick";
+import LineGraph from "./graphs/linegraph";
 import { useState } from "react";
 
- 
- // this is a functional component that will display both basic and advanced details of a cryptocurrency
- 
- // once again the implementation to switch between the two will be done by someone else
- 
- 
- // this will also provide the candlestick graph option for the cryptocurrency
- 
- // the time range will be between 1 - 30 days
- 
- 
+// this is a functional component that will display both basic and advanced details of a cryptocurrency
+// once again the implementation to switch between the two will be done by someone else
+// this will also provide the candlestick graph option for the cryptocurrency
+// the time range will be between 1 - 30 days
+
 interface AdvancedDetailsProps {
     cryptoId: string;
 }
@@ -22,6 +15,7 @@ interface AdvancedDetailsProps {
 const AdvancedDetails = ({ cryptoId }: AdvancedDetailsProps) => {
      const { cryptoData, isLoading, error } = useCryptoData(cryptoId);
      const [timeRange, setTimeRange] = useState(30);
+     const [graphType, setGraphType] = useState<'candlestick' | 'line'>('candlestick');
      const allowedDays = [1, 7, 14, 30, 90, 180, 365];
      console.log("received cryptoid", cryptoId);
     
@@ -70,22 +64,48 @@ const AdvancedDetails = ({ cryptoId }: AdvancedDetailsProps) => {
              </div>
  
              <div className="graph-holder">
-                 <div className="time-range">
-                     <select
-                         value={timeRange}
-                         onChange={(e) => setTimeRange(Number(e.target.value))}
-                      >
-                         {allowedDays.map((day) => (
-                         <option key={day} value={day}>
-                             {day} day{day > 1 ? 's' : ''}
-                         </option>
-                         ))}
-                     </select>
+                 <h3 className="graph-section-title">Price Chart</h3>
+                 <div className="graph-controls">
+                     <div className="time-range">
+                         <label>Time Range:</label>
+                         <select
+                             value={timeRange}
+                             onChange={(e) => setTimeRange(Number(e.target.value))}
+                          >
+                             {allowedDays.map((day) => (
+                             <option key={day} value={day}>
+                                 {day} day{day > 1 ? 's' : ''}
+                             </option>
+                             ))}
+                         </select>
+                     </div>
+                     
+                     <div className="graph-type-toggle-container">
+                         <label>Chart Type:</label>
+                         <div className="graph-type-toggle">
+                             <button 
+                                 className={`graph-toggle-btn ${graphType === 'candlestick' ? 'active' : ''}`}
+                                 onClick={() => setGraphType('candlestick')}
+                             >
+                                 Candlestick
+                             </button>
+                             <button 
+                                 className={`graph-toggle-btn ${graphType === 'line' ? 'active' : ''}`}
+                                 onClick={() => setGraphType('line')}
+                             >
+                                 Line Graph
+                             </button>
+                         </div>
+                     </div>
                  </div>
  
                  <div className="graph">
                  {cryptoId ? (
-                    <Candlestick crypto_id={cryptoId} time_range={timeRange} />
+                    graphType === 'candlestick' ? (
+                        <Candlestick crypto_id={cryptoId} time_range={timeRange} />
+                    ) : (
+                        <LineGraph crypto_id={cryptoId} time_range={timeRange} />
+                    )
                     ) : (
                       <p>No cryptocurrency selected.</p>
                     )}
