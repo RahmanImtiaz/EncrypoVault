@@ -25,6 +25,79 @@ body {
     font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
+.return-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+    height: 100vh;
+    position: relative;
+}
+
+/* Slide-in tutorial panel */
+.instructionBox {
+    background: rgba(19, 24, 63, 0.6); /* Semi-transparent for glass effect */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    width: 28vw;
+    max-width: 400px;
+    color: var(--text-light);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.5s ease forwards;
+    position: relative;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: translateX(-20px);
+    opacity: 0;
+    animation-fill-mode: forwards;
+}
+
+.instructionBox p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-top: 1rem;
+}
+
+.close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    border-radius: 50%;
+    color: var(--text-light);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background 0.2s ease, transform 0.2s ease;
+    z-index: 2;
+}
+
+.close-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* Slide-in animation */
+@keyframes slideIn {
+    0% {
+        transform: translateX(-40px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+
 .main-label {
     color: #ffffff;
     /*font-style: normal;*/
@@ -93,8 +166,7 @@ body {
 
 
 #amount{
-    flex: 40%;
-    text-align: right;
+    text-align: left;
     border: none;
     background-color: transparent;
     font-size: 1.2rem;
@@ -140,6 +212,10 @@ body {
 #receive-amount p {
     margin: 0;
     line-height: 1;
+}
+
+.buttons{
+    margin-top: 2rem;
 }
 
 .goBack{

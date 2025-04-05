@@ -2,6 +2,7 @@ import '../styles/SellCrypto.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
+import useCryptoPrice from '../components/fetchPrice';
 
 
 interface Holding {
@@ -22,15 +23,27 @@ interface Holding {
   }
 
 
+  interface PriceData {
+    market_data?: {
+      current_price: {
+        gbp: number;
+        [key: string]: number;
+      };
+    };
+  }
+
+
 export const SellCrypto = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const wallet = location.state?.wallet as Wallet;
-    const [selectedOption, setSelectedOption] = useState("");
     const [amountToSell, setAmountToSell] = useState("");
-    const [confirmMessage, setConfirmMessage] = useState("");
+    //const [confirmMessage, setConfirmMessage] = useState("");
     const { showToast } = useToast();
+    const { priceData } = useCryptoPrice() as { priceData: PriceData | null };
     const savedTheme = localStorage.getItem('theme');
+    const rate = priceData?.market_data?.current_price.gbp;
+    const [showTutorial, setShowTutorial] = useState<boolean>(false);
 
     useEffect(() => {
         if (savedTheme === 'light')
@@ -40,66 +53,62 @@ export const SellCrypto = () => {
     }, [savedTheme]);
 
 
-    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedOption(event.target.value);
-    };
-
     const sellAction = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        if (!selectedOption) {
-            setConfirmMessage("Please select a cryptocurrency to sell.");
-            showToast("Please select a cryptocurrency to sell.", "error");
-            return;
-        }
 
         if (!amountToSell.trim() || parseFloat(amountToSell) <= 0) {
-            setConfirmMessage("Please enter a valid amount greater than 0.00001.");
+            //setConfirmMessage("Please enter a valid amount greater than 0.00001.");
             showToast("Please enter a valid amount greater than 0.00001.", "error");
             return;
         }
 
         try {
             console.log("Crypto selling initiated.");
-            setConfirmMessage("Selling successful!");
+            //setConfirmMessage("Selling successful!");
             showToast("Selling successful!", "success");
             // Implement the actual purchase logic here
         } catch (err) {
-            setConfirmMessage("Transaction failed. Please try again.");
+            //setConfirmMessage("Transaction failed. Please try again.");
             showToast("Transaction failed. Please try again.", "error");
             console.error(err);
         }
     };
 
     return (
-        <div>
-        <form onSubmit={sellAction} className="sell-form">
-            <label htmlFor="" className="main-label">Sell Crypto</label>
-            <label htmlFor="toSell" id="sellLabel">Crypto Assets</label>
-            <div className="toSell">
-                <select id="crypto-dropdown" value={selectedOption} onChange={handleChange}>
-                    <option value="">--Choose an option--</option>
-                    <option value="Bitcoin">Bitcoin</option>
-                    <option value="Ethereum">Ethereum</option>
-                    <option value="Bitcoin Dogs">Bitcoin Dogs</option>
-                    <option value="name">{wallet.name}</option>
-                    <option value="Hello">Hello</option>
-                </select>
-                <input type="text" min="0.00001" step="0.000001" onChange={(e) => setAmountToSell(e.target.value)} name="amount" id="amount" placeholder="Enter Amount" className="sellingInput"/>
-            </div>
-            <div className="information">
-                <p>Total Owned: ...</p>
-                <p>Rate: 1 {selectedOption} = "£..."</p>
-            </div>
-            <label htmlFor="receive-amount" id="receive-label">You will Receive</label>
-            <div id="receive-amount">
-                <p>£25.43</p>
-            </div>
-            <div className="buttons">
-                <button type="button" className="goBack" onClick={() => navigate(-1)}>Cancel</button>
-                <button type="submit" className="send-button">Sell</button>
-            </div>
-            {confirmMessage && <p className="error-message">{confirmMessage}</p>}
+        <div className="return-container">
+            {showTutorial?
+                <div className="instructionBox">
+                    <button className="close-button" onClick={() => setShowTutorial(!showTutorial)}>
+                        ×
+                    </button>
+                <p>Sell Crypto allows you to sell a quantity of your asset for money in return.
+                    Please enter the amount you wish to sell in asset terms, not GBP.
+                    The total payment you will receive will be displayed in GBP.
+                    After confirming, you can send the asset to the chosen contact.
+                </p>
+                </div>
+            : null}
+            <form onSubmit={sellAction} className="sell-form">
+                <div className="help-tutorial">
+                    <button type="button" className="tutorial-button" onClick={() => setShowTutorial(!showTutorial)}>?</button>
+                </div>
+                <label htmlFor="" className="main-label">Sell Crypto</label>
+                <label htmlFor="amount" id="sellLabel">Crypto Assets</label>
+                <input type="number" min="0.00001" step="0.000001" onChange={(e) => setAmountToSell(e.target.value)} name="amount" id="buy-amount" placeholder="Enter Amount" className="sellingInput"/>
+                <div className="information">
+                    <p>Total Owned: {wallet?.balance}</p>
+                    <p>Rate: 1 {wallet?.coin_symbol} = £{typeof rate === 'number' ? rate.toFixed(2) : rate}</p>
+                </div>
+                <label htmlFor="receive-amount" id="receive-label">You will Receive</label>
+                <div id="receive-amount">
+                    <p>£{typeof rate === 'number' && amountToSell ? (rate * parseFloat(amountToSell)).toFixed(2) : '0.00'}</p>
+                </div>
+                <div className="buttons">
+                    <button type="button" className="goBack" onClick={() => navigate(-1)}>Cancel</button>
+                    <button type="submit" className="send-button">Sell</button>
+                </div>
+                {/*{confirmMessage && <p className="error-message">{confirmMessage}</p>}*/}
             </form>
         </div>
     );
