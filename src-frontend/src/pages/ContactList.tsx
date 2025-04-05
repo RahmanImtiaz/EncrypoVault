@@ -36,6 +36,15 @@ const ContactList = ({goToForm} : {goToForm: () => void}) => {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+  const savedTheme = localStorage.getItem('theme');
+
+  useEffect(() => {
+    if (savedTheme === 'light')
+      document.body.classList.add('light-mode');
+    else 
+      document.body.classList.remove('light-mode');
+  }, [savedTheme]);
+
 
   useEffect(() => {
     fetchContacts();

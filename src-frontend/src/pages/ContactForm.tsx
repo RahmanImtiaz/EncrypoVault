@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../styles/ContactForm.css';
 import api from '../lib/api';
 import { useToast } from '../contexts/ToastContext';
@@ -9,6 +9,15 @@ export const ContactForm = ({goToList} : {goToList: () => void}) => {
     const [confirmMessage, setConfirmMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const { showToast } = useToast();
+    const savedTheme = localStorage.getItem('theme');
+
+    useEffect(() => {
+        if (savedTheme === 'light')
+        document.body.classList.add('light-mode');
+        else 
+        document.body.classList.remove('light-mode');
+    }, [savedTheme]);
+
 
     const handleAddContact = async (e: React.FormEvent) => {
         e.preventDefault();

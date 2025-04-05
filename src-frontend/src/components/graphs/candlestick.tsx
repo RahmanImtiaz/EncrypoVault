@@ -17,6 +17,7 @@ const Candlestick: React.FC<CandlestickProps> = ({ crypto_id, time_range }) => {
   const [series, setSeries] = useState<{ data: DataPoint[] }[]>([]);
   const [minDate, setMinDate] = useState<number | null>(null);
   const [maxDate, setMaxDate] = useState<number | null>(null);
+  const savedTheme = localStorage.getItem('theme');
 
   useEffect(() => {
     async function fetchData() {
@@ -71,7 +72,7 @@ const Candlestick: React.FC<CandlestickProps> = ({ crypto_id, time_range }) => {
     chart: {
       type: 'candlestick',
       height: 350,
-      background: '#121212',
+      background: savedTheme === 'dark' ? '#121212' : '#ffffff',
       events: {
         beforeZoom: function (_, { xaxis }) {
           // Ensure that minDate and maxDate are set
@@ -110,7 +111,7 @@ const Candlestick: React.FC<CandlestickProps> = ({ crypto_id, time_range }) => {
       text: 'Candlestick Chart',
       align: 'left',
       style: {
-        color: '#ffffff',
+        color: savedTheme === 'dark' ? '#ffffff' : '#000000',
       },
     },
     xaxis: {
@@ -119,7 +120,7 @@ const Candlestick: React.FC<CandlestickProps> = ({ crypto_id, time_range }) => {
       max: maxDate ?? undefined,
       labels: {
         style: {
-          colors: '#ffffff',
+          colors: savedTheme === 'dark' ? '#ffffff' : '#000000',
         },
       },
     },
@@ -129,15 +130,15 @@ const Candlestick: React.FC<CandlestickProps> = ({ crypto_id, time_range }) => {
       },
       labels: {
         style: {
-          colors: '#ffffff',
+          colors: savedTheme === 'dark' ? '#ffffff' : '#000000',
         },
       },
     },
     grid: {
-      borderColor: '#333',
+      borderColor: savedTheme === 'dark' ? '#333' : '#e0e0e0',
     },
     tooltip: {
-      theme: 'dark',
+      theme: savedTheme === 'dark' ? 'dark' : 'light',
       shared: false,
       y: {
         formatter: function (val: number) {

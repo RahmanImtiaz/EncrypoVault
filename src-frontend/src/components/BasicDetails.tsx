@@ -47,11 +47,11 @@ const BasicDetails: React.FC<BasicDetailsProps> = ({ cryptoId }) => {
         )}
 
         <div className="price-info">
-            <p> Current Price: {getValue(cryptoData?.market_data?.current_price?.gbp)} </p>
+          <p> Current Price: £{getValue(cryptoData?.market_data?.current_price?.gbp)} </p>
         </div>
       </div>
 
-      <div className="description">
+      <div className="links">
         <p>
           {cryptoData?.description?.en
             ? cryptoData.description.en
@@ -61,6 +61,7 @@ const BasicDetails: React.FC<BasicDetailsProps> = ({ cryptoId }) => {
 
       <div className="graph-holder">
         <div className="time-range">
+          <label>Time Range:</label>
           <input
             type="number"
             min="1"
@@ -78,7 +79,7 @@ const BasicDetails: React.FC<BasicDetailsProps> = ({ cryptoId }) => {
         </div>
       </div>
 
-      <div className="basic-info">
+      <div className="links">
         <p>24h Price Change (%): {getValue(cryptoData?.market_data?.price_change_percentage_24h)}</p>
         <p>Market Cap Rank: {getValue(cryptoData?.market_cap_rank)}</p>
         <p>Market Cap (GBP): {getValue(cryptoData?.market_data?.market_cap?.gbp)}</p>

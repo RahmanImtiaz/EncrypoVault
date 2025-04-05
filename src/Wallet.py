@@ -41,11 +41,19 @@ class Wallet(CryptoObserver):
         }, indent=4)
 
     def update(self, crypto_id: str, crypto_data: dict):
-        if crypto_id in self.holdings:
-            self.holdings[crypto_id]["crypto"].update(crypto_id, crypto_data)
-            print(f"Updated {crypto_id} in wallet {self.name}")
+        symbol = ""
+        if crypto_id == "bitcoin":
+            symbol = "BTC"
+        elif crypto_id == "ethereum":
+            symbol = "ETH"
         else:
-            print(f"Crypto {crypto_id} not found in wallet {self.name}")
+            print(f"Unknown crypto ID: {crypto_id}")
+            return
+        pass
+    
+        # this as of right now does not need to be implemented as Wallet does not hold the price of the cryptocurrency
+        # the current implementation holds the amount of BTC or ETH in balance then the frontend gets the price from
+        # price_cache or the JSON file and displays that
 
     def _calculate_total_balance(self):
         self.balance = sum(

@@ -1,16 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import { QRCodeComponent } from '../components/generateQR';
+import useCryptoPrice from '../components/fetchPrice';
 import "../styles/Portfolio.css";
 
-interface Holding {
+interface Holding{
   amount: number;
   name: string;
   symbol: string;
   value: number;
 }
 
-interface Wallet {
+interface Wallet{
   name: string;
-  holdings: { [key: string]: Holding };
+  balance: number;
+  address: string;
+  coin_symbol: string;
+  holdings: {
+    [key: string]: Holding;
+  };
 }
 
 interface AggregatedHolding extends Holding {
@@ -18,24 +26,60 @@ interface AggregatedHolding extends Holding {
   wallets: { name: string; amount: number }[];
 }
 
+
 const Portfolio: React.FC = () => {
+  const {priceData} = useCryptoPrice();
+  const navigate = useNavigate();
   const [balance, setBalance] = useState<number>(0);
   const [aggregatedHoldings, setAggregatedHoldings] = useState<AggregatedHolding[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [accountType, setAccountType] = useState<string>("");
+  const [expandedAsset, setExpandedAsset] = useState<string | null>(null);
+  const [showTransactionHistory, setShowTransactionHistory] = useState<boolean>(false);
+  const [showWalletList, setShowWalletList] = useState<boolean>(false);
+  const [transactionType, setTransactionType] = useState<string>("");
+  const [wallets, setWallets] = useState<Wallet[]>([]);
+  const [chosenWallet, setChosenWallet] = useState<Wallet | null>(null);
+  const [showQR, setShowQR] = useState(false);
+  const savedTheme = localStorage.getItem('theme');
+ 
+   useEffect(() => {
+     if (savedTheme === 'light')
+       document.body.classList.add('light-mode');
+     else 
+       document.body.classList.remove('light-mode');
+   }, [savedTheme]);
+
 
   useEffect(() => {
-    fetchPortfolioData();
-    fetchAccountType();
+    if (localStorage.getItem('theme') === 'light')
+      document.body.classList.add('light-mode');
+    else 
+      document.body.classList.remove('light-mode');
+  })
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        await fetchAccountType();
+        await fetchPortfolioData();
+      }
+      catch (err) {
+        setError("Failed to load portfolio data");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
   const fetchAccountType = async () => {
     try {
       const response = await fetch('/api/accounts/current');
       const accountData = await response.json();
-
-      if (accountData && accountData.accountType) {
+      if (accountData?.accountType) {
         setAccountType(accountData.accountType);
       }
     } catch (error) {
@@ -45,17 +89,12 @@ const Portfolio: React.FC = () => {
 
   const fetchPortfolioData = async () => {
     try {
-      setLoading(true);
-
-      // Fetch the total balance
       const balance = await window.api.getPortfolioBalance();
 
-      // Fetch wallets and their holdings
       const wallets: Wallet[] = await window.api.getWallets();
+      setWallets(wallets);
 
-      // Aggregate holdings across all wallets
       const holdings: { [key: string]: AggregatedHolding } = {};
-
       wallets.forEach((wallet) => {
         Object.entries(wallet.holdings).forEach(([cryptoId, holding]) => {
           if (!holdings[cryptoId]) {
@@ -77,31 +116,63 @@ const Portfolio: React.FC = () => {
         });
       });
 
-      // Calculate percentage of portfolio
       const holdingsArray = Object.values(holdings);
       holdingsArray.forEach((holding) => {
         holding.percentOfPortfolio = balance > 0 ? (holding.value / balance) * 100 : 0;
       });
 
-      // Sort holdings by value (highest first)
       holdingsArray.sort((a, b) => b.value - a.value);
-
-      // Update state
       setBalance(balance);
       setAggregatedHoldings(holdingsArray);
-      setError(null);
     } catch (err) {
       console.error("Error fetching portfolio data:", err);
-      setError("Failed to load portfolio data");
-    } finally {
-      setLoading(false);
+      throw err;
     }
   };
 
-  const [expandedAsset, setExpandedAsset] = useState<string | null>(null);
-
+  
   const toggleAssetDetails = (symbol: string) => {
     setExpandedAsset(expandedAsset === symbol ? null : symbol);
+  };
+
+  const toggleTransactionHistory = () => {
+    setShowTransactionHistory(!showTransactionHistory);
+  };
+
+  const youtubeVideos = [
+    { title: "Crypto Investing for Beginners", url: "https://www.youtube.com/watch?v=LGHsNaIv5os" },
+    { title: "Crypto Trading", url: "https://www.youtube.com/watch?v=DRAcPbYPNVk" },
+    { title: "Understanding Blockchain", url: "https://www.youtube.com/watch?v=yubzJw0uiE4&pp=ygUkdW5kZXJzdGFkbmluZyBiaXRjb2luIGFuZCBibG9ja2NoYWlu" },
+  ];
+
+  const transactionHistory = [
+    { id: 1, date: "2025-04-01", type: "Buy", amount: "0.1 BTC", value: "£3000" },
+    { id: 2, date: "2025-03-28", type: "Sell", amount: "0.05 ETH", value: "£100" },
+    { id: 3, date: "2025-03-25", type: "Receive", amount: "100 ADA", value: "£50" },
+  ];
+  const expandWallets = (transaction: string) => {
+    setShowWalletList(true);
+    setTransactionType(transaction);
+  };
+
+  const handleWalletSelect = (wallet: Wallet) => {
+    setChosenWallet(wallet);
+    switch (transactionType) {
+      case "receive":
+        setShowQR(true);
+        break;
+      case "send":
+        navigate('/send', { state: { wallet } });
+        break;
+      case "buy":
+        navigate('/buy', { state: { wallet } });
+        break;
+      case "sell":
+        navigate('/sell', { state: { wallet } });
+        break;
+      default:
+        console.warn('Unknown transaction type');
+    }
   };
 
   if (loading) {
@@ -120,20 +191,99 @@ const Portfolio: React.FC = () => {
     );
   }
 
+  if (showQR && chosenWallet) {
+    return (
+      <div className="qr-modal-overlay">
+        <div className="qr-modal-content">
+          <div className="modal-header">
+            <h2>{chosenWallet.name}</h2>
+          </div>
+          <QRCodeComponent
+            value={chosenWallet.address}
+            size={256}
+            level="Q"
+            bgColor="#FFFFFF"
+            fgColor="#000000"
+          />
+          <p className="address-text">Wallet Address: {chosenWallet.address}</p>
+          <button 
+            className="close-button"
+            onClick={() => setShowQR(false)}
+          >
+            ×
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+
+  if (showWalletList) {
+    return (
+      <div className="wallet-list-overlay">
+        <div className="qr-modal-content">
+          {wallets.length === 0 ? (
+            <div className="empty-state">
+              <p>No wallets found.</p>
+            </div>
+          ) : (
+            <div className="wallets-list">
+              {wallets.map((wallet, index) => (
+                <div
+                  key={index}
+                  className="wallet-item"
+                  onClick={() => handleWalletSelect(wallet)}
+                >
+                  <div className="wallet-header">
+                    <h3 className="wallet-name">{wallet.name}</h3>
+                    <span className="wallet-balance">
+                      {(() => {
+                        const priceKey = wallet.coin_symbol === "BTC" ? "BTC-GBP" : "ETH-GBP";
+                        const price = priceData?.[priceKey];
+                        return `£${(wallet.balance * Number(price || 1)).toFixed(2)}`;
+                      })()}
+                    </span>
+                  </div>
+                  <div className="wallet-content">
+                    <div className="wallet-details">
+                      <div className="wallet-detail-row">
+                        <span className="wallet-detail-label">Type:</span>
+                        <span className="wallet-detail-value">{wallet.coin_symbol}</span>
+                      </div>
+                      <div className="wallet-detail-row">
+                        <span className="wallet-detail-label">Holdings:</span>
+                        <span className="wallet-detail-value">
+                            {wallet.balance} {wallet.coin_symbol}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <button className="close-button" onClick={() => setShowWalletList(false)}>x</button>
+        </div>
+      </div>
+    );
+  }
+
+
   return (
     <div className="portfolioContainer">
-      {/* Balance Section */}
       <div className="balanceContainer">
         <h2 className="balanceHeading">Total Balance</h2>
         <p className="total">£{balance.toFixed(2)}</p>
       </div>
+
       {/* Account Type Badge */}
+      
       {accountType && (
-        <div className="account-type-badge" data-type={accountType}>
-          {accountType} Mode
-        </div>
+          <div className="account-type-badge" data-type={accountType}>
+            {accountType} Mode
+          </div>
       )}
-      {/* Portfolio Composition Section */}
+
       <div className="portfolioComposition">
         <h2>Portfolio Composition</h2>
         {aggregatedHoldings.length === 0 ? (
@@ -142,7 +292,6 @@ const Portfolio: React.FC = () => {
           <div className="holdingsList">
             {aggregatedHoldings.map((holding) => (
               <div key={holding.symbol} className="holdingItem">
-                {/* Asset Summary */}
                 <div
                   className="holdingSummary"
                   onClick={() => toggleAssetDetails(holding.symbol)}
@@ -156,15 +305,13 @@ const Portfolio: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Asset Details (Dropdown) */}
                 {expandedAsset === holding.symbol && (
                   <div className="holdingDetails">
                     <h4>Wallet Breakdown</h4>
                     <ul>
                       {holding.wallets.map((wallet, index) => (
                         <li key={index}>
-                          {wallet.name}: {wallet.amount.toFixed(8)}{" "}
-                          {holding.symbol.toUpperCase()}
+                          {wallet.name}: {wallet.amount.toFixed(8)} {holding.symbol.toUpperCase()}
                         </li>
                       ))}
                     </ul>
@@ -176,18 +323,63 @@ const Portfolio: React.FC = () => {
         )}
       </div>
 
-      {/* Quick Actions Section */}
       <div className="quickActions">
         <h2>Quick Actions</h2>
         <div className="actionButtons">
-          <button className="actionButton">Buy Crypto</button>
-          <button className="actionButton">Sell Crypto</button>
-          <button className="actionButton">Send Crypto</button>
-          <button className="actionButton">Receive Crypto</button>
+          <button className="actionButton" onClick={() => expandWallets("buy")}>Buy Crypto</button>
+          <button className="actionButton" onClick={() => expandWallets("sell")}>Sell Crypto</button>
+          <button className="actionButton" onClick={() => expandWallets("send")}>Send Crypto</button>
+          <button className="actionButton" onClick={() => expandWallets("receive")}>Receive Crypto</button>
         </div>
+      </div>
+
+      {/* YouTube Videos Section */}
+      {accountType === "Beginner" && (
+        <div className="youtubeVideos">
+          <h2>Learn Crypto Trading</h2>
+          <ul>
+            {youtubeVideos.map((video, index) => (
+              <li key={index}>
+                <p>
+                  <strong>{video.title}:</strong> {video.url}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Transaction History Section */}
+      <div className="transactionHistory">
+        <button className="toggleButton" onClick={toggleTransactionHistory}>
+          {showTransactionHistory ? "Hide Transaction History" : "Show Transaction History"}
+        </button>
+        {showTransactionHistory && (
+          <ul className="transactionList">
+            {transactionHistory.map((transaction) => (
+              <li key={transaction.id}>
+                <p>
+                  <strong>Date:</strong> {transaction.date}
+                </p>
+                <p>
+                  <strong>Type:</strong> {transaction.type}
+                </p>
+                <p>
+                  <strong>Amount:</strong> {transaction.amount}
+                </p>
+                <p>
+                  <strong>Value:</strong> {transaction.value}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
+
+
 };
+
 
 export default Portfolio;

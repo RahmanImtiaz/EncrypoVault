@@ -164,3 +164,83 @@ body {
     text-align: center;
 }
 
+
+
+
+body.light-mode {
+    background: #f4f4f4;
+    color: #333;
+  }
+  
+
+  body.light-mode .contact-form {
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+
+  body.light-mode .main-label {
+    color: #333; 
+  }
+  
+
+  body.light-mode #contactLabel,
+  body.light-mode #addresslabel {
+    color: #333;
+  }
+  
+
+  body.light-mode .contactInput {
+    background: #f0f0f0; 
+    border: 1px solid #ccc; 
+    color: #333;
+  }
+  
+
+  body.light-mode #contact,
+  body.light-mode #waddress {
+    padding-left: 1.5rem;
+  }
+  
+
+  body.light-mode .qrcode {
+    background: #4A80EA;
+    color: #fff;
+  }
+  
+  body.light-mode .qrcode:hover {
+    background: #3671E9;
+  }
+  
+
+  
+
+  body.light-mode .goBack {
+    background: transparent;
+    border: 1px solid #ccc;
+    color: #333;
+  }
+  
+  body.light-mode .goBack:hover {
+    background: #e0e0e0;
+  }
+  
+
+  body.light-mode .add-contact-button {
+    background: #3671E9;
+    color: #fff;
+  }
+  
+  body.light-mode .add-contact-button:hover {
+    background: #4A80EA;
+  }
+  
+
+  body.light-mode .error-message {
+    color: red; 
+  }
+  
+  body.light-mode .success-message {
+    color: green; 
+  }
+  

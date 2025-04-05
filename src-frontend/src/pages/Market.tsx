@@ -24,6 +24,15 @@ const Market: React.FC = () => {
   const [filteredCoins, setFilteredCoins] = useState<Coin[]>([]);
   const [selectedCoin, setSelectedCoin] = useState<Coin | null>(null);
   const [accountType, setAccountType] = useState<string>("");
+  const savedTheme = localStorage.getItem('theme');
+
+  useEffect(() => {
+    if (savedTheme === 'light')
+      document.body.classList.add('light-mode');
+    else 
+      document.body.classList.remove('light-mode');
+  }, [savedTheme]);
+
 
   useEffect(() => {
     async function fetchCoins() {

@@ -28,6 +28,7 @@ const LineGraph: React.FC<LineGraphProps> = ({ crypto_id, time_range }) => {
   const [series, setSeries] = useState<SeriesData[]>([]);
   const [minDate, setMinDate] = useState<number | null>(null);
   const [maxDate, setMaxDate] = useState<number | null>(null);
+  const savedTheme = localStorage.getItem('theme');
 
   useEffect(() => {
     async function fetchData() {
@@ -112,36 +113,36 @@ const LineGraph: React.FC<LineGraphProps> = ({ crypto_id, time_range }) => {
             },
           };
         },
-      },
-      background: '#121212',
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    markers: {
-      size: 0,
-    },
-    title: {
-      text: 'Price Movement',
-      align: 'left',
-      style: {
-        color: '#ffffff', 
-      },
-    },
-    fill: {
-      type: 'gradient',
-      gradient: {
+            },
+            background: savedTheme === 'dark' ? '#121212' : '#ffffff',
+          },
+          dataLabels: {
+            enabled: false,
+          },
+          markers: {
+            size: 0,
+          },
+          title: {
+            text: 'Price Movement',
+            align: 'left',
+            style: {
+        color: savedTheme === 'dark' ? '#ffffff' : '#000000', 
+            },
+          },
+          fill: {
+            type: 'gradient',
+            gradient: {
         shadeIntensity: 1,
         inverseColors: false,
         opacityFrom: 0.5,
         opacityTo: 0,
         stops: [0, 90, 100],
-      },
-    },
-    yaxis: {
-      labels: {
+            },
+          },
+          yaxis: {
+            labels: {
         style: {
-          colors: '#ffffff', 
+          colors: savedTheme === 'dark' ? '#ffffff' : '#000000', 
         },
         formatter: function (val : number) {
           return val.toFixed(2);
@@ -150,7 +151,7 @@ const LineGraph: React.FC<LineGraphProps> = ({ crypto_id, time_range }) => {
       title: {
         text: 'Price (GBP)',
         style: {
-          color: '#ffffff',
+          color: savedTheme === 'dark' ? '#ffffff' : '#000000',
         },
       },
     },
@@ -160,7 +161,7 @@ const LineGraph: React.FC<LineGraphProps> = ({ crypto_id, time_range }) => {
       max: maxDate || undefined,
       labels: {
         style: {
-          colors: '#ffffff', 
+          colors: savedTheme === 'dark' ? '#ffffff' : '#000000', 
         },
       },
     },

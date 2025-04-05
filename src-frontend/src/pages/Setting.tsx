@@ -7,13 +7,28 @@ const Setting: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [feedbackMessage, setFeedbackMessage] = useState<string>("");
-  
   // Form states for feedback
   const [feedback, setFeedback] = useState<string>("");
   const [rating, setRating] = useState<string>("5");
   const [email, setEmail] = useState<string>("");
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState<boolean>(false);
   const { showToast } = useToast();
+  
+  const savedTheme = localStorage.getItem('theme');
+
+  useEffect(() => {
+    if (savedTheme === 'light')
+      document.body.classList.add('light-mode');
+    else 
+      document.body.classList.remove('light-mode');
+  }, [savedTheme]);
+
+  
+  const handleThemeToggle = () : void => {
+    const currentTheme = localStorage.getItem('theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    localStorage.setItem('theme', newTheme);
+  }
   
   // Fetch current account type on mount
   useEffect(() => {
@@ -142,79 +157,87 @@ const Setting: React.FC = () => {
             <p>Tester accounts are for development and testing purposes only.</p>
           )}
         </div>
-        
-        <button 
-          className="switch-type-button"
-          onClick={handleSwitchAccountType}
-          disabled={isLoading || accountType === "Tester"}
-        >
-          {isLoading ? "Switching..." : getButtonText()}
-        </button>
+        <div className='settings-buttons'>
+          <button 
+            className="switch-type-button"
+            onClick={handleSwitchAccountType}
+            disabled={isLoading || accountType === "Tester"}
+          >
+            {isLoading ? "Switching..." : getButtonText()}
+          </button>
+
+          <button className = "theme-toggle-button"
+          onClick={handleThemeToggle}>
+             {savedTheme === 'light' ? ' Dark ' : ' Light '} Mode
+          </button>
+        </div>
         
         {message && <p className="settings-message">{message}</p>}
       </div>
       
-      <div className="settings-section">
-        <h2>Send Feedback</h2>
-        <p className="feedback-intro">We'd love to hear your thoughts on EncryptoVault!</p>
-        
-        {feedbackMessage ? (
-          <div className="feedback-success">
-            {feedbackMessage}
+      {accountType === "Tester" && (
+        <div className="settings-section">
+          <h2>Send Feedback</h2>
+          <p className="feedback-intro">We'd love to hear your thoughts on EncryptoVault!</p>
+          
+          {feedbackMessage ? (
+        <div className="feedback-success">
+          {feedbackMessage}
+        </div>
+          ) : (
+        <form onSubmit={handleSubmitFeedback} className="feedback-form">
+          <div className="form-group">
+            <label htmlFor="feedback">Your Feedback</label>
+            <textarea 
+          id="feedback" 
+          value={feedback}
+          onChange={(e) => setFeedback(e.target.value)}
+          placeholder="Share your experience using EncryptoVault..."
+          required
+          rows={4}
+            />
           </div>
-        ) : (
-          <form onSubmit={handleSubmitFeedback} className="feedback-form">
-            <div className="form-group">
-              <label htmlFor="feedback">Your Feedback</label>
-              <textarea 
-                id="feedback" 
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                placeholder="Share your experience using EncryptoVault..."
-                required
-                rows={4}
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="rating">Rate your experience (1-5)</label>
-              <select 
-                id="rating"
-                value={rating}
-                onChange={(e) => setRating(e.target.value)}
-              >
-                <option value="5">5 - Excellent</option>
-                <option value="4">4 - Good</option>
-                <option value="3">3 - Average</option>
-                <option value="2">2 - Below Average</option>
-                <option value="1">1 - Poor</option>
-              </select>
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="email">Your Email (optional)</label>
-              <input 
-                type="email" 
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="email@example.com"
-              />
-              <p className="email-note">
-                We'll only use this to follow up on your feedback if needed.
-              </p>
-            </div>
-            
-            <button 
-              type="submit" 
-              className="submit-feedback-btn"
-              disabled={isSubmittingFeedback || !feedback}
+          
+          <div className="form-group">
+            <label htmlFor="rating">Rate your experience (1-5)</label>
+            <select 
+          id="rating"
+          value={rating}
+          onChange={(e) => setRating(e.target.value)}
             >
-              {isSubmittingFeedback ? 'Sending...' : 'Submit Feedback'}
-            </button>
-          </form>
-        )}
-      </div>
+          <option value="5">5 - Excellent</option>
+          <option value="4">4 - Good</option>
+          <option value="3">3 - Average</option>
+          <option value="2">2 - Below Average</option>
+          <option value="1">1 - Poor</option>
+            </select>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="email">Your Email (optional)</label>
+            <input 
+          type="email" 
+          id="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="email@example.com"
+            />
+            <p className="email-note">
+          We'll only use this to follow up on your feedback if needed.
+            </p>
+          </div>
+          
+          <button 
+            type="submit" 
+            className="submit-feedback-btn"
+            disabled={isSubmittingFeedback || !feedback}
+          >
+            {isSubmittingFeedback ? 'Sending...' : 'Submit Feedback'}
+          </button>
+        </form>
+          )}
+        </div>
+      )}
     </div>
   );
 };

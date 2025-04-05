@@ -307,3 +307,10 @@ select.login-input {
     font-size: 28px;
   }
 }
+
+
+
+body.light-mode .login-button {
+  color: #ffffff;
+}
+
