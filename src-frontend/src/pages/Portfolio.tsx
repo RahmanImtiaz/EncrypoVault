@@ -24,15 +24,8 @@ const Portfolio: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [accountType, setAccountType] = useState<string>("");
-  const savedTheme = localStorage.getItem('theme');
-
-  useEffect(() => {
-    if (savedTheme === 'light')
-      document.body.classList.add('light-mode');
-    else 
-      document.body.classList.remove('light-mode');
-  }, [savedTheme]);
-
+  const [expandedAsset, setExpandedAsset] = useState<string | null>(null);
+  const [showTransactionHistory, setShowTransactionHistory] = useState<boolean>(false);
 
   useEffect(() => {
     fetchPortfolioData();
@@ -60,7 +53,7 @@ const Portfolio: React.FC = () => {
       const balance = await window.api.getPortfolioBalance();
 
       // Fetch wallets and their holdings
-      const wallets: Wallet[] = await window.api.getWallets();
+      const wallets: Wallet[] = await window.api.getPortfolioWallets();
 
       // Aggregate holdings across all wallets
       const holdings: { [key: string]: AggregatedHolding } = {};
@@ -107,11 +100,25 @@ const Portfolio: React.FC = () => {
     }
   };
 
-  const [expandedAsset, setExpandedAsset] = useState<string | null>(null);
-
   const toggleAssetDetails = (symbol: string) => {
     setExpandedAsset(expandedAsset === symbol ? null : symbol);
   };
+
+  const toggleTransactionHistory = () => {
+    setShowTransactionHistory(!showTransactionHistory);
+  };
+
+  const youtubeVideos = [
+    { title: "Crypto Investing for Beginners", url: "https://www.youtube.com/watch?v=LGHsNaIv5os" },
+    { title: "Crypto Trading", url: "https://www.youtube.com/watch?v=DRAcPbYPNVk" },
+    { title: "Understanding Blockchain", url: "https://www.youtube.com/watch?v=yubzJw0uiE4&pp=ygUkdW5kZXJzdGFkbmluZyBiaXRjb2luIGFuZCBibG9ja2NoYWlu" },
+  ];
+
+  const transactionHistory = [
+    { id: 1, date: "2025-04-01", type: "Buy", amount: "0.1 BTC", value: "£3000" },
+    { id: 2, date: "2025-03-28", type: "Sell", amount: "0.05 ETH", value: "£100" },
+    { id: 3, date: "2025-03-25", type: "Receive", amount: "100 ADA", value: "£50" },
+  ];
 
   if (loading) {
     return (
@@ -136,11 +143,12 @@ const Portfolio: React.FC = () => {
         <h2 className="balanceHeading">Total Balance</h2>
         <p className="total">£{balance.toFixed(2)}</p>
       </div>
+
       {/* Account Type Badge */}
       {accountType && (
-        <div className="account-type-badge" data-type={accountType}>
-          {accountType} Mode
-        </div>
+          <div className="account-type-badge" data-type={accountType}>
+            {accountType} Mode
+          </div>
       )}
       {/* Portfolio Composition Section */}
       <div className="portfolioComposition">
@@ -194,6 +202,47 @@ const Portfolio: React.FC = () => {
           <button className="actionButton">Send Crypto</button>
           <button className="actionButton">Receive Crypto</button>
         </div>
+      </div>
+
+      {/* YouTube Videos Section */}
+      <div className="youtubeVideos">
+        <h2>Learn Crypto Trading</h2>
+        <ul>
+          {youtubeVideos.map((video, index) => (
+            <li key={index}>
+              <p>
+                <strong>{video.title}:</strong> {video.url}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Transaction History Section */}
+      <div className="transactionHistory">
+        <button className="toggleButton" onClick={toggleTransactionHistory}>
+          {showTransactionHistory ? "Hide Transaction History" : "Show Transaction History"}
+        </button>
+        {showTransactionHistory && (
+          <ul className="transactionList">
+            {transactionHistory.map((transaction) => (
+              <li key={transaction.id}>
+                <p>
+                  <strong>Date:</strong> {transaction.date}
+                </p>
+                <p>
+                  <strong>Type:</strong> {transaction.type}
+                </p>
+                <p>
+                  <strong>Amount:</strong> {transaction.amount}
+                </p>
+                <p>
+                  <strong>Value:</strong> {transaction.value}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
