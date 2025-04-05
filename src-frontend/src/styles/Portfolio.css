@@ -19,13 +19,15 @@ html, body {
 }
 
 .portfolioContainer {
+  width: 100%;
+  max-width: 1400px;
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   padding: 20px;
   height: auto; /* Allow the container to grow with its content */
-  width: clamp(60em, 80vw, 90em);
   gap: 2rem; /* Adjust spacing between sections */
   box-sizing: border-box;
   overflow-wrap: break-word; 
