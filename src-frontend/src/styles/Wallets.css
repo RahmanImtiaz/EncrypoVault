@@ -427,3 +427,148 @@ body {
     width: 100%; 
   }
 }
+
+body.light-mode {
+  background: #f4f4f4;
+  color: #333;
+}
+
+
+body.light-mode .wallets-container {
+  background: #ffffff;
+}
+
+
+body.light-mode .wallets-header .wallets-title {
+  color: #333;
+}
+
+
+body.light-mode .add-wallet-btn {
+  background: linear-gradient(92.23deg, #4A80EA 21.43%, #3671E9 119.36%);
+  color: #fff;
+}
+
+body.light-mode .add-wallet-btn:hover {
+  box-shadow: 0 10px 20px -10px rgba(54, 113, 233, 0.3);
+}
+
+
+body.light-mode .wallets-toolbar {
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+body.light-mode .search-input,
+body.light-mode .create-input {
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  color: #333;
+}
+
+body.light-mode .search-input:focus,
+body.light-mode .create-input:focus {
+  border-color: #3671E9;
+  box-shadow: 0 0 0 3px rgba(54, 113, 233, 0.2);
+}
+
+
+body.light-mode .search-btn,
+body.light-mode .create-btn,
+body.light-mode .cancel-btn {
+  background: #3671E9;
+  color: #fff;
+}
+
+body.light-mode .search-btn:hover,
+body.light-mode .create-btn:hover {
+  background: #4A80EA;
+}
+
+body.light-mode .cancel-btn {
+  background: transparent;
+  border: 1px solid #ccc;
+  color: #333;
+}
+
+body.light-mode .cancel-btn:hover {
+  background: #e0e0e0;
+}
+
+
+body.light-mode .wallet-item {
+  background: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .wallet-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  border-color: #3671E9;
+}
+
+
+body.light-mode .wallet-header {
+  border-bottom: 1px solid #ddd;
+}
+
+body.light-mode .wallet-name,
+body.light-mode .wallet-balance {
+  color: #333;
+}
+
+
+body.light-mode .wallet-content {
+  background: #fff;
+  color: #333; 
+}
+
+
+body.light-mode .wallet-details {
+  background: transparent;
+}
+
+body.light-mode .wallet-detail-row {
+  color: #333;
+}
+
+body.light-mode .wallet-detail-label {
+  color: #666;
+}
+
+body.light-mode .wallet-detail-value {
+  color: #333;
+}
+
+
+body.light-mode .wallet-view-btn {
+  background: #3671E9;
+  color: #fff;
+}
+
+body.light-mode .wallet-view-btn:hover {
+  background: #4A80EA;
+}
+
+
+body.light-mode .copy-btn {
+  background: #f0f0f0;
+  color: #666;
+  border: 1px solid #ccc;
+}
+
+body.light-mode .copy-btn:hover {
+  background: #e0e0e0;
+  color: #3671E9;
+  border-color: #3671E9;
+}
+
+
+body.light-mode .copy-btn svg,
+body.light-mode .add-wallet-btn svg,
+body.light-mode .wallet-view-btn svg {
+  fill: currentColor;
+  stroke: currentColor;
+}

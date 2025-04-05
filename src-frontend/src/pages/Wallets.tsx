@@ -29,6 +29,7 @@ const Wallets: React.FC = () => {
   const [newWalletName, setNewWalletName] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const {priceData} = fetchPrice();
+  console.log('Price data:', priceData);
   const [copiedAddresses, setCopiedAddresses] = useState<{[key: string]: boolean}>({});
   const { showToast } = useToast();
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);  

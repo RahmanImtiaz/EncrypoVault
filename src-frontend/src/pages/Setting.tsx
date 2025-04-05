@@ -168,7 +168,7 @@ const Setting: React.FC = () => {
 
           <button className = "theme-toggle-button"
           onClick={handleThemeToggle}>
-            Toggle {savedTheme} Mode
+             {savedTheme === 'light' ? ' Dark ' : ' Light '} Mode
           </button>
         </div>
         

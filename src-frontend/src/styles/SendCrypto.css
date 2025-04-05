@@ -232,8 +232,14 @@ body {
 }
 
 
+body.light-mode .contact-option-button{
+    background: rgba(0, 0, 0, 0.1);
+    color: var(--text-light);
+}
 
 
 
 
-
+body.light-mode .send-button{
+    color: white;
+}

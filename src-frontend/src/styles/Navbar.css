@@ -97,5 +97,21 @@ body {
 }
 
 .logoutButton:hover .navButton {
-  background-color: #e74c3c; /* Red color on hover for logout */
+  background-color: #e74c3c; 
+}
+
+body.light-mode .navbar {
+  background-color: rgba(0, 0, 0, 0.5); 
+}
+
+body.light-mode .navButton {
+  background-color: rgba(0, 0, 0, 0.3); 
+}
+
+body.light-mode .navLink {
+  color: #333; 
+}
+
+body.light-mode .navLink:hover {
+  color: #3498db; 
 }

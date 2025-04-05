@@ -415,3 +415,26 @@ body{
     order: 1;
   }
 }
+
+
+body.light-mode {
+  background: #f0f0f0; 
+  color: #333;
+}
+
+body.light-mode .wallet-button {
+  color: #fff; 
+}
+
+body.light-mode .wallet-details {
+  background: rgba(0, 0, 0, 0.1); 
+}
+
+body.light-mode .transaction-item {
+  background: rgba(0, 0, 0, 0.1); 
+}
+
+body.light-mode .tx-inputs,
+body.light-mode .tx-outputs {
+  background: rgba(0, 0, 0, 0.1);
+}

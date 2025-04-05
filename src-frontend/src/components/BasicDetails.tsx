@@ -78,7 +78,7 @@ const BasicDetails: React.FC<BasicDetailsProps> = ({ cryptoId }) => {
         </div>
       </div>
 
-      <div className="basic-info">
+      <div className="links">
         <p>24h Price Change (%): {getValue(cryptoData?.market_data?.price_change_percentage_24h)}</p>
         <p>Market Cap Rank: {getValue(cryptoData?.market_cap_rank)}</p>
         <p>Market Cap (GBP): {getValue(cryptoData?.market_data?.market_cap?.gbp)}</p>

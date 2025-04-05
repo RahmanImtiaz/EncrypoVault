@@ -144,3 +144,72 @@ body {
 
 }
 
+
+
+
+body.light-mode {
+    background: #f4f4f4;
+    color: #333;
+  }
+  
+
+  body.light-mode .contactsListContainer {
+    background: #ffffff;
+  }
+  
+
+  body.light-mode .contactsListHeading h1 {
+    color: #333;
+  }
+  
+
+  body.light-mode .contactsListHeading button {
+    background: linear-gradient(92.23deg, #4A80EA 21.43%, #3671E9 119.36%);
+    color: #fff;
+    transition: all 0.3s ease;
+  }
+  
+  body.light-mode .contactsListHeading button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -10px rgba(54, 113, 233, 0.3);
+  }
+  
+
+  body.light-mode .contactsList-list {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+
+  body.light-mode .contact-item {
+    background: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  body.light-mode .contact-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+  
+
+  body.light-mode .contact-icon {
+    background: linear-gradient(135deg, #4A80EA, #3671E9);
+    color: #fff;
+  }
+  
+
+  body.light-mode .contact-details .contact-name {
+    color: #333;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  
+  body.light-mode .contact-details .contact-address {
+    color: #666;
+  }
+  
