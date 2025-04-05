@@ -52,7 +52,7 @@ class BitcoinWalletHandler(HandlerInterface):
         return ctx.ChildKey(ind)
 
     def send_tx(self, amount, destination_address):
-        if amount < 0:
+        if amount < 1:
             amount = amount * 100000000
         tx = self.wallet.send_to(destination_address, amount, broadcast=True)
         acc = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account()

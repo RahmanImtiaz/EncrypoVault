@@ -3,6 +3,7 @@ import json
 
 #import slip39
 
+from TransactionLog import TransactionLog
 from bip_utils.bip.bip32 import Bip32Slip10Secp256k1
 
 from AccountType import AccountType, Beginner, Advanced, Tester
@@ -24,7 +25,7 @@ class Account:
         self._wallets = {}
         self._encryption_key = ""
         self.portfolio = None
-        self.transactionLog = None
+        self.transactionLog = TransactionLog()
         
         # Set default account type if none is provided
         self._accountType = account_type if account_type is not None else Beginner()
@@ -62,11 +63,8 @@ class Account:
             
             # Restore transaction log if it exists
             if "transactions" in data and data["transactions"]:
-                from TransactionLog import TransactionLog
                 from Transaction import Transaction
                 import datetime
-                
-                self.transactionLog = TransactionLog()
                 
                 for tx_data in data["transactions"]:
                     # Parse timestamp (handle both string and datetime formats)
@@ -229,7 +227,10 @@ class Account:
         encryption_key_str = self._encryption_key.hex() if isinstance(self._encryption_key, bytes) else self._encryption_key
 
         # Convert transaction log to dictionary if it exists
-        transactions_data = json.loads(self.transactionLog.toJSON())
+        if self.transactionLog is not None:
+            transactions_data = json.loads(self.transactionLog.toJSON())
+        else:
+            transactions_data = []
 
         # Convert wallets to dictionaries
         wallets_data = {}
