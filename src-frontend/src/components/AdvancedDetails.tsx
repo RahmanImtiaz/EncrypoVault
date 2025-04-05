@@ -51,11 +51,11 @@ const AdvancedDetails = ({ cryptoId }: AdvancedDetailsProps) => {
                  )}
  
                  <div className="price-info">
-                     <p> Current Price: {getValue(cryptoData?.market_data?.current_price?.gbp)} </p>
+                     <p> Current Price: £{getValue(cryptoData?.market_data?.current_price?.gbp)} </p>
                  </div>
              </div>
  
-             <div className="description">
+             <div className="links">
                  <p>
                      {cryptoData?.description && cryptoData.description.en
                          ? cryptoData.description.en
