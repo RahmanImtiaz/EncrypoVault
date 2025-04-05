@@ -47,7 +47,7 @@ const BasicDetails: React.FC<BasicDetailsProps> = ({ cryptoId }) => {
         )}
 
         <div className="price-info">
-            <p> Current Price: {getValue(cryptoData?.market_data?.current_price?.gbp)} </p>
+          <p> Current Price: {getValue(cryptoData?.market_data?.current_price?.gbp)} </p>
         </div>
       </div>
 
@@ -61,6 +61,7 @@ const BasicDetails: React.FC<BasicDetailsProps> = ({ cryptoId }) => {
 
       <div className="graph-holder">
         <div className="time-range">
+          <label>Time Range:</label>
           <input
             type="number"
             min="1"
