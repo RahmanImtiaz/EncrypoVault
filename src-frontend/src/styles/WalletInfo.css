@@ -10,8 +10,30 @@ body{
 
 
 
+/*
+.wallet-name {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.wallet-name .spacer {
+  flex: 1;
+}
+
+.wallet-name h2 {
+  font-size: 3rem;
+  margin: 0;
+  color: var(--text-light);
+}*/
 
 .wallet-name {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-bottom: 1rem;
 }
 
@@ -19,7 +41,24 @@ body{
   font-size: 3rem;
   margin: 0;
   color: var(--text-light);
+  text-align: center;
 }
+
+.wallet-name .previous-page {
+  position: absolute;
+  left: 0;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-light);
+}
+
+.previous-page{
+  padding-top: 0rem;
+  padding-bottom: 0rem;
+}
+
 
 
 .big {

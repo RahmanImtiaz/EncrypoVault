@@ -155,6 +155,7 @@ const WalletInfo = () => {
   return (
     <div className='info-container'>
       <div className='wallet-name'>
+        <button className="previous-page" onClick={() => navigate(-1)}>←</button>
         <h2>{wallet.name} Details</h2>
       </div>
 
@@ -173,11 +174,12 @@ const WalletInfo = () => {
             })()}
           </h3>
         </div>
-        <div className='wallet-address'>
-          <h3>Address: {wallet.address}</h3>
-        </div>
         <div className='wallet-coin-symbol'>
           <h4 className='smaller'>Coin Symbol: {wallet.coin_symbol}</h4>
+        </div>
+        <div className='wallet-holdings'>
+          <h3>Holdings:</h3>
+            <p className="balance-display">{wallet.balance} {wallet.coin_symbol}</p>
         </div>
         <div className="buttons">
           <button className="wallet-button" onClick={() => setShowQR(true)}>Receive {wallet.coin_symbol}</button>
@@ -185,9 +187,8 @@ const WalletInfo = () => {
           <button className="wallet-button" onClick={() => navigate("/buy")}>Buy {wallet.coin_symbol}</button>
           <button className="wallet-button" onClick={() => navigate("/sell")}>Sell {wallet.coin_symbol}</button>
         </div>
-        <div className='wallet-holdings'>
-          <h3>Holdings:</h3>
-            <p className="balance-display">{wallet.balance} {wallet.coin_symbol}</p>
+        <div className='wallet-address'>
+          <h3>Address: {wallet.address}</h3>
         </div>
       </div>
 

@@ -1,11 +1,31 @@
 import '../styles/SendCrypto.css';
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
+
+interface Holding {
+  amount: number;
+  name: string;
+  symbol: string;
+  value: number;
+}
+
+interface Wallet {
+  name: string;
+  balance: number;
+  address: string;
+  coin_symbol: string;
+  holdings: {
+    [key: string]: Holding;
+  };
+}
+
 
 const SendCrypto = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedOption, setSelectedOption] = useState("");
+  const wallet = location.state?.wallet as Wallet;
   const [amountToSend, setAmountToSend] = useState("");
   const [confirmMessage, setConfirmMessage] = useState("");
   const [newContact, setNewContact] = useState(false);
@@ -97,6 +117,7 @@ const SendCrypto = () => {
                     <option value="Bitcoin">Bitcoin</option>
                     <option value="Ethereum">Ethereum</option>
                     <option value="Bitcoin Dogs">Bitcoin Dogs</option>
+                    <option value="name">{wallet.name}</option>
                     <option value="Hello">Hello</option>
                 </select>
                 <input type="text" min="0.00001" step="0.000001" onChange={(e) => setAmountToSend(e.target.value)} name="amount" id="amount" placeholder="Enter Amount" className="sellingInput"/>

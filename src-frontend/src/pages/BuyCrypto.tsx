@@ -1,10 +1,32 @@
 import '../styles/BuyCrypto.css';
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
+
+
+interface Holding {
+    amount: number;
+    name: string;
+    symbol: string;
+    value: number;
+  }
+  
+  interface Wallet {
+    name: string;
+    balance: number;
+    address: string;
+    coin_symbol: string;
+    holdings: {
+      [key: string]: Holding;
+    };
+  }
+
+
 
 const BuyCrypto = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const wallet = location.state?.wallet as Wallet;
   const [selectedOption, setSelectedOption] = useState("");
   const [amountToSell, setAmountToSell] = useState("");
   const [confirmMessage, setConfirmMessage] = useState("");
@@ -64,6 +86,7 @@ const BuyCrypto = () => {
                   <option value="Ethereum">Ethereum</option>
                   <option value="Bitcoin Dogs">Bitcoin Dogs</option>
                   <option value="Hello">Hello</option>
+                  <option value="name">{wallet.name}</option>
               </select>
               <p>Rate: £1 = ... {selectedOption}</p>
           </div>
