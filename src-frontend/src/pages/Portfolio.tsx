@@ -42,6 +42,14 @@ const Portfolio: React.FC = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [chosenWallet, setChosenWallet] = useState<Wallet | null>(null);
   const [showQR, setShowQR] = useState(false);
+  const savedTheme = localStorage.getItem('theme');
+ 
+   useEffect(() => {
+     if (savedTheme === 'light')
+       document.body.classList.add('light-mode');
+     else 
+       document.body.classList.remove('light-mode');
+   }, [savedTheme]);
 
 
   useEffect(() => {
@@ -83,8 +91,7 @@ const Portfolio: React.FC = () => {
     try {
       const balance = await window.api.getPortfolioBalance();
 
-      // Fetch wallets and their holdings
-      //const wallets: Wallet[] = await window.api.getPortfolioWallets();
+
       const wallets: Wallet[] = await window.api.getWallets();
       setWallets(wallets);
 
