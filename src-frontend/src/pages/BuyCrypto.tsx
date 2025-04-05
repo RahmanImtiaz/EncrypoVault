@@ -2,7 +2,7 @@ import '../styles/BuyCrypto.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
-import useCryptoPrice from '../components/fetchPrice';
+import fetchPrice from '../components/fetchPrice';
 
 
 interface Holding {
@@ -22,15 +22,6 @@ interface Holding {
     };
   }
 
-  interface PriceData {
-    market_data?: {
-      current_price: {
-        gbp: number;
-        [key: string]: number;
-      };
-    };
-  }
-
 
 
 const BuyCrypto = () => {
@@ -39,8 +30,8 @@ const BuyCrypto = () => {
   const wallet = location.state?.wallet as Wallet;
   const [amountToBuy, setAmountToBuy] = useState("");
   //const [confirmMessage, setConfirmMessage] = useState("");
-  const { priceData } = useCryptoPrice() as { priceData: PriceData | null };
-  const rate = priceData?.market_data?.current_price.gbp;
+  const { priceData } = fetchPrice();
+  const rate = priceData?.[wallet.coin_symbol === "BTC" ? "BTC-GBP" : "ETH-GBP"];
   const { showToast } = useToast();
   const [showTutorial, setShowTutorial] = useState<boolean>(false);
 
@@ -97,11 +88,11 @@ const BuyCrypto = () => {
         <label htmlFor="buy-amount" id="buy-amountLabel">Enter Amount</label>
         <input type="number" min="0.00001" step="0.000001" onChange={(e) => setAmountToBuy(e.target.value)} name="amount" id="buy-amount" placeholder="Enter Amount" className="buyingInput"/>
         <div id="buy-receive-amount">
-          <p>Rate: 1 {wallet?.coin_symbol} = £{typeof rate === 'number' ? rate.toFixed(2) : rate}</p>
+          <p>Rate: 1 {wallet?.coin_symbol} = £{rate}</p>
         </div>
         <label htmlFor="receive-amount" id="receive-label">Total Price:</label>
         <div id="receive-amount">
-          <p>£{typeof rate === 'number' && amountToBuy ? (rate * parseFloat(amountToBuy)).toFixed(2) : '0.00'}</p>
+          <p>£{typeof Number(rate) === 'number' && amountToBuy ? (Number(rate) * parseFloat(amountToBuy)).toFixed(2) : '0.00'}</p>
         </div>
           
         <div className="buttons">
