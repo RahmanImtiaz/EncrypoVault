@@ -272,7 +272,7 @@ const Portfolio: React.FC = () => {
 
   return (
     <div className="portfolioContainer">
-      <div className="balanceContainer">
+      <div className="balanceSection">
         <h2 className="balanceHeading">Total Balance</h2>
         <p className="total">£{balance.toFixed(2)}</p>
       </div>
