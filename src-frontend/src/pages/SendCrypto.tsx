@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
 import api from '../lib/api';
-import useCryptoPrice from '../components/fetchPrice';
 
 interface Holding {
   amount: number;
@@ -27,15 +26,6 @@ interface Contact {
   address: string;
 }
 
-interface PriceData {
-  market_data?: {
-    current_price: {
-      gbp: number;
-      [key: string]: number;
-    };
-  };
-}
-
 
 const SendCrypto = () => {
   const navigate = useNavigate();
@@ -53,9 +43,7 @@ const SendCrypto = () => {
   //const [loading, setLoading] = useState<boolean>(true);
   //const [error, setError] = useState<string>("");
   const { showToast } = useToast();
-  const { priceData } = useCryptoPrice() as { priceData: PriceData | null };
   const savedTheme = localStorage.getItem('theme');
-  const rate = priceData?.market_data?.current_price.gbp;
   const [showTutorial, setShowTutorial] = useState<boolean>(false);
 
   useEffect(() => {
@@ -173,7 +161,6 @@ const SendCrypto = () => {
         <input type="number" min="0.00001" step="0.000001" onChange={(e) => setAmountToSend(e.target.value)} name="amount" id="buy-amount" placeholder="Enter Amount" className="sendingInput"/>
         <div className="information">
           <p>Total Owned: {wallet?.balance}</p>
-          <p>Rate: 1 {wallet?.coin_symbol} = £{typeof rate === 'number' ? rate.toFixed(2) : rate}</p>
         </div>
         <label htmlFor="contact-options" id="contacts">Choose Contact</label>
         <div id="contact-options">
