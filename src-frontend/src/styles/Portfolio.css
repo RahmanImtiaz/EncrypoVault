@@ -393,7 +393,7 @@ body.light-mode .transactionHistory .transactionList li p strong {
 }
 
 
-
+/*
 .wallets-list-overlay {
   position: fixed;
   top: 0;
@@ -484,4 +484,104 @@ body.light-mode .transactionHistory .transactionList li p strong {
   text-align: center;
   color: #fff;
   font-size: 16px;
+}*/
+
+
+
+/* Wallets List Overlay */
+.wallets-list-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
+
+/* Wallet List Container */
+.wallet-list-container {
+  position: relative;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh; /* Fixed height */
+  background-color: #1e1e2f;
+  border-radius: 16px;
+  padding: 2rem;
+  overflow-y: auto; /* Enable scroll */
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Wallet Items Wrapper */
+.all-wallets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* Single Wallet Item */
+.single-wallet-item {
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.single-wallet-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Wallet Header */
+.single-wallet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Wallet Name and Balance */
+.single-wallet-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.single-wallet-balance {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #ccc;
+}
+
+/* Wallet Content */
+.single-wallet-content {
+  margin-top: 0.5rem;
+}
+
+/* Wallet Details Rows */
+.wallet-details-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.2rem 0;
+  font-size: 0.95rem;
+  color: #ddd;
+}
+
+/* Close Button */
+.close-wallet-list-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.close-wallet-list-button:hover {
+  color: #ff4d4f;
+}
+
