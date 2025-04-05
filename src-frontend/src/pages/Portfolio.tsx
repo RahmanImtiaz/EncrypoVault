@@ -334,18 +334,20 @@ const Portfolio: React.FC = () => {
       </div>
 
       {/* YouTube Videos Section */}
-      <div className="youtubeVideos">
-        <h2>Learn Crypto Trading</h2>
-        <ul>
-          {youtubeVideos.map((video, index) => (
-            <li key={index}>
-              <p>
-                <strong>{video.title}:</strong> {video.url}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {accountType === "Beginner" && (
+        <div className="youtubeVideos">
+          <h2>Learn Crypto Trading</h2>
+          <ul>
+            {youtubeVideos.map((video, index) => (
+              <li key={index}>
+                <p>
+                  <strong>{video.title}:</strong> {video.url}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Transaction History Section */}
       <div className="transactionHistory">
