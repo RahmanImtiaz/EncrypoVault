@@ -585,3 +585,47 @@ body.light-mode .transactionHistory .transactionList li p strong {
   color: #ff4d4f;
 }
 
+
+body.light-mode .wallets-list-overlay {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+body.light-mode .wallet-list-container {
+  background-color: #ffffff;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+body.light-mode .single-wallet-item {
+  background-color: rgba(0, 0, 0, 0.03);
+  border: 1px solid #e0e0e0;
+}
+
+body.light-mode .single-wallet-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .single-wallet-name {
+  color: #333333;
+}
+
+body.light-mode .single-wallet-balance {
+  color: #666666;
+}
+
+body.light-mode .wallet-details-row {
+  color: #555555;
+}
+
+body.light-mode .close-wallet-list-button {
+  color: #666666;
+}
+
+body.light-mode .close-wallet-list-button:hover {
+  color: #ff4d4f;
+}
+
+body.light-mode .empty-wallet-list {
+  color: #666666;
+}
