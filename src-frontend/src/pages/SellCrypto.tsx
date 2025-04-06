@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
 import fetchPrice from '../components/fetchPrice';
-
+import { saveTransaction } from '../components/helpers/FakeTransactionRecords';
+import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
 
 interface Holding {
     amount: number;
@@ -63,14 +64,22 @@ export const SellCrypto = () => {
 
     const sellConfirm = () => {
         try {
-            console.log("Crypto selling initiated.");
-            showToast("Selling successful!", "success");
-            navigate(-1);
+          const amount = parseFloat(amountToSell);
+          saveTransaction({
+            walletName: wallet.name,
+            coinSymbol: wallet.coin_symbol,
+            amount,
+            type: 'sell'
+          });
+          
+          console.log("Crypto sale recorded.");
+          showToast("Sale recorded successfully!", "success");
+          navigate(-1);
         } catch (err) {
-            showToast("Transaction failed. Please try again.", "error");
-            console.error(err);
+          showToast("Failed to record transaction.", "error");
+          console.error(err);
         }
-    }
+      }
 
 
     if (detailsScreen) {
@@ -121,7 +130,7 @@ export const SellCrypto = () => {
                 <label htmlFor="amount" id="sellLabel">Crypto Assets</label>
                 <input type="number" min="0.00001" step="0.000001" onChange={(e) => setAmountToSell(e.target.value)} name="amount" id="buy-amount" placeholder="Enter Amount" className="sellingInput"/>
                 <div className="information">
-                    <p>Total Owned: {wallet?.balance}</p>
+                    <p>Total Owned: {getWalletBalance(wallet)} {wallet?.coin_symbol}</p>
                     <p>Rate: 1 {wallet?.coin_symbol} = £{rate}</p>
                 </div>
                 <label htmlFor="receive-amount" id="receive-label">You will Receive</label>

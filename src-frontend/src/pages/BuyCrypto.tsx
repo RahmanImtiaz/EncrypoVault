@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
 import fetchPrice from '../components/fetchPrice';
+import { saveTransaction } from '../components/helpers/FakeTransactionRecords';
+
 
 
 interface Holding {
@@ -58,11 +60,19 @@ const BuyCrypto = () => {
 
   const buyConfirm = () => {
     try {
-      console.log("Crypto purchase initiated.");
-      showToast("Purchase successful!", "success");
+      const amount = parseFloat(amountToBuy);
+      saveTransaction({
+        walletName: wallet.name,
+        coinSymbol: wallet.coin_symbol,
+        amount,
+        type: 'buy'
+      });
+      
+      console.log("Crypto purchase recorded.");
+      showToast("Purchase recorded successfully!", "success");
       navigate(-1);
     } catch (err) {
-      showToast("Transaction failed. Please try again.", "error");
+      showToast("Failed to record transaction.", "error");
       console.error(err);
     }
   }

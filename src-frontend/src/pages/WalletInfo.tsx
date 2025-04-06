@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { QRCodeComponent } from '../components/generateQR';
 import fetchPrice from '../components/fetchPrice';
 import '../styles/WalletInfo.css';
+import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
 
 interface Holding {
   amount: number;
@@ -179,7 +180,7 @@ const WalletInfo = () => {
         </div>
         <div className='wallet-holdings'>
           <h3>Holdings:</h3>
-            <p className="balance-display">{wallet.balance} {wallet.coin_symbol}</p>
+            <p className="balance-display"><p>{getWalletBalance(wallet)} {wallet?.coin_symbol}</p></p>
         </div>
         <div className="buttons">
           <button className="wallet-button" onClick={() => navigate("/buy", { state: { wallet }})}>Buy {wallet.coin_symbol}</button>

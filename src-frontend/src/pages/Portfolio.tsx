@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { QRCodeComponent } from '../components/generateQR';
 import useCryptoPrice from '../components/fetchPrice';
 import "../styles/Portfolio.css";
+import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
 
 interface Holding{
   amount: number;
@@ -253,7 +254,7 @@ const Portfolio: React.FC = () => {
                       <div className="wallet-details-row">
                         <span className="wallet-details-label">Holdings:</span>
                         <span className="wallet-details-value">
-                            {wallet.balance} {wallet.coin_symbol}
+                          {getWalletBalance(wallet)} {wallet?.coin_symbol}
                         </span>
                       </div>
                     </div>

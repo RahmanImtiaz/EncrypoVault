@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
 import api from '../lib/api';
+import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
 
 interface Holding {
   amount: number;
@@ -163,7 +164,7 @@ const SendCrypto = () => {
         <label htmlFor="amount" id="sendLabel">Crypto Assets</label>
         <input type="number" min="0.00001" step="0.000001" onChange={(e) => setAmountToSend(e.target.value)} name="amount" id="buy-amount" placeholder="Enter Amount" className="sendingInput"/>
         <div className="information">
-          <p>Total Owned: {wallet?.balance}</p>
+          <p>Total Owned: {getWalletBalance(wallet)} {wallet?.coin_symbol}</p>
         </div>
         <label htmlFor="contact-options" id="contacts">Choose Contact</label>
         <select id="existing-contacts-dropdown" value={contactChosen} onChange={handleChangeContact}>
