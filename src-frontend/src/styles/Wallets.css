@@ -23,18 +23,29 @@ body {
   background: linear-gradient(135deg, #13183F, #3A3F92, #726FBA);
   color: var(--text-light);
   font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100vh;
 }
 
 /* Main wallet container */
 .wallets-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 80px 20px 30px 20px; /* Increased top padding to move content down */
-  min-height: 100vh;
+  padding: 80px 20px 30px; /* Adjusted padding */
+  height: calc(100vh - 80px); /* Subtract header height */
+  overflow-y: auto; /* Ensure scrolling works */
+  box-sizing: border-box;
 }
 
 /* Header section */
 .wallets-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg-dark); /* Match the background color */
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -209,6 +220,8 @@ body {
   -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   scrollbar-width: thin; /* Firefox */
   scrollbar-color: var(--primary) var(--bg-card); /* Firefox */
+  min-height: min-content; /* Add this */
+  box-sizing: border-box; /* Add this */
 }
 
 .wallet-item {

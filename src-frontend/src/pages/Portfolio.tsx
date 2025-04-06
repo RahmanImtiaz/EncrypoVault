@@ -220,23 +220,23 @@ const Portfolio: React.FC = () => {
 
   if (showWalletList) {
     return (
-      <div className="wallet-list-overlay">
-        <div className="qr-modal-content">
+      <div className="wallets-list-overlay">
+        <div className="wallet-list-container">
           {wallets.length === 0 ? (
-            <div className="empty-state">
+            <div className="empty-wallet-list">
               <p>No wallets found.</p>
             </div>
           ) : (
-            <div className="wallets-list">
+            <div className="all-wallets-list">
               {wallets.map((wallet, index) => (
                 <div
                   key={index}
-                  className="wallet-item"
+                  className="single-wallet-item"
                   onClick={() => handleWalletSelect(wallet)}
                 >
-                  <div className="wallet-header">
-                    <h3 className="wallet-name">{wallet.name}</h3>
-                    <span className="wallet-balance">
+                  <div className="single-wallet-header">
+                    <h3 className="single-wallet-name">{wallet.name}</h3>
+                    <span className="single-wallet-balance">
                       {(() => {
                         const priceKey = wallet.coin_symbol === "BTC" ? "BTC-GBP" : "ETH-GBP";
                         const price = priceData?.[priceKey];
@@ -244,15 +244,15 @@ const Portfolio: React.FC = () => {
                       })()}
                     </span>
                   </div>
-                  <div className="wallet-content">
-                    <div className="wallet-details">
-                      <div className="wallet-detail-row">
-                        <span className="wallet-detail-label">Type:</span>
-                        <span className="wallet-detail-value">{wallet.coin_symbol}</span>
+                  <div className="single-wallet-content">
+                    <div className="wallet-details-important">
+                      <div className="wallet-details-row">
+                        <span className="wallet-details-label">Type:</span>
+                        <span className="wallet-details-value">{wallet.coin_symbol}</span>
                       </div>
-                      <div className="wallet-detail-row">
-                        <span className="wallet-detail-label">Holdings:</span>
-                        <span className="wallet-detail-value">
+                      <div className="wallet-details-row">
+                        <span className="wallet-details-label">Holdings:</span>
+                        <span className="wallet-details-value">
                             {wallet.balance} {wallet.coin_symbol}
                         </span>
                       </div>
@@ -262,7 +262,7 @@ const Portfolio: React.FC = () => {
               ))}
             </div>
           )}
-          <button className="close-button" onClick={() => setShowWalletList(false)}>x</button>
+          <button className="close-wallet-list-button" onClick={() => setShowWalletList(false)}>x</button>
         </div>
       </div>
     );

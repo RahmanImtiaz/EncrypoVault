@@ -13,6 +13,9 @@ export function Login({ onLogin, toggleForm }: LoginProps) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [accounts, setAccounts] = useState<string[]>([]);
+  const [failedAttempts, setFailedAttempts] = useState(0); 
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  console.log(failedAttempts);
   if (!localStorage.getItem("theme")) {
     localStorage.setItem("theme", "dark");
   }
@@ -49,6 +52,9 @@ export function Login({ onLogin, toggleForm }: LoginProps) {
 
   const handleBiometricAuth = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (isButtonDisabled) return;
+
     setLoading(true);
     const platform = await window.api.getOS()
     try {
@@ -91,6 +97,21 @@ export function Login({ onLogin, toggleForm }: LoginProps) {
       }
     } catch (err) {
       console.error('Biometric auth error:', err);
+      setFailedAttempts(prev => {
+        const attempts = prev +1
+        if (attempts >=3){
+          setIsButtonDisabled(true)
+          showToast('Too many failed attempts! Please try again in 5 minutes.', 'error');
+
+            setTimeout(() => {
+            setIsButtonDisabled(false);
+            setFailedAttempts(0);
+            showToast('You can try again!');
+            }, 300000); // 5 minutes
+        }
+        return attempts
+      });
+
       showToast('You closed the OS login prompt! or Incorrect Login Error', 'error');
     } finally {
       setLoading(false);
@@ -145,7 +166,7 @@ export function Login({ onLogin, toggleForm }: LoginProps) {
               <button 
                 type="submit" 
                 className="login-button"
-                disabled={loading}
+                disabled={loading || isButtonDisabled}
               >
                 {loading ? "Verifying..." : "Continue"}
               </button>
