@@ -4,6 +4,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
 import fetchPrice from '../components/fetchPrice';
 import api from '../lib/api';
+import { PublicKeyCredentialRequestOptionsJSON, startAuthentication } from '@simplewebauthn/browser';
+
 
 
 interface Holding {
@@ -11,17 +13,17 @@ interface Holding {
     name: string;
     symbol: string;
     value: number;
-  }
-  
-  interface Wallet {
+}
+
+interface Wallet {
     name: string;
     balance: number;
     address: string;
     coin_symbol: string;
     holdings: {
-      [key: string]: Holding;
+        [key: string]: Holding;
     };
-  }
+}
 
 
 
@@ -39,9 +41,9 @@ export const SellCrypto = () => {
 
     useEffect(() => {
         if (savedTheme === 'light')
-        document.body.classList.add('light-mode');
-        else 
-        document.body.classList.remove('light-mode');
+            document.body.classList.add('light-mode');
+        else
+            document.body.classList.remove('light-mode');
     }, [savedTheme]);
 
 
@@ -64,14 +66,27 @@ export const SellCrypto = () => {
 
     const sellConfirm = async () => {
         try {
-            // Trigger biometric verification
-            const response = await api.verifyBiometricForTransaction(wallet);
+            const platform = await window.api.getOS()
+            if (platform == "darwin") {
+                // Trigger biometric verification
+                const response = await api.verifyBiometricForTransaction(wallet);
 
-            if (!response.ok) {
-            const data = await response.json();
-            showToast(data.error || "Biometric verification failed", "error");
-            return;
+                if (!response.ok) {
+                    const data = await response.json();
+                    showToast(data.error || "Biometric verification failed", "error");
+                    return;
+                }
+            } else {
+                const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
+                const webauthnResponse = await startAuthentication({ optionsJSON: authData, useBrowserAutofill: false })
+                const response = await api.verifyBiometricForTransaction(wallet);
+
+                if (response.status !== 200) {
+                    showToast('Invalid Password or biometrics!', 'error');
+                    return;
+                }
             }
+
             console.log("Crypto selling initiated.");
             showToast("Selling successful!", "success");
             navigate(-1);
@@ -84,22 +99,22 @@ export const SellCrypto = () => {
 
     if (detailsScreen) {
         return (
-          <div className="confirm-modal-overlay">
-            <div className="confirm-modal-content">
-              <div className="confirm-header">
-                <h2>Confirm details</h2>
-              </div>
-              <div>
-                <p>Wallet: {wallet.name}</p>
-                <p>Amount to sell: {amountToSell} {wallet?.coin_symbol}</p>
-                <p>You will receive: £{typeof Number(rate) === 'number' && amountToSell ? (Number(rate) * parseFloat(amountToSell)).toFixed(2) : '0.00'}</p>
-              </div>
-              <div className="confirmation-buttons">
-                <button type="button" className="cancel-confirmation" onClick={() => showDetailsScreen(false)}>Cancel</button>
-                <button type="button" className="confirm-transaction-button" onClick={() => sellConfirm()}>Confirm</button>
-              </div>
+            <div className="confirm-modal-overlay">
+                <div className="confirm-modal-content">
+                    <div className="confirm-header">
+                        <h2>Confirm details</h2>
+                    </div>
+                    <div>
+                        <p>Wallet: {wallet.name}</p>
+                        <p>Amount to sell: {amountToSell} {wallet?.coin_symbol}</p>
+                        <p>You will receive: £{typeof Number(rate) === 'number' && amountToSell ? (Number(rate) * parseFloat(amountToSell)).toFixed(2) : '0.00'}</p>
+                    </div>
+                    <div className="confirmation-buttons">
+                        <button type="button" className="cancel-confirmation" onClick={() => showDetailsScreen(false)}>Cancel</button>
+                        <button type="button" className="confirm-transaction-button" onClick={() => sellConfirm()}>Confirm</button>
+                    </div>
+                </div>
             </div>
-          </div>
         );
     }
 
@@ -109,26 +124,26 @@ export const SellCrypto = () => {
 
     return (
         <div className="return-container">
-            {showTutorial?
+            {showTutorial ?
                 <div className="instructionBox">
                     <button className="close-button" onClick={() => setShowTutorial(!showTutorial)}>
                         ×
                     </button>
-                <p>Sell Crypto allows you to sell a quantity of your asset for money in return.</p>
-                <p>
-                    Please enter the amount you wish to sell in asset terms, not GBP.
-                    The total payment you will receive will be displayed in GBP.
-                    After confirming, you can send the asset to the chosen contact.
-                </p>
+                    <p>Sell Crypto allows you to sell a quantity of your asset for money in return.</p>
+                    <p>
+                        Please enter the amount you wish to sell in asset terms, not GBP.
+                        The total payment you will receive will be displayed in GBP.
+                        After confirming, you can send the asset to the chosen contact.
+                    </p>
                 </div>
-            : null}
+                : null}
             <form onSubmit={sellAction} className="sell-form">
                 <div className="help-tutorial">
                     <button type="button" className="tutorial-button" onClick={() => setShowTutorial(!showTutorial)}>?</button>
                 </div>
                 <label htmlFor="" className="main-label">Sell Crypto</label>
                 <label htmlFor="amount" id="sellLabel">Crypto Assets</label>
-                <input type="number" min="0.00001" step="0.000001" onChange={(e) => setAmountToSell(e.target.value)} name="amount" id="buy-amount" placeholder="Enter Amount" className="sellingInput"/>
+                <input type="number" min="0.00001" step="0.000001" onChange={(e) => setAmountToSell(e.target.value)} name="amount" id="buy-amount" placeholder="Enter Amount" className="sellingInput" />
                 <div className="information">
                     <p>Total Owned: {wallet?.balance}</p>
                     <p>Rate: 1 {wallet?.coin_symbol} = £{rate}</p>

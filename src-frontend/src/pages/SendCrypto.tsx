@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
 import api from '../lib/api';
+import { PublicKeyCredentialRequestOptionsJSON, startAuthentication } from '@simplewebauthn/browser';
 
 interface Holding {
   amount: number;
@@ -42,14 +43,14 @@ const SendCrypto = () => {
   useEffect(() => {
     if (savedTheme === 'light')
       document.body.classList.add('light-mode');
-    else 
+    else
       document.body.classList.remove('light-mode');
   }, [savedTheme]);
 
   useEffect(() => {
-      fetchContacts();
-    }, []);
-    
+    fetchContacts();
+  }, []);
+
   const fetchContacts = async () => {
     try {
       const contactsList = await api.getContacts();
@@ -69,8 +70,8 @@ const SendCrypto = () => {
     e.preventDefault();
 
     if (!amountToSend.trim() || parseFloat(amountToSend) <= 0) {
-        showToast("Please enter a valid amount greater than or equal to 0.00001.", "error");
-        return;
+      showToast("Please enter a valid amount greater than or equal to 0.00001.", "error");
+      return;
     }
 
     {/*}
@@ -79,42 +80,55 @@ const SendCrypto = () => {
         return;
     }*/}
 
-    if (!contactChosen){
-        showToast("Please select a contact.", "error");
-        return;
+    if (!contactChosen) {
+      showToast("Please select a contact.", "error");
+      return;
     }
 
     showDetailsScreen(true);
-    
+
   };
 
-  
+
 
   const sendConfirm = async () => {
     try {
       // Trigger biometric verification
-      const response = await api.verifyBiometricForTransaction(wallet);
+      const platform = await window.api.getOS()
+      if (platform == "darwin") {
+        // Trigger biometric verification
+        const response = await api.verifyBiometricForTransaction(wallet);
 
-      if (!response.ok) {
-        const data = await response.json();
-        showToast(data.error || "Biometric verification failed", "error");
-        return;
+        if (!response.ok) {
+          const data = await response.json();
+          showToast(data.error || "Biometric verification failed", "error");
+          return;
+        }
+      } else {
+        const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
+        const webauthnResponse = await startAuthentication({ optionsJSON: authData, useBrowserAutofill: false })
+        const response = await api.verifyBiometricForTransaction(wallet);
+
+        if (response.status !== 200) {
+          showToast('Invalid Password or biometrics!', 'error');
+          return;
+        }
       }
-      
+
       // Find the selected contact's address
       const selectedContact = contacts.find(contact => contact.name === contactChosen);
-      
+
       if (!selectedContact) {
         showToast("Contact not found.", "error");
         return;
       }
-      
+
       // Send the crypto using the wallet name, amount, and destination address
       await api.sendCrypto(wallet.name, parseFloat(amountToSend), selectedContact.address);
-      
+
       console.log("Crypto sending initiated.");
       showToast("Sent successful!", "success");
-      
+
       // Go back to previous page after successful transaction
       navigate(-1);
     } catch (err) {
@@ -151,33 +165,33 @@ const SendCrypto = () => {
 
   return (
     <div className="return-container">
-      {showTutorial?
+      {showTutorial ?
         <div className="instructionBox">
           <button className="close-button" onClick={() => setShowTutorial(!showTutorial)}>
-              ×
+            ×
           </button>
           <p>Send Crypto allows you to send a quantity of your asset to another user's wallet.
             Please enter the amount you wish to send in asset terms, not GBP.
             Then choose a contact in which you would like to send it to from the list of existing contacts.
           </p>
           <p>If no contacts are available, please add a new contact in the contacts page.
-          After confirming, you can send the asset to the chosen contact.</p>
+            After confirming, you can send the asset to the chosen contact.</p>
         </div>
-      : null}
+        : null}
       <form onSubmit={sellAction} className="send-form">
         <div className="help-tutorial">
           <button type="button" className="tutorial-button" onClick={() => setShowTutorial(!showTutorial)}>?</button>
         </div>
         <label htmlFor="" className="main-label">Send Crypto</label>
         <label htmlFor="amount" id="sendLabel">Crypto Assets</label>
-        <input type="number" min="0.00001" step="0.000001" onChange={(e) => setAmountToSend(e.target.value)} name="amount" id="buy-amount" placeholder="Enter Amount" className="sendingInput"/>
+        <input type="number" min="0.00001" step="0.000001" onChange={(e) => setAmountToSend(e.target.value)} name="amount" id="buy-amount" placeholder="Enter Amount" className="sendingInput" />
         <div className="information">
           <p>Total Owned: {wallet?.balance}</p>
         </div>
         <label htmlFor="contact-options" id="contacts">Choose Contact</label>
         <select id="existing-contacts-dropdown" value={contactChosen} onChange={handleChangeContact}>
           <option value="">--Choose an option--</option>
-          {contacts.map((contact,index) => (
+          {contacts.map((contact, index) => (
             <option key={index} value={contact.name}>{contact.name}</option>
           ))}
         </select>
