@@ -3,6 +3,7 @@ import json
 import asyncio
 import aiofiles
 import websockets
+from gevent import threading
 
 
 class PriceSocket:
@@ -86,15 +87,14 @@ class PriceSocket:
             self.session = False
 
     async def update_price_cache_periodically(self):
-        print("Started periodic price saving task.")
-        try:
-            while self.session:
-                await asyncio.sleep(9)
-                await self.save_price_cache()
-        except asyncio.CancelledError:
-            print("Periodic price saving task cancelled.")
-        except Exception as e:
-            print(f"Error in periodic save: {e}")
+        if self.session:
+            try:
+                asyncio.create_task(self.save_price_cache())
+                threading.Timer(10, self.update_price_cache_periodically).start()
+            except asyncio.CancelledError:
+                print("Cancelled")
+            except Exception as e:
+                print(f"Error updating price cache: {e}")
 
     async def save_price_cache(self):
         try:
