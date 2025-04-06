@@ -31,7 +31,6 @@ interface AggregatedHolding extends Holding {
 const Portfolio: React.FC = () => {
   const {priceData} = useCryptoPrice();
   const navigate = useNavigate();
-  const [balance, setBalance] = useState<number>(0);
   const [aggregatedHoldings, setAggregatedHoldings] = useState<AggregatedHolding[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,6 +42,7 @@ const Portfolio: React.FC = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [chosenWallet, setChosenWallet] = useState<Wallet | null>(null);
   const [showQR, setShowQR] = useState(false);
+  const [totalBalance, setTotalBalance] = useState<number>(0);
   const savedTheme = localStorage.getItem('theme');
  
    useEffect(() => {
@@ -90,12 +90,16 @@ const Portfolio: React.FC = () => {
 
   const fetchPortfolioData = async () => {
     try {
-      const balance = await window.api.getPortfolioBalance();
-
+      // Fetch wallets
       const wallets: Wallet[] = await window.api.getWallets();
       setWallets(wallets);
 
+      // Calculate total portfolio balance by summing up wallet balances
+      const totalBalance = wallets.reduce((sum, wallet) => sum + wallet.balance, 0);
+
+      // Aggregate holdings across all wallets
       const holdings: { [key: string]: AggregatedHolding } = {};
+
       wallets.forEach((wallet) => {
         Object.entries(wallet.holdings).forEach(([cryptoId, holding]) => {
           if (!holdings[cryptoId]) {
@@ -119,11 +123,11 @@ const Portfolio: React.FC = () => {
 
       const holdingsArray = Object.values(holdings);
       holdingsArray.forEach((holding) => {
-        holding.percentOfPortfolio = balance > 0 ? (holding.value / balance) * 100 : 0;
+        holding.percentOfPortfolio = totalBalance > 0 ? (holding.value / totalBalance) * 100 : 0;
       });
 
       holdingsArray.sort((a, b) => b.value - a.value);
-      setBalance(balance);
+      setTotalBalance(totalBalance); // Use setTotalBalance here
       setAggregatedHoldings(holdingsArray);
     } catch (err) {
       console.error("Error fetching portfolio data:", err);
@@ -274,7 +278,7 @@ const Portfolio: React.FC = () => {
     <div className="portfolioContainer">
       <div className="balanceContainer">
         <h2 className="balanceHeading">Total Balance</h2>
-        <p className="total">£{balance.toFixed(2)}</p>
+        <p className="total">£{totalBalance.toFixed(2)}</p>
       </div>
 
       {/* Account Type Badge */}
