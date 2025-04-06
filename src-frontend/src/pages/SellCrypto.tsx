@@ -78,7 +78,7 @@ export const SellCrypto = () => {
                 }
             } else {
                 const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
-                const webauthnResponse = await startAuthentication({ optionsJSON: authData, useBrowserAutofill: false })
+                // const webauthnResponse = await startAuthentication({ optionsJSON: authData, useBrowserAutofill: false })
                 const response = await api.verifyBiometricForTransaction(wallet);
 
                 if (response.status !== 200) {
