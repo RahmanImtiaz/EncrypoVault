@@ -36,6 +36,17 @@ async function register(accountName: string, password: string, accountType: Acco
     })
 }
 
+async function verifyBiometricForTransaction(wallet: {name: string}): Promise<Response> {
+    const response = await fetch("/api/crypto/verify_biometrics", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          accountName: wallet.name,
+        }),
+      });
+    return response;
+}
+
 async function getOS() : Promise<string> {
     const res = await fetch("/api/utils/os")
     return (await res.json()).os
@@ -198,5 +209,6 @@ export default {
     createWallet,
     getWallets,
     sendCrypto,
+    verifyBiometricForTransaction,
     logout
 }

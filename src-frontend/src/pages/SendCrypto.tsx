@@ -92,6 +92,15 @@ const SendCrypto = () => {
 
   const sendConfirm = async () => {
     try {
+      // Trigger biometric verification
+      const response = await api.verifyBiometricForTransaction(wallet);
+
+      if (!response.ok) {
+        const data = await response.json();
+        showToast(data.error || "Biometric verification failed", "error");
+        return;
+      }
+      
       // Find the selected contact's address
       const selectedContact = contacts.find(contact => contact.name === contactChosen);
       

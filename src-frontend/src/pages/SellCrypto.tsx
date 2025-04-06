@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
 import fetchPrice from '../components/fetchPrice';
+import api from '../lib/api';
 
 
 interface Holding {
@@ -61,8 +62,16 @@ export const SellCrypto = () => {
         showDetailsScreen(true);
     };
 
-    const sellConfirm = () => {
+    const sellConfirm = async () => {
         try {
+            // Trigger biometric verification
+            const response = await api.verifyBiometricForTransaction(wallet);
+
+            if (!response.ok) {
+            const data = await response.json();
+            showToast(data.error || "Biometric verification failed", "error");
+            return;
+            }
             console.log("Crypto selling initiated.");
             showToast("Selling successful!", "success");
             navigate(-1);
