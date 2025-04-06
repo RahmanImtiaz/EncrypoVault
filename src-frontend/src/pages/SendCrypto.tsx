@@ -30,18 +30,10 @@ interface Contact {
 const SendCrypto = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  //const [selectedOption, setSelectedOption] = useState("");
   const wallet = location.state?.wallet as Wallet;
   const [amountToSend, setAmountToSend] = useState("");
-  //const [confirmMessage, setConfirmMessage] = useState("");
-  //const [newContact, setNewContact] = useState(false);
-  //const [existingContactsList, setExistingContactsList] = useState(false);
-  //const [qrCodeContact, setQrCodeContact] = useState(false);
   const [contactChosen, setContactChosen] = useState("");
-  //const [activeButton, setActiveButton] = useState<string | null>(null);
   const [contacts, setContacts] = useState<Contact[]>([]);
-  //const [loading, setLoading] = useState<boolean>(true);
-  //const [error, setError] = useState<string>("");
   const { showToast } = useToast();
   const savedTheme = localStorage.getItem('theme');
   const [showTutorial, setShowTutorial] = useState<boolean>(false);
@@ -60,22 +52,14 @@ const SendCrypto = () => {
     
   const fetchContacts = async () => {
     try {
-      //setLoading(true);
       const contactsList = await api.getContacts();
       setContacts(contactsList);
     } catch (err) {
       console.error("Error fetching contacts:", err);
-      //setError("Failed to load contacts");
     } finally {
-      //setLoading(false);
     }
   };
 
-
-
-  //const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-  //    setSelectedOption(event.target.value);
-  //};
 
   const handleChangeContact = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setContactChosen(event.target.value);
@@ -83,26 +67,30 @@ const SendCrypto = () => {
 
   const sellAction = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    {/*}
-    if (!selectedOption) {
-        setConfirmMessage("Please select a cryptocurrency to send.");
-        showToast("Please select a cryptocurrency to send.", "error");
-        return;
-    }*/}
 
     if (!amountToSend.trim() || parseFloat(amountToSend) <= 0) {
-        //setConfirmMessage("Please enter a valid amount greater than 0.00001.");
-        showToast("Please enter a valid amount greater than 0.00001.", "error");
+        showToast("Please enter a valid amount greater than or equal to 0.00001.", "error");
         return;
     }
 
+    {/*}
+    if (parseFloat(amountToSend) > wallet.balance) {
+        showToast("Insufficient balance. Please enter a valid amount up to or equal to your balance.", "error");
+        return;
+    }*/}
+
     if (!contactChosen){
-        //setConfirmMessage("Please select a contact.");
         showToast("Please select a contact.", "error");
         return;
     }
 
+    showDetailsScreen(true);
+    
+  };
+
+  
+
+  const sendConfirm = async () => {
     try {
       // Find the selected contact's address
       const selectedContact = contacts.find(contact => contact.name === contactChosen);
@@ -121,23 +109,6 @@ const SendCrypto = () => {
       // Go back to previous page after successful transaction
       navigate(-1);
     } catch (err) {
-      showToast("Transaction failed. Please try again.", "error");
-      console.error(err);
-    }
-    
-  };
-
-  
-
-  const sendConfirm = () => {
-    try {
-      console.log("Crypto sending initiated.");
-      //setConfirmMessage("Sent successful!");
-      showToast("Sent successful!", "success");
-      navigate(-1);
-      // Implement the actual purchase logic here
-    } catch (err) {
-      //setConfirmMessage("Transaction failed. Please try again.");
       showToast("Transaction failed. Please try again.", "error");
       console.error(err);
     }
@@ -201,13 +172,11 @@ const SendCrypto = () => {
             <option key={index} value={contact.name}>{contact.name}</option>
           ))}
         </select>
-        {/*{qrCodeContact? "display QR code scanner here (to be added)": null}*/}
         <p className="label-contact-selection">Contact selected: {contactChosen}</p>
         <div className="buttons">
           <button type="button" className="goBack" onClick={() => navigate(-1)}>Cancel</button>
           <button type="submit" className="send-button">Send</button>
         </div>
-        {/*{confirmMessage && <p className="error-message">{confirmMessage}</p>}*/}
       </form>
     </div>
   );

@@ -29,7 +29,6 @@ const BuyCrypto = () => {
   const location = useLocation();
   const wallet = location.state?.wallet as Wallet;
   const [amountToBuy, setAmountToBuy] = useState("");
-  //const [confirmMessage, setConfirmMessage] = useState("");
   const { priceData } = fetchPrice();
   const rate = priceData?.[wallet.coin_symbol === "BTC" ? "BTC-GBP" : "ETH-GBP"];
   const { showToast } = useToast();
@@ -50,8 +49,7 @@ const BuyCrypto = () => {
     e.preventDefault();
 
     if (!amountToBuy.trim() || parseFloat(amountToBuy) <= 0) {
-      //setConfirmMessage("Please enter a valid amount greater than £0.00.");
-      showToast("Please enter a valid amount greater than £0.00.", "error");
+      showToast("Please enter a valid amount greater than or equal to 0.00001.", "error");
       return;
     }
 
@@ -61,12 +59,9 @@ const BuyCrypto = () => {
   const buyConfirm = () => {
     try {
       console.log("Crypto purchase initiated.");
-      //setConfirmMessage("Purchase successful!");
       showToast("Purchase successful!", "success");
       navigate(-1);
-      // Implement the actual purchase logic here
     } catch (err) {
-      //setConfirmMessage("Transaction failed. Please try again.");
       showToast("Transaction failed. Please try again.", "error");
       console.error(err);
     }
@@ -134,7 +129,6 @@ const BuyCrypto = () => {
           <button type="button" className="goBack" onClick={() => navigate(-1)}>Cancel</button>
           <button type="submit" className="buy-button">Buy</button>
         </div>
-        {/*{confirmMessage && <p className="error-message">{confirmMessage}</p>}*/}
       </form>
     </div>
   );
