@@ -34,6 +34,7 @@ const BuyCrypto = () => {
   const rate = priceData?.[wallet.coin_symbol === "BTC" ? "BTC-GBP" : "ETH-GBP"];
   const { showToast } = useToast();
   const [showTutorial, setShowTutorial] = useState<boolean>(false);
+  const [detailsScreen, showDetailsScreen] = useState(false);
 
   const savedTheme = localStorage.getItem('theme');
 
@@ -46,25 +47,58 @@ const BuyCrypto = () => {
 
 
   const buyAction = async (e: React.FormEvent) => {
-        e.preventDefault();
+    e.preventDefault();
 
-        if (!amountToBuy.trim() || parseFloat(amountToBuy) <= 0) {
-            //setConfirmMessage("Please enter a valid amount greater than £0.00.");
-            showToast("Please enter a valid amount greater than £0.00.", "error");
-            return;
-        }
+    if (!amountToBuy.trim() || parseFloat(amountToBuy) <= 0) {
+      //setConfirmMessage("Please enter a valid amount greater than £0.00.");
+      showToast("Please enter a valid amount greater than £0.00.", "error");
+      return;
+    }
 
-        try {
-            console.log("Crypto purchase initiated.");
-            //setConfirmMessage("Purchase successful!");
-            showToast("Purchase successful!", "success");
-            // Implement the actual purchase logic here
-        } catch (err) {
-            //setConfirmMessage("Transaction failed. Please try again.");
-            showToast("Transaction failed. Please try again.", "error");
-            console.error(err);
-        }
-    };
+    showDetailsScreen(true);
+  };
+
+  const buyConfirm = () => {
+    try {
+      console.log("Crypto purchase initiated.");
+      //setConfirmMessage("Purchase successful!");
+      showToast("Purchase successful!", "success");
+      navigate(-1);
+      // Implement the actual purchase logic here
+    } catch (err) {
+      //setConfirmMessage("Transaction failed. Please try again.");
+      showToast("Transaction failed. Please try again.", "error");
+      console.error(err);
+    }
+  }
+
+
+
+  if (detailsScreen) {
+    return (
+      <div className="confirm-modal-overlay">
+        <div className="confirm-modal-content">
+          <div className="confirm-header">
+            <h2>Confirm details</h2>
+          </div>
+          <div>
+            <p>Wallet: {wallet.name}</p>
+            <p>Amount to purchase: {amountToBuy} {wallet?.coin_symbol}</p>
+            <p>Total price: £{typeof Number(rate) === 'number' && amountToBuy ? (Number(rate) * parseFloat(amountToBuy)).toFixed(2) : '0.00'}</p>
+          </div>
+          <div className="confirmation-buttons">
+            <button type="button" className="cancel-confirmation" onClick={() => showDetailsScreen(false)}>Cancel</button>
+            <button type="button" className="confirm-transaction-button" onClick={() => buyConfirm()}>Confirm</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+
+
+
+
 
   return (
     <div className="return-container">
@@ -73,7 +107,8 @@ const BuyCrypto = () => {
           <button className="close-button" onClick={() => setShowTutorial(!showTutorial)}>
               ×
           </button>
-          <p>Buy Crypto allows you to buy a quantity of the asset associated to the wallet and store it.
+          <p>Buy Crypto allows you to buy a quantity of the asset associated to the wallet and store it.</p>
+          <p>
             Please enter the amount you wish to buy in asset terms, not GBP.
             The total price of the amount you wish to buy will be displayed in GBP.
             After confirming, you can purchase the asset successfully.

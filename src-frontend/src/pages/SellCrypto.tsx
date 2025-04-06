@@ -35,6 +35,7 @@ export const SellCrypto = () => {
     const rate = priceData?.[wallet.coin_symbol === "BTC" ? "BTC-GBP" : "ETH-GBP"];
     const savedTheme = localStorage.getItem('theme');
     const [showTutorial, setShowTutorial] = useState<boolean>(false);
+    const [detailsScreen, showDetailsScreen] = useState(false);
 
     useEffect(() => {
         if (savedTheme === 'light')
@@ -46,7 +47,6 @@ export const SellCrypto = () => {
 
     const sellAction = async (e: React.FormEvent) => {
         e.preventDefault();
-        
 
         if (!amountToSell.trim() || parseFloat(amountToSell) <= 0) {
             //setConfirmMessage("Please enter a valid amount greater than 0.00001.");
@@ -54,17 +54,48 @@ export const SellCrypto = () => {
             return;
         }
 
+        showDetailsScreen(true);
+    };
+
+    const sellConfirm = () => {
         try {
             console.log("Crypto selling initiated.");
             //setConfirmMessage("Selling successful!");
             showToast("Selling successful!", "success");
+            navigate(-1);
             // Implement the actual purchase logic here
         } catch (err) {
             //setConfirmMessage("Transaction failed. Please try again.");
             showToast("Transaction failed. Please try again.", "error");
             console.error(err);
         }
-    };
+    }
+
+
+    if (detailsScreen) {
+        return (
+          <div className="confirm-modal-overlay">
+            <div className="confirm-modal-content">
+              <div className="confirm-header">
+                <h2>Confirm details</h2>
+              </div>
+              <div>
+                <p>Wallet: {wallet.name}</p>
+                <p>Amount to sell: {amountToSell} {wallet?.coin_symbol}</p>
+                <p>You will receive: £{typeof Number(rate) === 'number' && amountToSell ? (Number(rate) * parseFloat(amountToSell)).toFixed(2) : '0.00'}</p>
+              </div>
+              <div className="confirmation-buttons">
+                <button type="button" className="cancel-confirmation" onClick={() => showDetailsScreen(false)}>Cancel</button>
+                <button type="button" className="confirm-transaction-button" onClick={() => sellConfirm()}>Confirm</button>
+              </div>
+            </div>
+          </div>
+        );
+    }
+
+
+
+
 
     return (
         <div className="return-container">
@@ -73,7 +104,8 @@ export const SellCrypto = () => {
                     <button className="close-button" onClick={() => setShowTutorial(!showTutorial)}>
                         ×
                     </button>
-                <p>Sell Crypto allows you to sell a quantity of your asset for money in return.
+                <p>Sell Crypto allows you to sell a quantity of your asset for money in return.</p>
+                <p>
                     Please enter the amount you wish to sell in asset terms, not GBP.
                     The total payment you will receive will be displayed in GBP.
                     After confirming, you can send the asset to the chosen contact.

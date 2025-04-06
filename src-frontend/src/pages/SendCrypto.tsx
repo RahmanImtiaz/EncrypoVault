@@ -45,6 +45,7 @@ const SendCrypto = () => {
   const { showToast } = useToast();
   const savedTheme = localStorage.getItem('theme');
   const [showTutorial, setShowTutorial] = useState<boolean>(false);
+  const [detailsScreen, showDetailsScreen] = useState(false);
 
   useEffect(() => {
     if (savedTheme === 'light')
@@ -102,41 +103,49 @@ const SendCrypto = () => {
         return;
     }
 
-    try {
-        console.log("Crypto sending initiated.");
-        //setConfirmMessage("Sent successful!");
-        showToast("Sent successful!", "success");
-        // Implement the actual purchase logic here
-    } catch (err) {
-        //setConfirmMessage("Transaction failed. Please try again.");
-        showToast("Transaction failed. Please try again.", "error");
-        console.error(err);
-    }
+    
   };
 
-  {/*}
-  const showNewContact = () => {
-    setNewContact(true);
-    setExistingContactsList(false);
-    //setQrCodeContact(false);
-    setActiveButton('new'); // Set active button to 'new'
-  }*/}
+  
 
-  {/*}
-  const showExistingContacts = () => {
-    setExistingContactsList(true);
-    setNewContact(false);
-    //setQrCodeContact(false);
-    setActiveButton('existing'); // Set active button to 'existing'
-  }*/}
+  const sendConfirm = () => {
+    try {
+      console.log("Crypto sending initiated.");
+      //setConfirmMessage("Sent successful!");
+      showToast("Sent successful!", "success");
+      navigate(-1);
+      // Implement the actual purchase logic here
+    } catch (err) {
+      //setConfirmMessage("Transaction failed. Please try again.");
+      showToast("Transaction failed. Please try again.", "error");
+      console.error(err);
+    }
+  }
 
-  {/*
-  const showQrCodeScan = () => {
-    setQrCodeContact(true);
-    setNewContact(false);
-    setExistingContactsList(false);
-    setActiveButton('qrCode'); // Set active button to 'qrCode'
-  }*/}
+
+  if (detailsScreen) {
+    return (
+      <div className="confirm-modal-overlay">
+        <div className="confirm-modal-content">
+          <div className="confirm-header">
+            <h2>Confirm details</h2>
+          </div>
+          <div>
+            <p>Wallet: {wallet.name}</p>
+            <p>Amount to send: {amountToSend} {wallet?.coin_symbol}</p>
+            <p>Contact selected: {contactChosen}</p>
+          </div>
+          <div className="confirmation-buttons">
+            <button type="button" className="cancel-confirmation" onClick={() => showDetailsScreen(false)}>Cancel</button>
+            <button type="button" className="confirm-transaction-button" onClick={() => sendConfirm()}>Confirm</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+
+
 
 
   return (
@@ -165,23 +174,6 @@ const SendCrypto = () => {
           <p>Total Owned: {wallet?.balance}</p>
         </div>
         <label htmlFor="contact-options" id="contacts">Choose Contact</label>
-        {/*<div id="contact-options">*/}
-          {/*<button type="button" onClick={showNewContact} className={`contact-option-button ${activeButton === 'new' ? 'active' : ''}`}>New</button>*/}
-          {/*<button type="button" onClick={showExistingContacts} className={`contact-option-button ${activeButton === 'existing' ? 'active' : ''}`}>Existing</button>*/}
-          {/*<button type="button" onClick={showQrCodeScan} className={`contact-option-button ${activeButton === 'qrCode' ? 'active' : ''}`}>QR code</button>*/}
-        {/*</div>*/}
-        {/*}
-        {newContact? "display new contact form here (to be added)": null}
-        {existingContactsList ? 
-          <select id="existing-contacts-dropdown" value={contactChosen} onChange={handleChangeContact}>
-            <option value="">--Choose an option--</option>
-            {contacts.map((contact,index) => (
-              <option key={index} value={contact.name}>{contact.name}</option>
-            ))}
-          </select>
-          : (
-          null
-        )}*/}
         <select id="existing-contacts-dropdown" value={contactChosen} onChange={handleChangeContact}>
           <option value="">--Choose an option--</option>
           {contacts.map((contact,index) => (
