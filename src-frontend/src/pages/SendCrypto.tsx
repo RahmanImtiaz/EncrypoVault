@@ -103,6 +103,27 @@ const SendCrypto = () => {
         return;
     }
 
+    try {
+      // Find the selected contact's address
+      const selectedContact = contacts.find(contact => contact.name === contactChosen);
+      
+      if (!selectedContact) {
+        showToast("Contact not found.", "error");
+        return;
+      }
+      
+      // Send the crypto using the wallet name, amount, and destination address
+      await api.sendCrypto(wallet.name, parseFloat(amountToSend), selectedContact.address);
+      
+      console.log("Crypto sending initiated.");
+      showToast("Sent successful!", "success");
+      
+      // Go back to previous page after successful transaction
+      navigate(-1);
+    } catch (err) {
+      showToast("Transaction failed. Please try again.", "error");
+      console.error(err);
+    }
     
   };
 
@@ -184,7 +205,7 @@ const SendCrypto = () => {
         <p className="label-contact-selection">Contact selected: {contactChosen}</p>
         <div className="buttons">
           <button type="button" className="goBack" onClick={() => navigate(-1)}>Cancel</button>
-          <button type="submit" className="send-button">Sell</button>
+          <button type="submit" className="send-button">Send</button>
         </div>
         {/*{confirmMessage && <p className="error-message">{confirmMessage}</p>}*/}
       </form>
