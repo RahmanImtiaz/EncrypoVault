@@ -59,7 +59,7 @@ class BitcoinWalletHandler(HandlerInterface):
         if tx is not None and tx.txid is not None:
             transaction_entry = Transaction(
                 timestamp=datetime.now().isoformat(),
-                amount=amount,
+                amount=amount/100000000,
                 tx_hash=tx.txid,
                 sender=self.wallet.get_key().address,
                 receiver=destination_address,

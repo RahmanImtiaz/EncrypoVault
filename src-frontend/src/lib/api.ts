@@ -1,4 +1,4 @@
-import {AccountType} from "../index";
+import {AccountType, Transaction} from "../index";
 import {io, Socket} from "socket.io-client"
 
 async function getAccountNames(): Promise<string[]> {
@@ -137,6 +137,19 @@ async function getWallets() {
     }
 }
 
+
+async function getAllTransactions(): Promise<Transaction[]> {
+    try {
+      const response = await fetch("/api/transactions");
+      const data = await response.json();
+
+      return data.data
+    } catch (error) {
+      console.error('Error fetching wallets:', error);
+      return [];
+    }
+}
+
 async function sendCrypto(walletName: string, amount: number, destinationAddress: string) {
     try {
         await fetch("/api/crypto/wallets/send_crypto", {
@@ -196,6 +209,7 @@ export default {
     getWebauthnRegOpts,
     getPortfolioBalance,
     getPortfolioWallets,
+    getAllTransactions,
     getCryptoSocket,
     addContact,
     getContacts,
