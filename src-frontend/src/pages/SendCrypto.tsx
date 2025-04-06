@@ -3,11 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
 import api from '../lib/api';
-<<<<<<< HEAD
 import { PublicKeyCredentialRequestOptionsJSON, startAuthentication } from '@simplewebauthn/browser';
 import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
-=======
->>>>>>> 4d3fc11497d0d0cb7a3120b0d8847c2a60b9a001
 
 interface Holding {
   amount: number;
