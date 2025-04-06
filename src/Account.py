@@ -65,29 +65,39 @@ class Account:
             if "transactions" in data and data["transactions"]:
                 from Transaction import Transaction
                 import datetime
+
+                if isinstance(data["transactions"], str):
+                    data["transactions"] = json.loads(data["transactions"])
                 
                 for tx_data in data["transactions"]:
-                    # Parse timestamp (handle both string and datetime formats)
-                    try:
-                        if isinstance(tx_data['timestamp'], str):
-                            timestamp = datetime.datetime.fromisoformat(tx_data['timestamp'])
-                        else:
-                            timestamp = tx_data['timestamp']
-                    except (ValueError, TypeError):
-                        timestamp = datetime.datetime.now()  # Fallback
-                    
-                    # Create transaction object with saved data
-                    tx = Transaction(
-                        timestamp=timestamp,
-                        amount=tx_data.get('amount', 0),
-                        hash=tx_data.get('hash', ''),
-                        receiver=tx_data.get('receiver', ''),
-                        sender=tx_data.get('sender', ''),
-                        name=tx_data.get('name', 'unknown')
-                    )
-                    
-                    # Add to transaction log
-                    self.transactionLog.add_to_transaction_log(tx)
+                    if isinstance(tx_data, str):
+                        tx_data = json.loads(tx_data)
+                    required_fields = ["timestamp", "amount", "hash", "receiver", "sender", "name"]
+                    for required_field in required_fields:
+                        if required_field not in tx_data:
+                            break
+                    else:
+                        # Parse timestamp (handle both string and datetime formats)
+                        try:
+                            if isinstance(tx_data['timestamp'], str):
+                                timestamp = datetime.datetime.fromisoformat(tx_data['timestamp'])
+                            else:
+                                timestamp = tx_data['timestamp']
+                        except (ValueError, TypeError):
+                            timestamp = datetime.datetime.now()  # Fallback
+
+                        # Create transaction object with saved data
+                        tx = Transaction(
+                            timestamp=timestamp,
+                            amount=tx_data.get('amount', 0),
+                            tx_hash=tx_data.get('hash', ''),
+                            receiver=tx_data.get('receiver', ''),
+                            sender=tx_data.get('sender', ''),
+                            name=tx_data.get('name', 'unknown')
+                        )
+
+                        # Add to transaction log
+                        self.transactionLog.add_to_transaction_log(tx)
 
 
     def recover_wallets_from_save_data(self, save_data):

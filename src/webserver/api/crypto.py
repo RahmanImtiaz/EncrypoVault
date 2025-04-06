@@ -62,6 +62,9 @@ class CryptoRoutes:
                 return {"error": f"{wallet_name} not found"}, 404
 
             txid = wallet.crypto_handler.send_tx(amount, destination)
+            print(f"Acc has transactions:")
+            print(json.dumps(account.transactionLog.toJSON(), indent=4))
+            AccountsFileManager.get_instance().save_account(account)
             return {"success": True, "txid": txid}, 200
 
 

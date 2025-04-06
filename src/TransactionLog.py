@@ -3,6 +3,8 @@ import json
 from typing import List
 
 from Transaction import Transaction
+from util import to_json_recursive
+
 
 class TransactionLog:
     _log: List[Transaction]
@@ -28,4 +30,4 @@ class TransactionLog:
         self._log.append(transaction)
 
     def toJSON(self):
-        return json.dumps(self._log)
+        return to_json_recursive(self._log)

@@ -58,9 +58,9 @@ class BitcoinWalletHandler(HandlerInterface):
         acc = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account()
         if tx is not None and tx.txid is not None:
             transaction_entry = Transaction(
-                timestamp=datetime.now(),
+                timestamp=datetime.now().isoformat(),
                 amount=amount,
-                hash=tx.txid,
+                tx_hash=tx.txid,
                 sender=self.wallet.get_key().address,
                 receiver=destination_address,
                 name=self._name
