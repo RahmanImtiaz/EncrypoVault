@@ -6,6 +6,7 @@ from bitcoinlib.keys import HDKey
 from bitcoinlib.wallets import wallet_create_or_open
 
 import AccountsFileManager
+import threading
 from Transaction import Transaction
 from crypto_impl.HandlerInterface import HandlerInterface
 from crypto_impl.WalletType import WalletType
@@ -40,11 +41,19 @@ class BitcoinWalletHandler(HandlerInterface):
             keys=subkey.wif_private(witness_type="segwit"),
             network="testnet"
         )
+        self.update_loop()
 
 
     @staticmethod
     def create_wallet(name):
        return BitcoinWalletHandler(name)
+
+    def update_balance(self):
+        self.wallet.scan()
+
+    def update_loop(self):
+        self.update_balance()
+        threading.Timer(30, self.update_loop).start()
 
     def _get_child_key(self):
         ctx = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account().get_bip32_ctx()
@@ -85,7 +94,6 @@ class BitcoinWalletHandler(HandlerInterface):
         return self.wallet.get_key().address
 
     def get_balance(self):
-        self.wallet.scan()
         return self.wallet.balance(network="testnet")/100000000
 
     def toJSON(self):
