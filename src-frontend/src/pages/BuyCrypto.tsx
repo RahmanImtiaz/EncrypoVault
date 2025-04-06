@@ -5,24 +5,26 @@ import { useToast } from '../contexts/ToastContext';
 import fetchPrice from '../components/fetchPrice';
 import { saveTransaction } from '../components/helpers/FakeTransactionRecords';
 
+import api from '../lib/api';
+import { PublicKeyCredentialRequestOptionsJSON, startAuthentication } from '@simplewebauthn/browser';
 
 
 interface Holding {
-    amount: number;
-    name: string;
-    symbol: string;
-    value: number;
-  }
-  
-  interface Wallet {
-    name: string;
-    balance: number;
-    address: string;
-    coin_symbol: string;
-    holdings: {
-      [key: string]: Holding;
-    };
-  }
+  amount: number;
+  name: string;
+  symbol: string;
+  value: number;
+}
+
+interface Wallet {
+  name: string;
+  balance: number;
+  address: string;
+  coin_symbol: string;
+  holdings: {
+    [key: string]: Holding;
+  };
+}
 
 
 
@@ -42,7 +44,7 @@ const BuyCrypto = () => {
   useEffect(() => {
     if (savedTheme === 'light')
       document.body.classList.add('light-mode');
-    else 
+    else
       document.body.classList.remove('light-mode');
   }, [savedTheme]);
 
@@ -58,7 +60,7 @@ const BuyCrypto = () => {
     showDetailsScreen(true);
   };
 
-  const buyConfirm = () => {
+  const buyConfirm = async () => {
     try {
       const amount = parseFloat(amountToBuy);
       saveTransaction({
@@ -70,6 +72,28 @@ const BuyCrypto = () => {
       
       console.log("Crypto purchase recorded.");
       showToast("Purchase recorded successfully!", "success");
+      const platform = await window.api.getOS()
+      if (platform == "darwin") {
+        // Trigger biometric verification
+        const response = await api.verifyBiometricForTransaction(wallet);
+
+        if (!response.ok) {
+          const data = await response.json();
+          showToast(data.error || "Biometric verification failed", "error");
+          return;
+        }
+      } else {
+        const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
+        const webauthnResponse = await startAuthentication({ optionsJSON: authData, useBrowserAutofill: false })
+        const response = await api.verifyBiometricForTransaction(wallet);
+
+        if (response.status !== 200) {
+          showToast('Invalid Password or biometrics!', 'error');
+          return;
+        }
+      }
+      console.log("Crypto purchase initiated.");
+      showToast("Purchase successful!", "success");
       navigate(-1);
     } catch (err) {
       showToast("Failed to record transaction.", "error");
@@ -107,10 +131,10 @@ const BuyCrypto = () => {
 
   return (
     <div className="return-container">
-      {showTutorial?
+      {showTutorial ?
         <div className="instructionBox">
           <button className="close-button" onClick={() => setShowTutorial(!showTutorial)}>
-              ×
+            ×
           </button>
           <p>Buy Crypto allows you to buy a quantity of the asset associated to the wallet and store it.</p>
           <p>
@@ -119,14 +143,14 @@ const BuyCrypto = () => {
             After confirming, you can purchase the asset successfully.
           </p>
         </div>
-      : null}
+        : null}
       <form onSubmit={buyAction} className="buy-form">
         <div className="help-tutorial">
           <button type="button" className="tutorial-button" onClick={() => setShowTutorial(!showTutorial)}>?</button>
         </div>
         <label htmlFor="" className="main-label">Buy Crypto</label>
         <label htmlFor="buy-amount" id="buy-amountLabel">Enter Amount</label>
-        <input type="number" min="0.00001" step="0.000001" onChange={(e) => setAmountToBuy(e.target.value)} name="amount" id="buy-amount" placeholder="Enter Amount" className="buyingInput"/>
+        <input type="number" min="0.00001" step="0.000001" onChange={(e) => setAmountToBuy(e.target.value)} name="amount" id="buy-amount" placeholder="Enter Amount" className="buyingInput" />
         <div id="buy-receive-amount">
           <p>Rate: 1 {wallet?.coin_symbol} = £{rate}</p>
         </div>
@@ -134,7 +158,7 @@ const BuyCrypto = () => {
         <div id="receive-amount">
           <p>£{typeof Number(rate) === 'number' && amountToBuy ? (Number(rate) * parseFloat(amountToBuy)).toFixed(2) : '0.00'}</p>
         </div>
-          
+
         <div className="buttons">
           <button type="button" className="goBack" onClick={() => navigate(-1)}>Cancel</button>
           <button type="submit" className="buy-button">Buy</button>

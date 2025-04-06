@@ -1,5 +1,6 @@
 import json
 from json import JSONDecodeError
+import sys
 
 from flask import Blueprint, request
 from flask_socketio import SocketIO
@@ -114,7 +115,28 @@ class CryptoRoutes:
             print('got client disconnect w/ reason: {}'.format(reason))
 
 
+        @crypto_bp.route("/verify_biometrics", methods=["POST"])
+        def verify_biometrics():
+            try:
+                data = json.loads(request.data)
+                account_name = data.get("accountName")
+                password = data.get("password")  # Optional fallback
+                platform = sys.platform
 
+                if platform == "darwin":
+                    # macOS: Use Touch ID
+                    from macos_touch_id import authenticate_with_touch_id
+                    if not authenticate_with_touch_id():
+                        return {"error": "Biometric authentication failed"}, 403
+                elif platform == "win32":
+                    return {"success": True}, 200
+                else:
+                    return {"error": "Biometric authentication not supported on this platform"}, 400
+
+                return {"success": True}, 200
+            except Exception as e:
+                print(f"Error verifying biometrics: {e}")
+                return {"error": str(e)}, 500
 
         @socket.on('message', ws_prefix+'/ws')
         def handle_message(message=None):
