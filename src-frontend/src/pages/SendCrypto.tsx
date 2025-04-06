@@ -34,11 +34,11 @@ const SendCrypto = () => {
   const wallet = location.state?.wallet as Wallet;
   const [amountToSend, setAmountToSend] = useState("");
   //const [confirmMessage, setConfirmMessage] = useState("");
-  const [newContact, setNewContact] = useState(false);
-  const [existingContactsList, setExistingContactsList] = useState(false);
+  //const [newContact, setNewContact] = useState(false);
+  //const [existingContactsList, setExistingContactsList] = useState(false);
   //const [qrCodeContact, setQrCodeContact] = useState(false);
   const [contactChosen, setContactChosen] = useState("");
-  const [activeButton, setActiveButton] = useState<string | null>(null);
+  //const [activeButton, setActiveButton] = useState<string | null>(null);
   const [contacts, setContacts] = useState<Contact[]>([]);
   //const [loading, setLoading] = useState<boolean>(true);
   //const [error, setError] = useState<string>("");
@@ -114,19 +114,21 @@ const SendCrypto = () => {
     }
   };
 
+  {/*}
   const showNewContact = () => {
     setNewContact(true);
     setExistingContactsList(false);
     //setQrCodeContact(false);
     setActiveButton('new'); // Set active button to 'new'
-  }
+  }*/}
 
+  {/*}
   const showExistingContacts = () => {
     setExistingContactsList(true);
     setNewContact(false);
     //setQrCodeContact(false);
     setActiveButton('existing'); // Set active button to 'existing'
-  }
+  }*/}
 
   {/*
   const showQrCodeScan = () => {
@@ -146,10 +148,10 @@ const SendCrypto = () => {
           </button>
           <p>Send Crypto allows you to send a quantity of your asset to another user's wallet.
             Please enter the amount you wish to send in asset terms, not GBP.
-            Then choose a contact in which you would like to send it to. You may wish to choose from
-            an existing contact or create a contact in the spot.
-            After confirming, you can send the asset to the chosen contact.
+            Then choose a contact in which you would like to send it to from the list of existing contacts.
           </p>
+          <p>If no contacts are available, please add a new contact in the contacts page.
+          After confirming, you can send the asset to the chosen contact.</p>
         </div>
       : null}
       <form onSubmit={sellAction} className="send-form">
@@ -163,11 +165,12 @@ const SendCrypto = () => {
           <p>Total Owned: {wallet?.balance}</p>
         </div>
         <label htmlFor="contact-options" id="contacts">Choose Contact</label>
-        <div id="contact-options">
-          <button type="button" onClick={showNewContact} className={`contact-option-button ${activeButton === 'new' ? 'active' : ''}`}>New</button>
-          <button type="button" onClick={showExistingContacts} className={`contact-option-button ${activeButton === 'existing' ? 'active' : ''}`}>Existing</button>
+        {/*<div id="contact-options">*/}
+          {/*<button type="button" onClick={showNewContact} className={`contact-option-button ${activeButton === 'new' ? 'active' : ''}`}>New</button>*/}
+          {/*<button type="button" onClick={showExistingContacts} className={`contact-option-button ${activeButton === 'existing' ? 'active' : ''}`}>Existing</button>*/}
           {/*<button type="button" onClick={showQrCodeScan} className={`contact-option-button ${activeButton === 'qrCode' ? 'active' : ''}`}>QR code</button>*/}
-        </div>
+        {/*</div>*/}
+        {/*}
         {newContact? "display new contact form here (to be added)": null}
         {existingContactsList ? 
           <select id="existing-contacts-dropdown" value={contactChosen} onChange={handleChangeContact}>
@@ -178,7 +181,13 @@ const SendCrypto = () => {
           </select>
           : (
           null
-        )}
+        )}*/}
+        <select id="existing-contacts-dropdown" value={contactChosen} onChange={handleChangeContact}>
+          <option value="">--Choose an option--</option>
+          {contacts.map((contact,index) => (
+            <option key={index} value={contact.name}>{contact.name}</option>
+          ))}
+        </select>
         {/*{qrCodeContact? "display QR code scanner here (to be added)": null}*/}
         <p className="label-contact-selection">Contact selected: {contactChosen}</p>
         <div className="buttons">
