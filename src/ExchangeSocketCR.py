@@ -42,7 +42,6 @@ class PriceSocket:
             with open(self.price_file, 'w') as f:
                 json.dump(self.price_cache, f)
 
-        self.cache_task = None
         self._initialized = True
 
     def subcribe(self, observer):
@@ -61,9 +60,6 @@ class PriceSocket:
             await self.ws.send(json.dumps(subscribe_message))
             print("Subscribed to channels")
             asyncio.create_task(self.listen_to_messages())
-
-            self.cache_task = asyncio.create_task(self.update_price_cache_periodically())
-
         except Exception as e:
             print(f"Error connecting to exchange: {e}")
             self.session = False
@@ -79,22 +75,14 @@ class PriceSocket:
                     price = data.get("price")
                     if crypto_id and price:
                         self.price_cache[crypto_id] = price
+                        # Save the cache immediately when a new ticker arrives
+                        asyncio.create_task(self.save_price_cache())
         except websockets.exceptions.ConnectionClosed as e:
             print(f"WebSocket connection closed: {e}")
             self.session = False
         except Exception as e:
             print(f"Error listening to messages: {e}")
             self.session = False
-
-    async def update_price_cache_periodically(self):
-        if self.session:
-            try:
-                asyncio.create_task(self.save_price_cache())
-                threading.Timer(10, self.update_price_cache_periodically).start()
-            except asyncio.CancelledError:
-                print("Cancelled")
-            except Exception as e:
-                print(f"Error updating price cache: {e}")
 
     async def save_price_cache(self):
         try:
@@ -105,13 +93,6 @@ class PriceSocket:
 
     async def disconnect(self):
         self.session = False
-
-        if self.cache_task and not self.cache_task.done():
-            self.cache_task.cancel()
-            try:
-                await self.cache_task
-            except asyncio.CancelledError:
-                print("Cache task successfully cancelled.")
 
         if self.ws:
             try:
