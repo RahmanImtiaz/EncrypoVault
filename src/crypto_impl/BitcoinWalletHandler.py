@@ -41,7 +41,8 @@ class BitcoinWalletHandler(HandlerInterface):
             keys=subkey.wif_private(witness_type="segwit"),
             network="testnet"
         )
-        self.update_loop()
+        #self.update_loop()
+        threading.Thread(target=self.update_loop, daemon=True).start()
 
 
     @staticmethod
