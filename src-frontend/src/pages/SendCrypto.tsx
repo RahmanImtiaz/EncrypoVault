@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
 import api from '../lib/api';
-import { PublicKeyCredentialRequestOptionsJSON, startAuthentication } from '@simplewebauthn/browser';
 
 interface Holding {
   amount: number;
@@ -57,7 +56,6 @@ const SendCrypto = () => {
       setContacts(contactsList);
     } catch (err) {
       console.error("Error fetching contacts:", err);
-    } finally {
     }
   };
 
@@ -105,7 +103,7 @@ const SendCrypto = () => {
           return;
         }
       } else {
-        const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
+        // const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
         // const webauthnResponse = await startAuthentication({ optionsJSON: authData, useBrowserAutofill: false })
         const response = await api.verifyBiometricForTransaction(wallet);
 

@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
 import fetchPrice from '../components/fetchPrice';
 import api from '../lib/api';
-import { PublicKeyCredentialRequestOptionsJSON, startAuthentication } from '@simplewebauthn/browser';
+// import { PublicKeyCredentialRequestOptionsJSON, startAuthentication } from '@simplewebauthn/browser';
 
 
 
@@ -77,7 +77,7 @@ export const SellCrypto = () => {
                     return;
                 }
             } else {
-                const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
+                // const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
                 // const webauthnResponse = await startAuthentication({ optionsJSON: authData, useBrowserAutofill: false })
                 const response = await api.verifyBiometricForTransaction(wallet);
 
