@@ -32,9 +32,9 @@ body {
 .wallets-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 80px 20px 30px; /* Adjusted padding */
-  height: calc(100vh - 80px); /* Subtract header height */
-  overflow-y: auto; /* Ensure scrolling works */
+  padding: 80px 20px 30px; 
+  height: calc(100vh - 80px); 
+  overflow-y: auto; 
   box-sizing: border-box;
 }
 
@@ -43,7 +43,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--bg-dark); /* Match the background color */
+  background: var(--bg-dark); 
   padding: 16px 20px;
   box-shadow: var(--shadow-sm);
   display: flex;
@@ -216,12 +216,12 @@ body {
   gap: 20px;
   width: 100%;
   overflow-x: visible;
-  padding: 10px 0 30px 0; /* Add bottom padding for scrollbar */
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: var(--primary) var(--bg-card); /* Firefox */
-  min-height: min-content; /* Add this */
-  box-sizing: border-box; /* Add this */
+  padding: 10px 0 30px 0; 
+  -webkit-overflow-scrolling: touch; 
+  scrollbar-width: thin; 
+  scrollbar-color: var(--primary) var(--bg-card); 
+  min-height: min-content; 
+  box-sizing: border-box; 
 }
 
 .wallet-item {

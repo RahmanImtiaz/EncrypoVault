@@ -12,7 +12,7 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    display: flex; /* Enables Flexbox */
+    display: flex; 
     justify-content: center;
     width: 100%;
     z-index: 1000;
@@ -41,7 +41,7 @@ body {
   }
   
   .navLink:hover {
-    color: #3498db; /* Add hover effect */
+    color: #3498db; 
   }
 
   .navButton {
@@ -50,11 +50,11 @@ body {
     background-color: #5F5C7D;
     width: 1em;
     height: 1em;  
-    display: flex; /* Enables flexbox */
-    justify-content: center; /* Centers horizontally */
-    align-items: center; /* Centers vertically */
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
     border-radius: 0.2em;
-    padding: 0.5em; /* Ensures spacing inside */
+    padding: 0.5em; 
   }
 
   .navButton:hover {

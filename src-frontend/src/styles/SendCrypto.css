@@ -219,8 +219,8 @@ body {
 }
 
 .contact-option-button.active {
-    background-color: var(--primary); /* Active state color */
-    color: white; /* Text color when active */
+    background-color: var(--primary); 
+    color: white; 
 }
 
 
@@ -248,7 +248,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 10rem; /* Ensures uniform button width */
+    width: 10rem; 
 }
 
 .label-contact-selection{
