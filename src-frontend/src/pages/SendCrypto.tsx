@@ -3,8 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
 import api from '../lib/api';
+<<<<<<< HEAD
 import { PublicKeyCredentialRequestOptionsJSON, startAuthentication } from '@simplewebauthn/browser';
 import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
+=======
+>>>>>>> 4d3fc11497d0d0cb7a3120b0d8847c2a60b9a001
 
 interface Holding {
   amount: number;
@@ -58,7 +61,6 @@ const SendCrypto = () => {
       setContacts(contactsList);
     } catch (err) {
       console.error("Error fetching contacts:", err);
-    } finally {
     }
   };
 
@@ -106,8 +108,8 @@ const SendCrypto = () => {
           return;
         }
       } else {
-        const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
-        const webauthnResponse = await startAuthentication({ optionsJSON: authData, useBrowserAutofill: false })
+        // const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
+        // const webauthnResponse = await startAuthentication({ optionsJSON: authData, useBrowserAutofill: false })
         const response = await api.verifyBiometricForTransaction(wallet);
 
         if (response.status !== 200) {

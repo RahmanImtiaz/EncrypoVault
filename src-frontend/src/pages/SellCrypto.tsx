@@ -6,7 +6,7 @@ import fetchPrice from '../components/fetchPrice';
 import { saveTransaction } from '../components/helpers/FakeTransactionRecords';
 import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
 import api from '../lib/api';
-import { PublicKeyCredentialRequestOptionsJSON, startAuthentication } from '@simplewebauthn/browser';
+// import { PublicKeyCredentialRequestOptionsJSON, startAuthentication } from '@simplewebauthn/browser';
 
 
 
@@ -90,8 +90,8 @@ export const SellCrypto = () => {
                     return;
                 }
             } else {
-                const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
-                const webauthnResponse = await startAuthentication({ optionsJSON: authData, useBrowserAutofill: false })
+                // const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
+                // const webauthnResponse = await startAuthentication({ optionsJSON: authData, useBrowserAutofill: false })
                 const response = await api.verifyBiometricForTransaction(wallet);
 
                 if (response.status !== 200) {
