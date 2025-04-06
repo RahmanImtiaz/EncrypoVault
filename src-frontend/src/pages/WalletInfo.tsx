@@ -182,10 +182,10 @@ const WalletInfo = () => {
             <p className="balance-display">{wallet.balance} {wallet.coin_symbol}</p>
         </div>
         <div className="buttons">
-          <button className="wallet-button" onClick={() => setShowQR(true)}>Receive {wallet.coin_symbol}</button>
-          <button className="wallet-button" onClick={() => navigate("/send",{ state: { wallet }} )}>Send {wallet.coin_symbol}</button>
           <button className="wallet-button" onClick={() => navigate("/buy", { state: { wallet }})}>Buy {wallet.coin_symbol}</button>
           <button className="wallet-button" onClick={() => navigate("/sell", { state: { wallet }})}>Sell {wallet.coin_symbol}</button>
+          <button className="wallet-button" onClick={() => navigate("/send",{ state: { wallet }} )}>Send {wallet.coin_symbol}</button>
+          <button className="wallet-button" onClick={() => setShowQR(true)}>Receive {wallet.coin_symbol}</button>
         </div>
         <div className='wallet-address'>
           <h3>Address: {wallet.address}</h3>
