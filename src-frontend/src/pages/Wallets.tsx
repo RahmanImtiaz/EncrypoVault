@@ -35,6 +35,7 @@ const Wallets: React.FC = () => {
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);  
   const navigate = useNavigate();
   const savedTheme = localStorage.getItem('theme');
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   useEffect(() => {
     if (savedTheme === 'light')
@@ -100,6 +101,12 @@ const Wallets: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const refreshWallets = async () => {
+    setRefreshing(true);
+    await fetchWallets();
+    setRefreshing(false);
   };
 
   const toggleCreateForm = () => {
@@ -172,9 +179,20 @@ const Wallets: React.FC = () => {
     <div className="wallets-container">
       <div className="wallets-header">
         <h1 className="wallets-title">Your Wallets</h1>
-        <button className="add-wallet-btn" onClick={toggleCreateForm}>
-          + Add New Wallet
-        </button>
+        <div className="wallets-header-buttons">
+          <div className="button-group">
+            <button 
+              className="refresh-button" 
+              onClick={refreshWallets} 
+              disabled={refreshing}
+            >
+              {refreshing ? "Refreshing..." : "↻"}
+            </button>
+            <button className="add-wallet-btn" onClick={toggleCreateForm}>
+              + Add New Wallet
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="wallets-toolbar">

@@ -59,7 +59,26 @@ body{
   padding-bottom: 0rem;
 }
 
+.refresh-button {
+  right: 1rem;
+  top: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 
+.refresh-button:hover {
+  transform: rotate(180deg);
+  color: var(--primary);
+}
+
+.refresh-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 .big {
   font-size: 2.5rem;
