@@ -74,11 +74,11 @@ const SendCrypto = () => {
       return;
     }
 
-    {/*}
-    if (parseFloat(amountToSend) > wallet.balance) {
+    
+    if (parseFloat(amountToSend) > getWalletBalance(wallet)) {
         showToast("Insufficient balance. Please enter a valid amount up to or equal to your balance.", "error");
         return;
-    }*/}
+    }
 
     if (!contactChosen) {
       showToast("Please select a contact.", "error");

@@ -69,8 +69,8 @@ const BuyCrypto = () => {
         type: 'buy'
       });
       
-      console.log("Crypto purchase recorded.");
-      showToast("Purchase recorded successfully!", "success");
+      //console.log("Crypto purchase recorded.");
+      //showToast("Purchase recorded successfully!", "success");
       const platform = await window.api.getOS()
       if (platform == "darwin") {
         // Trigger biometric verification

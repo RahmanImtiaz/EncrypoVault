@@ -57,11 +57,11 @@ export const SellCrypto = () => {
             return;
         }
 
-        {/*}
-        if (parseFloat(amountToSell) > wallet.balance) {
+        
+        if (parseFloat(amountToSell) > getWalletBalance(wallet)) {
             showToast("Insufficient balance. Please enter a valid amount up to or equal to your balance.", "error");
             return;
-        }*/}
+        }
 
         showDetailsScreen(true);
     };
@@ -76,8 +76,8 @@ export const SellCrypto = () => {
             type: 'sell'
           });
           
-          console.log("Crypto sale recorded.");
-          showToast("Sale recorded successfully!", "success");
+          //console.log("Crypto sale recorded.");
+          //showToast("Sale recorded successfully!", "success");
           navigate(-1);
             const platform = await window.api.getOS()
             if (platform == "darwin") {
