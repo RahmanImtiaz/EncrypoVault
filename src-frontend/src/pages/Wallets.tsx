@@ -3,6 +3,7 @@ import '../styles/Wallets.css';
 import fetchPrice from '../components/fetchPrice';
 import { useToast } from '../contexts/ToastContext';
 import { useNavigate } from 'react-router-dom';
+import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
 
 interface Holding {
   amount: number;
@@ -247,7 +248,7 @@ const Wallets: React.FC = () => {
                   const price = priceData?.[priceKey];
                   
                   if (price !== undefined) {
-                    return `£${(wallet.balance * Number(price)).toFixed(2)}`;
+                    return `£${(Number(getWalletBalance(wallet))* Number(price)).toFixed(2)}`;
                   } else {
                     return `£${wallet.balance.toFixed(2)}`;
                   }

@@ -228,7 +228,7 @@ const WalletInfo = () => {
             const price = priceData?.[priceKey];
             
             if (price !== undefined) {
-              return `£${(wallet.balance * Number(price)).toFixed(2)}`;
+              return `£${(Number(getWalletBalance(wallet)) * Number(price)).toFixed(2)}`;
             } else {
               return `£${wallet.balance.toFixed(2)}`;
             }
