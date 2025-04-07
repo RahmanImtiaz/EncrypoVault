@@ -174,6 +174,7 @@ export function Login({ onLogin, toggleForm }: LoginProps) {
                 type="button"
                 onClick={toggleForm} 
                 className="toggle-button"
+                disabled={loading || isButtonDisabled}
               >
                 Need to Register?
               </button>
