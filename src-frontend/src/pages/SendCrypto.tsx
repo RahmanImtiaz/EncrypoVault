@@ -124,7 +124,12 @@ const SendCrypto = () => {
       }
 
       // Send the crypto using the wallet name, amount, and destination address
-      await api.sendCrypto(wallet.name, parseFloat(amountToSend), selectedContact.address);
+      const response = await api.sendCrypto(wallet.name, parseFloat(amountToSend), selectedContact.address);
+
+      if (!response.success) {
+        showToast(response.error || "Failed to send crypto. Please try again.", "error");
+        return;
+      }
 
       console.log("Crypto sending initiated.");
       showToast("Sent successful!", "success");

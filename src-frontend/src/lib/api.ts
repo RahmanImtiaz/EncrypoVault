@@ -144,9 +144,9 @@ async function getAllTransactions(): Promise<Transaction[]> {
     }
 }
 
-async function sendCrypto(walletName: string, amount: number, destinationAddress: string) {
+async function sendCrypto(walletName: string, amount: number, destinationAddress: string): Promise<{ success: boolean; txid?: string; error?: string }> {
     try {
-        await fetch("/api/crypto/wallets/send_crypto", {
+        const response = await fetch("/api/crypto/wallets/send_crypto", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -156,9 +156,18 @@ async function sendCrypto(walletName: string, amount: number, destinationAddress
                 amount,
                 destinationAddress
             })
-        })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            return { success: false, error: errorData.error || "Failed to send crypto" };
+        }
+
+        const data = await response.json();
+        return { success: true, txid: data.txid };
     } catch (e) {
-        console.error(`Error trying to send crypto: ${e}`)
+        console.error(`Error trying to send crypto: ${e}`);
+        return { success: false, error: "An unexpected error occurred" };
     }
 }
 
