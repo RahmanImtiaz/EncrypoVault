@@ -456,6 +456,9 @@ body.light-mode .wallets-header .wallets-title {
   color: #333;
 }
 
+body.light-mode .wallets-header {
+  background: #ffffff;
+}
 
 body.light-mode .add-wallet-btn {
   background: linear-gradient(92.23deg, #4A80EA 21.43%, #3671E9 119.36%);
