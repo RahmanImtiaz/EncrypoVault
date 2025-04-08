@@ -60,7 +60,7 @@ class BitcoinWalletHandler(HandlerInterface):
             try:
                 self.wallet.scan()
                 account = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account()
-                self._balance = self.wallet.balance(network="testnet")
+                self._balance = self.wallet.balance(network="testnet")/100000000
                 transactions = self.wallet.transactions()
 
                 # valid_transactions = transactions
