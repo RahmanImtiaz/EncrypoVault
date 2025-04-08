@@ -20,10 +20,14 @@ from crypto_impl.WalletType import WalletType
 class BitcoinWalletHandler(HandlerInterface):
 
     wallet: bitcoinlib.wallets.Wallet
+    fake_balance: float
+    last_balance: float
 
-    def __init__(self, name):
+    def __init__(self, name, balance, fake_balance):
         self._name = name
         self._db_lock = threading.Lock() 
+        self._balance = balance
+        self.fake_balance = fake_balance
         acc_manager = AccountsFileManager.AccountsFileManager.get_instance()
         db_uri = f"{acc_manager.current_directory}/{acc_manager.get_loaded_account().get_account_name()}.db"
         db_cache_uri = f"{acc_manager.current_directory}/{acc_manager.get_loaded_account().get_account_name()}.cache.db"
@@ -146,7 +150,7 @@ class BitcoinWalletHandler(HandlerInterface):
 
     @staticmethod
     def load_wallet(data: dict):
-        return BitcoinWalletHandler(data["name"])
+        return BitcoinWalletHandler(data["name"], data.get("balance", 0), data.get("fake_balance", 0))
 
     def get_address(self):
         return self.wallet.get_key().address
@@ -194,7 +198,8 @@ class BitcoinWalletHandler(HandlerInterface):
         return json.dumps({
             "name": self._name,
             "type": str(self.get_wallet_type()),
-            "balance": self.get_balance()
+            "balance": self.get_balance(),
+            "fake_balance": self.fake_balance,
         })
 
     @staticmethod

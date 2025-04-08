@@ -40,6 +40,10 @@ class HandlerInterface(abc.ABC):
     def get_balance(self):
         pass
 
+    @abc.abstractmethod
+    def get_fake_balance(self):
+        pass
+
     @staticmethod
     def account_name_to_index(account_name: str, wallet_type: WalletType) -> int:
         """
