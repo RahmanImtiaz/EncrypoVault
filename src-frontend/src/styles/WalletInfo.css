@@ -6,6 +6,8 @@ body{
   max-width: 800px;
   margin: 0 auto;
   color: var(--text-light);
+  max-height: 92vh; 
+  overflow-y: auto; 
 }
 
 
