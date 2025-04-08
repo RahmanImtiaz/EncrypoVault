@@ -55,7 +55,7 @@ const WalletInfo = () => {
       return data.confirmed;
     } catch (error) {
       console.error('Error fetching confirmation status:', error);
-      return false; 
+      return false; // Assume unconfirmed if there's an error
     }
   };
   
@@ -74,6 +74,7 @@ const WalletInfo = () => {
       }
 
       const allTransactions = await api.getAllTransactions();
+      // Filter transactions for this wallet
       const walletTransactions = allTransactions.filter(tx => tx.name === initialWallet.name);
       const transactionsWithStatus = await Promise.all(
         walletTransactions.map(async (tx) => {

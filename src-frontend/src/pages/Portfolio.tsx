@@ -31,6 +31,7 @@ interface Transaction {
   sender: string;
   receiver: string;
   name: string;
+  confirmed?: boolean;
 }
 
 const Portfolio: React.FC = () => {
@@ -49,6 +50,18 @@ const Portfolio: React.FC = () => {
   const [totalBalance, setTotalBalance] = useState<number>(0);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const savedTheme = localStorage.getItem('theme');
+
+  const checkConfirmationStatus = async (txid: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`https://blockstream.info/testnet/api/tx/${txid}/status`);
+      const data = await response.json();
+      return data.confirmed === true;
+    } catch (err) {
+      console.error(`Failed to check status for txid ${txid}:`, err);
+      return false; 
+    }
+  };
+  
 
   const fetchWallets = async () => {
     try {
@@ -95,12 +108,28 @@ const Portfolio: React.FC = () => {
 
   const fetchTransactions = async () => {
     try {
-      const allTransactions = await api.getAllTransactions();
-      setTransactions(allTransactions);
+      const allTransactions: Transaction[] = await api.getAllTransactions();
+  
+      const transactionsWithStatus = await Promise.all(
+        allTransactions.map(async (tx) => {
+          const isFakeTx = tx.hash.startsWith('fake-');
+          let confirmed = true;
+  
+          if (!isFakeTx) {
+            const txid = tx.hash;
+            confirmed = await checkConfirmationStatus(txid);
+          }
+  
+          return { ...tx, confirmed };
+        })
+      );
+  
+      setTransactions(transactionsWithStatus);
     } catch (error) {
       console.error('Error fetching transactions:', error);
     }
   };
+  
 
   const refreshData = async () => {
     await fetchWallets();
@@ -362,7 +391,7 @@ const Portfolio: React.FC = () => {
                         </div>
                       </div>
                       <div className={`tx-status ${isConfirmed ? 'confirmed' : 'pending'}`}>
-                        {isConfirmed ? 'confirmed' : 'pending'}
+                        {tx.confirmed ? 'confirmed' : 'pending'}
                       </div>
                       <div className="tx-id">
                         {tx.hash.startsWith('fake-') 
