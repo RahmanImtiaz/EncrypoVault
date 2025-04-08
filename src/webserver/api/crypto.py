@@ -114,6 +114,39 @@ class CryptoRoutes:
         def handle_disconnect(reason):
             print('got client disconnect w/ reason: {}'.format(reason))
 
+        @crypto_bp.route("/buy", methods=["POST"])
+        def buy_crypto():
+            data = request.get_json()
+            required_values = ["walletName", "amount"]
+            for required_value in required_values:
+                if required_value not in data:
+                    return {"error": f"{required_value} not found"}, 400
+            wallet_name = data["walletName"]
+            amount = data["amount"]
+            account = AccountsFileManager.get_instance().get_loaded_account()
+            wallet = account.get_wallets()[wallet_name]
+            if wallet is None:
+                return {"error": f"{wallet_name} not found"}, 404
+            wallet.crypto_handler.fake_balance+=amount
+            return {"success": True}, 200
+
+        @crypto_bp.route("/sell", methods=["POST"])
+        def sell_crypto():
+            data = request.get_json()
+            required_values = ["walletName", "amount"]
+            for required_value in required_values:
+                if required_value not in data:
+                    return {"error": f"{required_value} not found"}, 400
+            wallet_name = data["walletName"]
+            amount = data["amount"]
+            account = AccountsFileManager.get_instance().get_loaded_account()
+            wallet = account.get_wallets()[wallet_name]
+            if wallet is None:
+                return {"error": f"{wallet_name} not found"}, 404
+            if wallet.crypto_handler.fake_balance < amount:
+                return {"error": f"{wallet.crypto_handler.fake_balance} < {amount}"}, 400
+            wallet.crypto_handler.fake_balance -= amount
+            return {"success": True}, 200
 
         @crypto_bp.route("/verify_biometrics", methods=["POST"])
         def verify_biometrics():
