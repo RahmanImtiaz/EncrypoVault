@@ -181,7 +181,7 @@ const WalletInfo = () => {
         <div className='wallet-holdings'>
           <h3>Holdings:</h3>
           <p className="balance-display">
-            {(Number(wallet.balance) + Number(wallet.fake_balance)).toFixed(7)} {wallet?.coin_symbol}
+            {(Number(wallet.balance) + Number(wallet.fake_balance)).toFixed(8)} {wallet?.coin_symbol}
           </p>
         </div>
         <div className="buttons">

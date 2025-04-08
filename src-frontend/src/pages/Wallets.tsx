@@ -296,7 +296,7 @@ const Wallets: React.FC = () => {
                   <div className="wallet-detail-row">
                     <span className="wallet-detail-label">Holdings:</span>
                     <span className="wallet-detail-value">
-                      {(Number(wallet.balance) + Number(wallet.fake_balance)).toFixed(7)} {wallet.coin_symbol}
+                      {(Number(wallet.balance) + Number(wallet.fake_balance)).toFixed(8)} {wallet.coin_symbol}
                     </span>
                   </div>
                 </div>
