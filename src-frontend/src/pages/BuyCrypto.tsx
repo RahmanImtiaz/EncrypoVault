@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
 import fetchPrice from '../components/fetchPrice';
-import { saveTransaction } from '../components/helpers/FakeTransactionRecords';
 
 import api from '../lib/api';
 
@@ -20,6 +19,7 @@ interface Wallet {
   balance: number;
   address: string;
   coin_symbol: string;
+  fake_balance: string
   holdings: {
     [key: string]: Holding;
   };
@@ -62,43 +62,36 @@ const BuyCrypto = () => {
   const buyConfirm = async () => {
     try {
       const amount = parseFloat(amountToBuy);
-      saveTransaction({
-        walletName: wallet.name,
-        coinSymbol: wallet.coin_symbol,
-        amount,
-        type: 'buy'
-      });
-      
-      //console.log("Crypto purchase recorded.");
-      //showToast("Purchase recorded successfully!", "success");
-      const platform = await window.api.getOS()
-      if (platform == "darwin") {
-        // Trigger biometric verification
+  
+      const platform = await window.api.getOS();
+      if (platform === "darwin") {
         const response = await api.verifyBiometricForTransaction(wallet);
-
         if (!response.ok) {
           const data = await response.json();
           showToast(data.error || "Biometric verification failed", "error");
           return;
         }
       } else {
-        // const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
-        // const _webauthnResponse = await startAuthentication({ optionsJSON: authData, useBrowserAutofill: false })
         const response = await api.verifyBiometricForTransaction(wallet);
-
         if (response.status !== 200) {
           showToast('Invalid Password or biometrics!', 'error');
           return;
         }
       }
-      console.log("Crypto purchase initiated.");
-      showToast("Purchase successful!", "success");
-      navigate(-1);
+  
+      const result = await api.fakeBuy(wallet.name, amount);
+      if (result.success) { 
+        showToast("Purchase successful!", "success");
+        console.log("Purchase recorded successfully!");
+        navigate(-1);
+      } else {
+        showToast(result.error || "Purchase failed", "error");
+      }
     } catch (err) {
-      showToast("Failed to record transaction.", "error");
+      showToast("Failed to process purchase.", "error");
       console.error(err);
     }
-  }
+  };
 
 
 
