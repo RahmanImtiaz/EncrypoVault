@@ -5,6 +5,7 @@ import { QRCodeComponent } from '../components/generateQR';
 import fetchPrice from '../components/fetchPrice';
 import '../styles/WalletInfo.css';
 import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
+import api from '../lib/api';
 
 interface Holding {
   amount: number;
@@ -52,13 +53,63 @@ interface TransactionOutput {
 
 const WalletInfo = () => {
   const location = useLocation();
-  const wallet = location.state?.wallet as Wallet;
+  const initialWallet = location.state?.wallet as Wallet;
+  const [wallet, setWallet] = useState<Wallet | null>(initialWallet);
   const [showQR, setShowQR] = useState(false);
   const [showTxModal, setShowTxModal] = useState(false);
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const {priceData} = fetchPrice(); 
   const savedTheme = localStorage.getItem('theme');
+
+  // Function to fetch the latest wallet data
+  const refreshWalletData = async () => {
+    if (!initialWallet) return;
+    
+    setLoading(true);
+    try {
+      const wallets: Wallet[] = await api.getWallets();
+      const updatedWallet = wallets.find((w: Wallet) => w.name === initialWallet.name);
+      
+      if (updatedWallet) {
+        setWallet(updatedWallet);
+        console.log('Wallet data refreshed:', updatedWallet);
+      }
+    } catch (error) {
+      console.error('Error refreshing wallet data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Refresh on initial mount
+  useEffect(() => {
+    refreshWalletData();
+  }, []);
+
+  // Listen for navigation events to refresh data when returning to this page
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        refreshWalletData();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  // Add a focus event listener to refresh when returning from other pages
+  useEffect(() => {
+    window.addEventListener('focus', refreshWalletData);
+    return () => {
+      window.removeEventListener('focus', refreshWalletData);
+    };
+  }, []);
 
   useEffect(() => {
     if (savedTheme === 'light')
@@ -124,7 +175,9 @@ const WalletInfo = () => {
   };
 
   if (!wallet) {
-    return <div className="wallet-info-container">No wallet selected</div>;
+    return <div className="wallet-info-container">
+      {loading ? "Loading wallet data..." : "No wallet selected"}
+    </div>;
   }
 
   if (showQR) {
@@ -158,6 +211,13 @@ const WalletInfo = () => {
       <div className='wallet-name'>
         <button className="previous-page" onClick={() => navigate(-1)}>←</button>
         <h2>{wallet.name} Details</h2>
+        <button 
+          className="refresh-button" 
+          onClick={refreshWalletData}
+          disabled={loading}
+        >
+          {loading ? "Refreshing..." : "↻"}
+        </button>
       </div>
 
       <div className='wallet-details'>
@@ -168,7 +228,7 @@ const WalletInfo = () => {
             const price = priceData?.[priceKey];
             
             if (price !== undefined) {
-              return `£${(wallet.balance * Number(price)).toFixed(2)}`;
+              return `£${(Number(getWalletBalance(wallet)) * Number(price)).toFixed(2)}`;
             } else {
               return `£${wallet.balance.toFixed(2)}`;
             }
