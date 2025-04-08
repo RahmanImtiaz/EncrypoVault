@@ -313,11 +313,39 @@ body{
   max-width: 100px;
 }
 
+/* Transaction type colors */
 .transaction-item.in .tx-amount {
   color: #28a745;
 }
 
 .transaction-item.out .tx-amount {
+  color: #dc3545;
+}
+
+/* Fake transaction indicators */
+.transaction-item.fake-buy {
+  border-left: 3px solid rgba(40, 167, 69, 0.5);
+}
+
+.transaction-item.fake-sell {
+  border-left: 3px solid rgba(220, 53, 69, 0.5);
+}
+
+.tx-type-badge {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  margin-left: 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.transaction-item.fake-buy .tx-type-badge {
+  background: rgba(40, 167, 69, 0.15);
+  color: #28a745;
+}
+
+.transaction-item.fake-sell .tx-type-badge {
+  background: rgba(220, 53, 69, 0.15);
   color: #dc3545;
 }
 

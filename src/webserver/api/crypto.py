@@ -1,10 +1,13 @@
 import json
 from json import JSONDecodeError
 import sys
+import asyncio
+import uuid
 
+from datetime import datetime
+from Transaction import Transaction 
 from flask import Blueprint, request
 from flask_socketio import SocketIO
-import asyncio
 from AccountsFileManager import AccountsFileManager
 from ConcreteCryptoObserver import ConcreteCryptoObserver
 from ExchangeSocket import ExchangeSocket
@@ -127,8 +130,18 @@ class CryptoRoutes:
             wallet = account.get_wallets()[wallet_name]
             if wallet is None:
                 return {"error": f"{wallet_name} not found"}, 404
-            wallet.crypto_handler.fake_balance+=amount
+            
+            transaction = Transaction(
+                timestamp=datetime.now().isoformat(),
+                amount=amount/100000000,  # Convert back to BTC
+                tx_hash=f"fake-buy-{uuid.uuid4()}",  # Generate fake TXID
+                sender="exchange",
+                receiver=wallet.address,
+                name=wallet.name
+            )
+            account.transactionLog.add_to_transaction_log(transaction)
 
+            wallet.crypto_handler.fake_balance+=amount
             AccountsFileManager.get_instance().save_account(account)
             return {"success": True}, 200
 
@@ -147,8 +160,18 @@ class CryptoRoutes:
                 return {"error": f"{wallet_name} not found"}, 404
             if wallet.crypto_handler.fake_balance < amount:
                 return {"error": f"{wallet.crypto_handler.get_fake_balance()} < {amount/100000000}"}, 400
-            wallet.crypto_handler.fake_balance -= amount
+            
+            transaction = Transaction(
+                timestamp=datetime.now().isoformat(),
+                amount=amount/100000000,
+                tx_hash=f"fake-sell-{uuid.uuid4()}",
+                sender=wallet.address,
+                receiver="exchange",
+                name=wallet.name
+            )
+            account.transactionLog.add_to_transaction_log(transaction)
 
+            wallet.crypto_handler.fake_balance -= amount
             AccountsFileManager.get_instance().save_account(account)
             return {"success": True}, 200
 

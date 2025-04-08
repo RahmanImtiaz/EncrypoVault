@@ -12,6 +12,8 @@ body {
 
 html, body {
   overflow-x: hidden;
+  height: auto;
+  min-height: 100vh;
 }
 
 .portfolioContainer {
@@ -23,11 +25,11 @@ html, body {
   justify-content: flex-start;
   align-items: center;
   padding: 20px;
+  min-height: 100vh; 
   height: auto;
   gap: 2rem;
   box-sizing: border-box;
-  overflow-wrap: break-word; 
-  overflow-y: auto;
+  overflow-y: visible; 
 }
 
 .balanceContainer {
@@ -45,6 +47,8 @@ html, body {
   overflow: hidden;
   backdrop-filter: blur(8px);
   border: none;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .balanceContainer::before {
@@ -206,7 +210,8 @@ html, body {
 }
 
 .transactionHistory {
-  margin-top: 30px;
+  width: 100%;
+  margin-top: 20px;
   padding: 20px;
   border-radius: 8px;
 }

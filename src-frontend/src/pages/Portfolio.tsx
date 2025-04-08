@@ -6,8 +6,6 @@ import "../styles/Portfolio.css";
 import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
 import api from '../lib/api';
 
-
-
 interface Holding {
   amount: number;
   name: string;
@@ -26,6 +24,14 @@ interface Wallet {
   };
 }
 
+interface Transaction {
+  timestamp: string;
+  amount: number;
+  hash: string;
+  sender: string;
+  receiver: string;
+  name: string;
+}
 
 const Portfolio: React.FC = () => {
   const { priceData } = useCryptoPrice();
@@ -41,12 +47,13 @@ const Portfolio: React.FC = () => {
   const [chosenWallet, setChosenWallet] = useState<Wallet | null>(null);
   const [showQR, setShowQR] = useState(false);
   const [totalBalance, setTotalBalance] = useState<number>(0);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const savedTheme = localStorage.getItem('theme');
 
   const fetchWallets = async () => {
     try {
       setLoading(true);
-      const walletsList: Wallet[] = await api.getWallets(); // Fetch wallets from the API
+      const walletsList: Wallet[] = await api.getWallets();
       console.log("Fetched wallets:", walletsList); 
       setWallets(walletsList);
   
@@ -85,9 +92,23 @@ const Portfolio: React.FC = () => {
       setLoading(false);
     }
   };
+
+  const fetchTransactions = async () => {
+    try {
+      const allTransactions = await api.getAllTransactions();
+      setTransactions(allTransactions);
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+    }
+  };
+
+  const refreshData = async () => {
+    await fetchWallets();
+    await fetchTransactions();
+  };
   
   useEffect(() => {
-    fetchWallets();
+    refreshData();
   }, [priceData]);
 
   useEffect(() => {
@@ -96,7 +117,6 @@ const Portfolio: React.FC = () => {
     else
       document.body.classList.remove('light-mode');
   }, [savedTheme]);
-
 
   useEffect(() => {
     if (localStorage.getItem('theme') === 'light')
@@ -132,56 +152,6 @@ const Portfolio: React.FC = () => {
       console.error("Failed to fetch account type:", error);
     }
   };
-/* 
-  const fetchPortfolioData = async () => {
-    try {
-      // Fetch wallets
-      const wallets: Wallet[] = await window.api.getWallets();
-      setWallets(wallets);
-
-      // Calculate total portfolio balance by summing up wallet balances
-      const totalBalance = wallets.reduce((sum, wallet) => sum + wallet.balance, 0);
-
-      // Aggregate holdings across all wallets
-      const holdings: { [key: string]: AggregatedHolding } = {};
-
-      wallets.forEach((wallet) => {
-        Object.entries(wallet.holdings).forEach(([cryptoId, holding]) => {
-          if (!holdings[cryptoId]) {
-            holdings[cryptoId] = {
-              name: holding.name,
-              symbol: holding.symbol,
-              amount: 0,
-              value: 0,
-              percentOfPortfolio: 0,
-              wallets: [],
-            };
-          }
-          holdings[cryptoId].amount += holding.amount;
-          holdings[cryptoId].value += holding.value;
-          holdings[cryptoId].wallets.push({
-            name: wallet.name,
-            amount: holding.amount,
-          });
-        });
-      });
-
-      const holdingsArray = Object.values(holdings);
-      holdingsArray.forEach((holding) => {
-        holding.percentOfPortfolio = totalBalance > 0 ? (holding.value / totalBalance) * 100 : 0;
-      });
-
-      holdingsArray.sort((a, b) => b.value - a.value);
-      setTotalBalance(totalBalance); // Use setTotalBalance here
-      setAggregatedHoldings(holdingsArray);
-    } catch (err) {
-      console.error("Error fetching portfolio data:", err);
-      throw err;
-    }
-  };
-  */
-
-
 
   const toggleTransactionHistory = () => {
     setShowTransactionHistory(!showTransactionHistory);
@@ -193,11 +163,6 @@ const Portfolio: React.FC = () => {
     { title: "Understanding Blockchain", url: "https://www.youtube.com/watch?v=yubzJw0uiE4&pp=ygUkdW5kZXJzdGFkbmluZyBiaXRjb2luIGFuZCBibG9ja2NoYWlu" },
   ];
 
-  const transactionHistory = [
-    { id: 1, date: "2025-04-01", type: "Buy", amount: "0.1 BTC", value: "£3000" },
-    { id: 2, date: "2025-03-28", type: "Sell", amount: "0.05 ETH", value: "£100" },
-    { id: 3, date: "2025-03-25", type: "Receive", amount: "100 ADA", value: "£50" },
-  ];
   const expandWallets = (transaction: string) => {
     setShowWalletList(true);
     setTransactionType(transaction);
@@ -265,7 +230,6 @@ const Portfolio: React.FC = () => {
     );
   }
 
-
   if (showWalletList) {
     return (
       <div className="wallets-list-overlay">
@@ -316,15 +280,12 @@ const Portfolio: React.FC = () => {
     );
   }
 
-
   return (
     <div className="portfolioContainer">
       <div className="balanceContainer">
         <h2 className="balanceHeading">Total Balance</h2>
         <p className="total">£{totalBalance.toFixed(2)}</p>
       </div>
-
-      {/* Account Type Badge */}
 
       {accountType && (
         <div className="account-type-badge" data-type={accountType}>
@@ -342,7 +303,6 @@ const Portfolio: React.FC = () => {
         </div>
       </div>
 
-      {/* YouTube Videos Section */}
       {accountType === "Beginner" && (
         <div className="youtubeVideos">
           <h2>Learn Crypto Trading</h2>
@@ -358,37 +318,67 @@ const Portfolio: React.FC = () => {
         </div>
       )}
 
-      {/* Transaction History Section */}
-      <div className="transactionHistory">
+      <div className="transaction-history">
         <button className="toggleButton" onClick={toggleTransactionHistory}>
           {showTransactionHistory ? "Hide Transaction History" : "Show Transaction History"}
         </button>
         {showTransactionHistory && (
-          <ul className="transactionList">
-            {transactionHistory.map((transaction) => (
-              <li key={transaction.id}>
-                <p>
-                  <strong>Date:</strong> {transaction.date}
-                </p>
-                <p>
-                  <strong>Type:</strong> {transaction.type}
-                </p>
-                <p>
-                  <strong>Amount:</strong> {transaction.amount}
-                </p>
-                <p>
-                  <strong>Value:</strong> {transaction.value}
-                </p>
-              </li>
-            ))}
-          </ul>
+          <>
+            <h3>Transaction History</h3>
+            {transactions.length === 0 ? (
+              <p className="no-transactions">No transactions yet</p>
+            ) : (
+              <div className="transactions-list">
+                {transactions.map((tx) => {
+                  const wallet = wallets.find(w => w.name === tx.name);
+                  const isOutgoing = wallet ? tx.sender === wallet.address : false;
+                  const isFakeBuy = tx.sender === "exchange";
+                  const isFakeSell = tx.receiver === "exchange";
+                  const isConfirmed = true;
+
+                  return (
+                    <div
+                      key={tx.hash}
+                      className={`transaction-item ${
+                        isOutgoing ? 'out' : 'in'
+                      } ${
+                        isFakeBuy ? 'fake-buy' : isFakeSell ? 'fake-sell' : ''
+                      }`}
+                    >
+                      <div className="tx-direction">
+                        {isOutgoing ? '⬆️' : '⬇️'}
+                      </div>
+                      <div className="tx-details">
+                        <div className="tx-amount">
+                          {isOutgoing ? '-' : '+'}{tx.amount} {wallet?.coin_symbol || 'CRYPTO'}
+                          {(isFakeBuy || isFakeSell) && (
+                            <span className="tx-type-badge">
+                              {isFakeBuy ? 'BUY' : 'SELL'}
+                            </span>
+                          )}
+                        </div>
+                        <div className="tx-time">
+                          {new Date(tx.timestamp).toLocaleString()}
+                        </div>
+                      </div>
+                      <div className={`tx-status ${isConfirmed ? 'confirmed' : 'pending'}`}>
+                        {isConfirmed ? 'confirmed' : 'pending'}
+                      </div>
+                      <div className="tx-id">
+                        {tx.hash.startsWith('fake-') 
+                          ? tx.hash.replace('fake-buy-', '').replace('fake-sell-', '').substring(0, 8)
+                          : tx.hash.substring(0, 12)}...
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
   );
-
-
 };
-
 
 export default Portfolio;

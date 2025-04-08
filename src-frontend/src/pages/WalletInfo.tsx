@@ -48,7 +48,6 @@ const WalletInfo = () => {
   const savedTheme = localStorage.getItem('theme');
 
   // Function to fetch the latest wallet data
-  // In your refreshWalletData function:
   const refreshWalletData = async () => {
     if (!initialWallet) return;
 
@@ -196,34 +195,58 @@ const WalletInfo = () => {
       </div>
 
       {/* Transaction History Section */}
-      <div className="transaction-history">
-        <h3>Transaction History</h3>
-        {transactions.length === 0 ? (
-          <p className="no-transactions">No transactions yet</p>
-        ) : (
-          <div className="transactions-list">
-            {transactions.map((tx) => (
-              <div
-                key={tx.hash}
-                className={`transaction-item ${tx.sender === wallet.address ? 'out' : 'in'}`}
-                onClick={() => handleTxClick(tx)}
-              >
-                <div className="tx-direction">
-                  {tx.sender === wallet.address ? '⬆️' : '⬇️'}
-                </div>
-                <div className="tx-details">
-                  <div className="tx-amount">
-                    {tx.sender === wallet.address ? '-' : '+'}{tx.amount} {wallet.coin_symbol}
-                  </div>
-                  <div className="tx-time">{new Date(tx.timestamp).toLocaleString()}</div>
-                </div>
-                <div className="tx-status">confirmed</div>
-                <div className="tx-id">{tx.hash.substring(0, 12)}...</div>
+<div className="transaction-history">
+  <h3>Transaction History</h3>
+  {transactions.length === 0 ? (
+    <p className="no-transactions">No transactions yet</p>
+  ) : (
+    <div className="transactions-list">
+      {transactions.map((tx) => {
+        const isOutgoing = tx.sender === wallet.address;
+        const isFakeBuy = tx.sender === "exchange";
+        const isFakeSell = tx.receiver === "exchange";
+        const isConfirmed = true; // All fake transactions are confirmed
+
+        return (
+          <div
+            key={tx.hash}
+            className={`transaction-item ${
+              isOutgoing ? 'out' : 'in'
+            } ${
+              isFakeBuy ? 'fake-buy' : isFakeSell ? 'fake-sell' : ''
+            }`}
+            onClick={() => handleTxClick(tx)}
+          >
+            <div className="tx-direction">
+              {isOutgoing ? '⬆️' : '⬇️'}
+            </div>
+            <div className="tx-details">
+              <div className="tx-amount">
+                {isOutgoing ? '-' : '+'}{tx.amount} {wallet.coin_symbol}
+                {(isFakeBuy || isFakeSell) && (
+                  <span className="tx-type-badge">
+                    {isFakeBuy ? 'BUY' : 'SELL'}
+                  </span>
+                )}
               </div>
-            ))}
+              <div className="tx-time">
+                {new Date(tx.timestamp).toLocaleString()}
+              </div>
+            </div>
+            <div className={`tx-status ${isConfirmed ? 'confirmed' : 'pending'}`}>
+              {isConfirmed ? 'confirmed' : 'pending'}
+            </div>
+            <div className="tx-id">
+              {tx.hash.startsWith('fake-') 
+                ? tx.hash.replace('fake-buy-', '').replace('fake-sell-', '').substring(0, 8)
+                : tx.hash.substring(0, 12)}...
+            </div>
           </div>
-        )}
-      </div>
+        );
+      })}
+    </div>
+  )}
+</div>
 
       {/* Transaction Details Modal */}
       {showTxModal && selectedTx && (
