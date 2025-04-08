@@ -25,30 +25,12 @@ interface Wallet {
 }
 
 interface Transaction {
-  txid: string;
-  time: string;
-  direction: 'in' | 'out';
-  amount: string;
-  status: 'confirmed' | 'pending';
-}
-
-interface TransactionOutput {
-  value: string | number;
-  address: string;
-  public_hash?: string;
-  public_key?: string;
-  lock_script?: string;
-  spent?: boolean;
-  output_n?: number;
-  script_type?: string;
-  witver?: number;
-  encoding?: string;
-  spending_txid?: string;
-  spending_index_n?: number;
-  strict?: boolean;
-  change?: boolean;
-  witness_type?: string;
-  network?: string;
+  timestamp: string; 
+  amount: number;
+  hash: string;
+  sender: string;
+  receiver: string;
+  name: string;
 }
 
 const WalletInfo = () => {
@@ -59,29 +41,36 @@ const WalletInfo = () => {
   const [showTxModal, setShowTxModal] = useState(false);
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
   const [loading, setLoading] = useState(false);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const navigate = useNavigate();
   const {priceData} = fetchPrice(); 
   const savedTheme = localStorage.getItem('theme');
 
   // Function to fetch the latest wallet data
-  const refreshWalletData = async () => {
-    if (!initialWallet) return;
+  // In your refreshWalletData function:
+const refreshWalletData = async () => {
+  if (!initialWallet) return;
+  
+  setLoading(true);
+  try {
+    const wallets: Wallet[] = await api.getWallets();
+    const updatedWallet = wallets.find((w: Wallet) => w.name === initialWallet.name);
     
-    setLoading(true);
-    try {
-      const wallets: Wallet[] = await api.getWallets();
-      const updatedWallet = wallets.find((w: Wallet) => w.name === initialWallet.name);
-      
-      if (updatedWallet) {
-        setWallet(updatedWallet);
-        console.log('Wallet data refreshed:', updatedWallet);
-      }
-    } catch (error) {
-      console.error('Error refreshing wallet data:', error);
-    } finally {
-      setLoading(false);
+    if (updatedWallet) {
+      setWallet(updatedWallet);
     }
-  };
+
+    const allTransactions = await api.getAllTransactions();
+    // Filter transactions for this wallet
+    const walletTransactions = allTransactions.filter(tx => tx.name === initialWallet.name);
+    setTransactions(walletTransactions);
+  } catch (error) {
+    console.error('Error refreshing wallet data:', error);
+    setTransactions([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Refresh on initial mount
   useEffect(() => {
@@ -117,57 +106,6 @@ const WalletInfo = () => {
     else 
       document.body.classList.remove('light-mode');
   }, [savedTheme]);
-
-  // Mock transaction data
-  const transactions = useState<Transaction[]>([
-    {
-      txid: '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
-      time: '2023-05-15 14:22:10',
-      direction: 'in',
-      amount: '0.005',
-      status: 'confirmed'
-    },
-    {
-      txid: '3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a',
-      time: '2023-05-14 09:45:22',
-      direction: 'out',
-      amount: '0.002',
-      status: 'confirmed'
-    },
-  ])[0]; 
-
-  // Mock transaction details
-  const txDetails = useState<{
-    inputs: TransactionOutput[];
-    outputs: TransactionOutput[];
-  }>({
-    inputs: [
-      {
-        value: 500000,
-        address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-        script_type: 'p2pkh',
-        spent: true
-      }
-    ],
-    outputs: [
-      {
-        value: 200000,
-        address: '1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2',
-        script_type: 'p2pkh',
-        spent: false
-      },
-      {
-        value: 300000,
-        address: wallet?.address || '',
-        script_type: 'p2pkh',
-        change: true
-      }
-    ]
-  })[0]; 
-
-  useEffect(() => {
-    console.log('WalletInfo received:', wallet);
-  }, [wallet]);
 
   const handleTxClick = (tx: Transaction) => {
     setSelectedTx(tx);
@@ -262,21 +200,21 @@ const WalletInfo = () => {
           <div className="transactions-list">
             {transactions.map((tx) => (
               <div 
-                key={tx.txid} 
-                className={`transaction-item ${tx.direction} ${tx.status}`}
+                key={tx.hash} 
+                className={`transaction-item ${tx.sender === wallet.address ? 'out' : 'in'}`}
                 onClick={() => handleTxClick(tx)}
               >
                 <div className="tx-direction">
-                  {tx.direction === 'in' ? '⬇️' : '⬆️'}
+                  {tx.sender === wallet.address ? '⬆️' : '⬇️'}
                 </div>
                 <div className="tx-details">
                   <div className="tx-amount">
-                    {tx.direction === 'in' ? '+' : '-'}{tx.amount} {wallet.coin_symbol}
+                    {tx.sender === wallet.address ? '-' : '+'}{tx.amount} {wallet.coin_symbol}
                   </div>
-                  <div className="tx-time">{tx.time}</div>
+                  <div className="tx-time">{new Date(tx.timestamp).toLocaleString()}</div>
                 </div>
-                <div className="tx-status">{tx.status}</div>
-                <div className="tx-id">{tx.txid.substring(0, 12)}...</div>
+                <div className="tx-status">confirmed</div>
+                <div className="tx-id">{tx.hash.substring(0, 12)}...</div>
               </div>
             ))}
           </div>
@@ -296,38 +234,12 @@ const WalletInfo = () => {
             
             <h3>Transaction Details</h3>
             <div className="tx-summary">
-              <p><strong>TXID:</strong> {selectedTx.txid}</p>
-              <p><strong>Time:</strong> {selectedTx.time}</p>
+              <p><strong>TXID:</strong> {selectedTx.hash}</p>
+              <p><strong>Time:</strong> {new Date(selectedTx.timestamp).toLocaleString()}</p>
               <p><strong>Amount:</strong> {selectedTx.amount} {wallet.coin_symbol}</p>
-              <p><strong>Status:</strong> {selectedTx.status}</p>
-              <p><strong>Direction:</strong> {selectedTx.direction === 'in' ? 'Received' : 'Sent'}</p>
-            </div>
-
-            <div className="tx-io-container">
-              <div className="tx-inputs">
-                <h4>Inputs</h4>
-                {txDetails.inputs.map((input, index) => (
-                  <div key={index} className="tx-io-item">
-                    <p><strong>Value:</strong> {input.value} satoshis</p>
-                    <p><strong>Address:</strong> {input.address}</p>
-                    {input.script_type && <p><strong>Script Type:</strong> {input.script_type}</p>}
-                    {input.spent && <p><strong>Spent:</strong> Yes</p>}
-                  </div>
-                ))}
-              </div>
-
-              <div className="tx-outputs">
-                <h4>Outputs</h4>
-                {txDetails.outputs.map((output, index) => (
-                  <div key={index} className="tx-io-item">
-                    <p><strong>Value:</strong> {output.value} satoshis</p>
-                    <p><strong>Address:</strong> {output.address}</p>
-                    {output.script_type && <p><strong>Script Type:</strong> {output.script_type}</p>}
-                    {output.change && <p><strong>Change:</strong> Yes</p>}
-                    {output.spent === false && <p><strong>Spent:</strong> No</p>}
-                  </div>
-                ))}
-              </div>
+              <p><strong>Status:</strong> confirmed</p>
+              <p><strong>Direction:</strong> {selectedTx.sender === wallet.address ? 'Sent' : 'Received'}</p>
+              <p><strong>{selectedTx.sender === wallet.address ? 'To:' : 'From:'}</strong> {selectedTx.sender === wallet.address ? selectedTx.receiver : selectedTx.sender}</p>
             </div>
           </div>
         </div>
