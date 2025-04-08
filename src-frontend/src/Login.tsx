@@ -3,6 +3,7 @@ import { PublicKeyCredentialRequestOptionsJSON, startAuthentication } from '@sim
 import "./Login.css";
 import { useToast } from './contexts/ToastContext';
 
+
 interface LoginProps {
   onLogin: () => void;
   toggleForm: () => void;
@@ -15,11 +16,22 @@ export function Login({ onLogin, toggleForm }: LoginProps) {
   const [accounts, setAccounts] = useState<string[]>([]);
   const [failedAttempts, setFailedAttempts] = useState(0); 
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const isOnline = navigator.onLine;
   console.log(failedAttempts);
   if (!localStorage.getItem("theme")) {
     localStorage.setItem("theme", "dark");
   }
   const { showToast } = useToast();
+
+  // display a toast message when the user is offline only once
+  const offlineToastShownRef = React.useRef(false);
+  
+  useEffect(() => {
+    if (!isOnline && !offlineToastShownRef.current) {
+      showToast("You are offline! Please check your internet connection. The current rates may not be accurate", 'error');
+      offlineToastShownRef.current = true;
+    }
+  }, [isOnline, showToast]);
 
   // Check biometric support when component mounts
   useEffect(() => {
