@@ -113,6 +113,8 @@ async function createWallet(walletName: string): Promise<Response> {
     });
 }
 
+
+
 async function getWallets() {
     try {
       const response = await fetch("/api/crypto/wallets/details");
@@ -172,6 +174,34 @@ async function sendCrypto(walletName: string, amount: number, destinationAddress
     }
 }
 
+async function fakeBuy(walletName: string, amount: number) {
+    const res = await fetch("/api/crypto/buy", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            walletName,
+            amount: amount*100000000
+        })
+    })
+    return await res.json()
+}
+
+async function fakeSell(walletName: string, amount: number) {
+    const res = await fetch("/api/crypto/sell", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            walletName,
+            amount: amount*100000000
+        })
+    })
+    return await res.json()
+}
+
 async function addContact(name: string, address: string): Promise<Response> {
     return fetch("/api/contacts/add", {
         method: "POST",
@@ -220,5 +250,7 @@ export default {
     getWallets,
     sendCrypto,
     verifyBiometricForTransaction,
-    logout
+    logout,
+    fakeBuy,
+    fakeSell
 }

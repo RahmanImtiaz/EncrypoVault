@@ -20,13 +20,13 @@ from crypto_impl.WalletType import WalletType
 class BitcoinWalletHandler(HandlerInterface):
 
     wallet: bitcoinlib.wallets.Wallet
-    fake_balance: float
+    _fake_balance: float
 
     def __init__(self, name, balance, fake_balance):
         self._name = name
         self._db_lock = threading.Lock() 
         self._balance = balance
-        self.fake_balance = fake_balance
+        self._fake_balance = fake_balance
         acc_manager = AccountsFileManager.AccountsFileManager.get_instance()
         db_uri = f"{acc_manager.current_directory}/{acc_manager.get_loaded_account().get_account_name()}.db"
         db_cache_uri = f"{acc_manager.current_directory}/{acc_manager.get_loaded_account().get_account_name()}.cache.db"
@@ -53,14 +53,15 @@ class BitcoinWalletHandler(HandlerInterface):
 
     @staticmethod
     def create_wallet(name):
-       return BitcoinWalletHandler(name)
+       return BitcoinWalletHandler(name, balance=0, fake_balance=0)
 
     def update_balance(self):
         with self._db_lock:  # Ensure thread-safe access to the database
             try:
                 self.wallet.scan()
                 account = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account()
-                self._balance = self.wallet.balance(network="testnet")/100000000
+                self._balance = self.wallet.balance()/100000000
+                print("Balance: ", self._balance)
                 transactions = self.wallet.transactions()
 
                 # valid_transactions = transactions
@@ -159,14 +160,14 @@ class BitcoinWalletHandler(HandlerInterface):
         return self._balance
     
     def get_fake_balance(self) :
-        return self.fake_balance
+        return self._fake_balance/100000000
 
     def toJSON(self):
         return json.dumps({
             "name": self._name,
             "type": str(self.get_wallet_type()),
             "balance": self.get_balance(),
-            "fake_balance": self.fake_balance,
+            "fake_balance": self.get_fake_balance(),
         })
 
     @staticmethod

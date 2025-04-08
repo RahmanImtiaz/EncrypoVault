@@ -40,7 +40,7 @@ class Wallet(CryptoObserver):
             "address": self.address,
             "type": str(self.wallet_type),
             "balance": self.crypto_handler.get_balance(),
-            "fake_balance": self.crypto_handler.fake_balance,
+            "fake_balance": self.crypto_handler.get_fake_balance(),
         }, indent=4)
 
     def update(self, crypto_id: str, crypto_data: dict):

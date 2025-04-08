@@ -127,7 +127,9 @@ class CryptoRoutes:
             wallet = account.get_wallets()[wallet_name]
             if wallet is None:
                 return {"error": f"{wallet_name} not found"}, 404
-            wallet.crypto_handler.fake_balance+=amount
+            wallet.crypto_handler._fake_balance+=amount
+
+            AccountsFileManager.get_instance().save_account(account)
             return {"success": True}, 200
 
         @crypto_bp.route("/sell", methods=["POST"])
@@ -143,9 +145,11 @@ class CryptoRoutes:
             wallet = account.get_wallets()[wallet_name]
             if wallet is None:
                 return {"error": f"{wallet_name} not found"}, 404
-            if wallet.crypto_handler.fake_balance < amount:
-                return {"error": f"{wallet.crypto_handler.fake_balance} < {amount}"}, 400
-            wallet.crypto_handler.fake_balance -= amount
+            if wallet.crypto_handler._fake_balance < amount:
+                return {"error": f"{wallet.crypto_handler.get_fake_balance()} < {amount}"}, 400
+            wallet.crypto_handler._fake_balance -= amount
+
+            AccountsFileManager.get_instance().save_account(account)
             return {"success": True}, 200
 
         @crypto_bp.route("/verify_biometrics", methods=["POST"])
