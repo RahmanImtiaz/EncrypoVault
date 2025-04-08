@@ -149,6 +149,7 @@ class Account:
                     print(f"Error recreating wallet file for {name}: {e}")
 
     def get_recovery_phrases(self):
+        """Get recovery phrases for the account"""
         return self._mnemonic
         # Bip39SeedGenerator(a).Generate()
 
