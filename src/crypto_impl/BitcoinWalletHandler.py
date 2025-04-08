@@ -51,6 +51,56 @@ class BitcoinWalletHandler(HandlerInterface):
 
     def update_balance(self):
         self.wallet.scan()
+        account = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account()
+        transactions = self.wallet.transactions()
+
+        # valid_transactions = transactions
+        if transactions is not None:
+            valid_transactions = []
+            for transaction in transactions:
+                is_valid = False
+                for inp in transaction.inputs:
+                    if inp.address == self.get_address():
+                        is_valid = True
+
+                for output in transaction.outputs:
+                    if output.address == self.get_address():
+                        is_valid = True
+                if is_valid:
+                    valid_transactions.append(transaction)
+            print(f"Found {len(valid_transactions)} transactions")
+            for tx in valid_transactions:
+                if account.transactionLog.search(tx_hash=tx.txid) is None:
+                    incoming = tx.inputs[0].address != self.get_address()
+                    print("Incoming:", incoming)
+                    print("Found a transaction that is not in the local log:")
+                    amount = 0
+                    sender = ""
+                    receiver = ""
+                    if incoming:
+                        pass
+                        amount = tx.inputs[0].value
+                        sender = tx.inputs[0].address
+                        receiver = self.get_address()
+                    else:
+                        for output in tx.outputs: # tb1qgdq7j0ntsdzm8t42xmqa0yygh9t7pw4ynuk3td
+                            if output.address != self.get_address():
+                                amount = output.value
+                                receiver = output.address
+
+
+                    t = Transaction(
+                        timestamp=tx.date.isoformat(),
+                        amount=amount / 100000000,
+                        tx_hash=tx.txid,
+                        sender=sender,
+                        receiver=receiver,
+                        name=self._name
+                    )
+                    print(f"tx: {t.__str__()}")
+
+        else:
+            print("No incoming transactions found.")
 
     def update_loop(self):
         self.update_balance()
@@ -79,7 +129,6 @@ class BitcoinWalletHandler(HandlerInterface):
         return tx.txid
 
     def get_tx_info(self, tx_id):
-        self.wallet.transactions()
         pass
 
     def get_tx(self):

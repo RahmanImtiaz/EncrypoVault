@@ -18,11 +18,11 @@ class TransactionLog:
                sent_to: str = None,
                sent_by: str = None):
         for transaction in self._log:
-            if (transaction.timestamp == timestamp and
-                    transaction.amount == amount and
-                    transaction.hash == tx_hash and
-                    transaction.receiver == sent_to and
-                    transaction.sender == sent_by):
+            if ((timestamp is not None and transaction.timestamp == timestamp) or
+                    (amount is not None and transaction.amount == amount) or
+                    (tx_hash is not None and transaction.hash == tx_hash) or
+                    (sent_to is not None and transaction.receiver == sent_to) or
+                    (sent_by is not None and transaction.sender == sent_by)):
                 return transaction
         return None
     
