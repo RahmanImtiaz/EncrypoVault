@@ -21,7 +21,6 @@ class BitcoinWalletHandler(HandlerInterface):
 
     wallet: bitcoinlib.wallets.Wallet
     fake_balance: float
-    last_balance: float
 
     def __init__(self, name, balance, fake_balance):
         self._name = name
@@ -61,6 +60,7 @@ class BitcoinWalletHandler(HandlerInterface):
             try:
                 self.wallet.scan()
                 account = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account()
+                self._balance = self.wallet.balance(network="testnet")
                 transactions = self.wallet.transactions()
 
                 # valid_transactions = transactions
@@ -156,44 +156,7 @@ class BitcoinWalletHandler(HandlerInterface):
         return self.wallet.get_key().address
 
     def get_balance(self):
-        retries = 5  # Number of retries for database locking
-        while retries > 0:
-            try:
-                with self._db_lock:  # Ensure thread-safe access to the database
-                    #return self.wallet.balance(network="testnet") / 100000000
-                    return self.last_balance
-            except sqlalchemy.exc.PendingRollbackError as e:
-                print(f"PendingRollbackError encountered: {e}")
-                # Rollback the session to recover
-                try:
-                    if self.wallet._session.is_active:
-                        print("Rolling back the session...")
-                        self.wallet._session.rollback()
-                    else:
-                        print("Session is inactive. Closing the session.")
-                        self.wallet._session.close()
-
-                    # Recreate the session using the sessionmaker
-                    from sqlalchemy.orm import sessionmaker
-                    Session = sessionmaker(bind=self.wallet._session.bind)
-                    self.wallet._session = Session()
-
-                    print("Session recovered successfully.")
-                except Exception as recovery_error:
-                    print(f"Error recovering session: {recovery_error}")
-                    raise
-            except sqlite3.OperationalError as e:
-                if "database is locked" in str(e):
-                    print("Database is locked. Retrying...")
-                    retries -= 1
-                    time.sleep(1)  # Wait before retrying
-                else:
-                    raise
-            except Exception as e:
-                print(f"Unexpected error in get_balance: {e}")
-                raise
-        print("Failed to retrieve balance after multiple retries.")
-        raise sqlite3.OperationalError("Database is locked or in an unexpected state, and retries are exhausted.")
+        return self._balance
     
     def get_fake_balance(self) :
         return self.fake_balance

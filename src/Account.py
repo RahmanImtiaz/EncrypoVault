@@ -124,7 +124,9 @@ class Account:
                 wallet = Wallet(
                     name=wallet_data.get('name', name),
                     wallet_type=wallet_type,
-                    address=wallet_data.get('address')
+                    address=wallet_data.get('address'),
+                    last_balance=wallet_data.get('balance', 0),
+                    fake_balance=wallet_data.get('fake_balance', 0)
                 )
 
                 # Restore wallet balance

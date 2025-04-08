@@ -16,14 +16,16 @@ class Wallet(CryptoObserver):
     def __init__(self, 
                  name: str,
                  wallet_type: WalletType,
-                 address: Optional[str] = None):
+                 address: Optional[str] = None,
+                 last_balance: float = 0,
+                 fake_balance: float = 0):
         self.name = name
         self.wallet_type = wallet_type
         self.crypto_handler: HandlerInterface
         self.holdings = {}
         match wallet_type:
             case WalletType.BITCOIN:
-                self.crypto_handler = BitcoinWalletHandler(self.name)
+                self.crypto_handler = BitcoinWalletHandler(self.name, last_balance, fake_balance)
             # case WalletType.ETHEREUM:
             #     pass
             case _:
@@ -38,6 +40,7 @@ class Wallet(CryptoObserver):
             "address": self.address,
             "type": str(self.wallet_type),
             "balance": self.crypto_handler.get_balance(),
+            "fake_balance": self.crypto_handler.fake_balance,
         }, indent=4)
 
     def update(self, crypto_id: str, crypto_data: dict):
