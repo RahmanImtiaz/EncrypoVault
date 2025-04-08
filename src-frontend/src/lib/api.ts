@@ -122,6 +122,7 @@ async function getWallets() {
           name: wallet.name,
           address: wallet.address || "",
           balance: wallet.balance || 0,
+          fake_balance: wallet.fake_balance || 0,
           coin_symbol: wallet.type || 'BTC',
           holdings: wallet.holdings || {}
       }));
