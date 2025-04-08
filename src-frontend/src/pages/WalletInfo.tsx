@@ -32,6 +32,7 @@ interface Transaction {
   sender: string;
   receiver: string;
   name: string;
+  confirmed?: boolean
 }
 
 const WalletInfo = () => {
@@ -47,6 +48,18 @@ const WalletInfo = () => {
   const { priceData } = fetchPrice();
   const savedTheme = localStorage.getItem('theme');
 
+  const fetchConfirmationStatus = async (txid: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`https://blockstream.info/testnet/api/tx/${txid}/status`);
+      const data = await response.json();
+      return data.confirmed;
+    } catch (error) {
+      console.error('Error fetching confirmation status:', error);
+      return false; 
+    }
+  };
+  
+
   // Function to fetch the latest wallet data
   const refreshWalletData = async () => {
     if (!initialWallet) return;
@@ -61,9 +74,15 @@ const WalletInfo = () => {
       }
 
       const allTransactions = await api.getAllTransactions();
-      // Filter transactions for this wallet
       const walletTransactions = allTransactions.filter(tx => tx.name === initialWallet.name);
-      setTransactions(walletTransactions);
+      const transactionsWithStatus = await Promise.all(
+        walletTransactions.map(async (tx) => {
+          const isFake = tx.hash.startsWith('fake-');
+          const confirmed = isFake ? true : await fetchConfirmationStatus(tx.hash);
+          return { ...tx, confirmed };
+        })
+      );
+      setTransactions(transactionsWithStatus);
     } catch (error) {
       console.error('Error refreshing wallet data:', error);
       setTransactions([]);
@@ -205,7 +224,7 @@ const WalletInfo = () => {
         const isOutgoing = tx.sender === wallet.address;
         const isFakeBuy = tx.sender === "exchange";
         const isFakeSell = tx.receiver === "exchange";
-        const isConfirmed = true; // All fake transactions are confirmed
+        const isConfirmed = tx.confirmed ?? false; // All fake transactions are confirmed
 
         return (
           <div
@@ -264,7 +283,7 @@ const WalletInfo = () => {
               <p><strong>TXID:</strong> {selectedTx.hash}</p>
               <p><strong>Time:</strong> {new Date(selectedTx.timestamp).toLocaleString()}</p>
               <p><strong>Amount:</strong> {selectedTx.amount} {wallet.coin_symbol}</p>
-              <p><strong>Status:</strong> confirmed</p>
+              <p><strong>Status:</strong> {selectedTx.confirmed? 'confirmed' : 'pending'}</p>
               <p><strong>Direction:</strong> {selectedTx.sender === wallet.address ? 'Sent' : 'Received'}</p>
               <p><strong>{selectedTx.sender === wallet.address ? 'To:' : 'From:'}</strong> {selectedTx.sender === wallet.address ? selectedTx.receiver : selectedTx.sender}</p>
             </div>
