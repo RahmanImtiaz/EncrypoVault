@@ -20,6 +20,7 @@ interface Wallet {
   balance: number;
   address: string;
   coin_symbol: string;
+  fake_balance: number;
   holdings: {
     [key: string]: Holding;
   };
@@ -42,18 +43,19 @@ const Portfolio: React.FC = () => {
   const [totalBalance, setTotalBalance] = useState<number>(0);
   const savedTheme = localStorage.getItem('theme');
 
-  // Fetch wallets and calculate total balance
   const fetchWallets = async () => {
     try {
       setLoading(true);
       const walletsList: Wallet[] = await api.getWallets(); // Fetch wallets from the API
-      console.log("Fetched wallets:", walletsList); // Debugging step
+      console.log("Fetched wallets:", walletsList); 
       setWallets(walletsList);
   
       // Wait for price data to be available
       if (!priceData) {
         console.warn("Price data is not available. Using wallet balances without conversion.");
-        setTotalBalance(walletsList.reduce((sum, wallet) => sum + wallet.balance, 0));
+        setTotalBalance(
+          walletsList.reduce((sum, wallet) => sum + wallet.balance + Number(wallet.fake_balance), 0)
+        );
         return;
       }
   
@@ -67,14 +69,14 @@ const Portfolio: React.FC = () => {
         }
   
         const walletBalance = price !== undefined
-          ? Number(wallet.balance) * Number(price) // Convert to GBP
-          : wallet.balance; // Fallback to native balance
+          ? (Number(wallet.balance) + Number(wallet.fake_balance)) * Number(price) // Convert to GBP
+          : wallet.balance + Number(wallet.fake_balance); // Fallback to native balance
   
-        console.log(`Wallet: ${wallet.name}, Balance: ${wallet.balance}, Price: ${price}, Wallet Balance in GBP: ${walletBalance}`);
+        console.log(`Wallet: ${wallet.name}, Balance: ${wallet.balance}, Fake Balance: ${wallet.fake_balance}, Price: ${price}, Wallet Balance in GBP: ${walletBalance}`);
         return sum + walletBalance;
       }, 0);
   
-      console.log("Calculated total balance:", total); // Debugging step
+      console.log("Calculated total balance:", total);
       setTotalBalance(total);
     } catch (err) {
       console.error("Error fetching wallets:", err);
