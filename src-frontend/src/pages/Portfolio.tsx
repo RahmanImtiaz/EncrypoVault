@@ -4,38 +4,36 @@ import { QRCodeComponent } from '../components/generateQR';
 import useCryptoPrice from '../components/fetchPrice';
 import "../styles/Portfolio.css";
 import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
+import api from '../lib/api';
 
-interface Holding{
+
+
+interface Holding {
   amount: number;
   name: string;
   symbol: string;
   value: number;
 }
 
-interface Wallet{
+interface Wallet {
   name: string;
   balance: number;
   address: string;
   coin_symbol: string;
+  fake_balance: number;
   holdings: {
     [key: string]: Holding;
   };
 }
 
-interface AggregatedHolding extends Holding {
-  percentOfPortfolio: number;
-  wallets: { name: string; amount: number }[];
-}
-
 
 const Portfolio: React.FC = () => {
-  const {priceData} = useCryptoPrice();
+  const { priceData } = useCryptoPrice();
   const navigate = useNavigate();
-  const [aggregatedHoldings, setAggregatedHoldings] = useState<AggregatedHolding[]>([]);
+  //const [aggregatedHoldings, setAggregatedHoldings] = useState<AggregatedHolding[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [accountType, setAccountType] = useState<string>("");
-  const [expandedAsset, setExpandedAsset] = useState<string | null>(null);
   const [showTransactionHistory, setShowTransactionHistory] = useState<boolean>(false);
   const [showWalletList, setShowWalletList] = useState<boolean>(false);
   const [transactionType, setTransactionType] = useState<string>("");
@@ -44,19 +42,66 @@ const Portfolio: React.FC = () => {
   const [showQR, setShowQR] = useState(false);
   const [totalBalance, setTotalBalance] = useState<number>(0);
   const savedTheme = localStorage.getItem('theme');
- 
-   useEffect(() => {
-     if (savedTheme === 'light')
-       document.body.classList.add('light-mode');
-     else 
-       document.body.classList.remove('light-mode');
-   }, [savedTheme]);
+
+  const fetchWallets = async () => {
+    try {
+      setLoading(true);
+      const walletsList: Wallet[] = await api.getWallets(); // Fetch wallets from the API
+      console.log("Fetched wallets:", walletsList); 
+      setWallets(walletsList);
+  
+      // Wait for price data to be available
+      if (!priceData) {
+        console.warn("Price data is not available. Using wallet balances without conversion.");
+        setTotalBalance(
+          walletsList.reduce((sum, wallet) => sum + wallet.balance + Number(wallet.fake_balance), 0)
+        );
+        return;
+      }
+  
+      // Calculate total balance using price data
+      const total = walletsList.reduce((sum, wallet) => {
+        const priceKey = wallet.coin_symbol === "BTC" ? "BTC-GBP" : "ETH-GBP";
+        const price = priceData?.[priceKey];
+  
+        if (price === undefined) {
+          console.warn(`Price for ${wallet.coin_symbol} is undefined. Using wallet balance directly.`);
+        }
+  
+        const walletBalance = price !== undefined
+          ? (Number(wallet.balance) + Number(wallet.fake_balance)) * Number(price) // Convert to GBP
+          : wallet.balance + Number(wallet.fake_balance); // Fallback to native balance
+  
+        console.log(`Wallet: ${wallet.name}, Balance: ${wallet.balance}, Fake Balance: ${wallet.fake_balance}, Price: ${price}, Wallet Balance in GBP: ${walletBalance}`);
+        return sum + walletBalance;
+      }, 0);
+  
+      console.log("Calculated total balance:", total);
+      setTotalBalance(total);
+    } catch (err) {
+      console.error("Error fetching wallets:", err);
+      setError("Failed to load wallets");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    fetchWallets();
+  }, [priceData]);
+
+  useEffect(() => {
+    if (savedTheme === 'light')
+      document.body.classList.add('light-mode');
+    else
+      document.body.classList.remove('light-mode');
+  }, [savedTheme]);
 
 
   useEffect(() => {
     if (localStorage.getItem('theme') === 'light')
       document.body.classList.add('light-mode');
-    else 
+    else
       document.body.classList.remove('light-mode');
   })
 
@@ -65,7 +110,7 @@ const Portfolio: React.FC = () => {
       try {
         setLoading(true);
         await fetchAccountType();
-        await fetchPortfolioData();
+        //await fetchPortfolioData();
       }
       catch (err) {
         setError("Failed to load portfolio data");
@@ -87,7 +132,7 @@ const Portfolio: React.FC = () => {
       console.error("Failed to fetch account type:", error);
     }
   };
-
+/* 
   const fetchPortfolioData = async () => {
     try {
       // Fetch wallets
@@ -134,11 +179,9 @@ const Portfolio: React.FC = () => {
       throw err;
     }
   };
+  */
 
-  
-  const toggleAssetDetails = (symbol: string) => {
-    setExpandedAsset(expandedAsset === symbol ? null : symbol);
-  };
+
 
   const toggleTransactionHistory = () => {
     setShowTransactionHistory(!showTransactionHistory);
@@ -211,7 +254,7 @@ const Portfolio: React.FC = () => {
             fgColor="#000000"
           />
           <p className="address-text">Wallet Address: {chosenWallet.address}</p>
-          <button 
+          <button
             className="close-button"
             onClick={() => setShowQR(false)}
           >
@@ -282,51 +325,12 @@ const Portfolio: React.FC = () => {
       </div>
 
       {/* Account Type Badge */}
-      
+
       {accountType && (
-          <div className="account-type-badge" data-type={accountType}>
-            {accountType} Mode
-          </div>
+        <div className="account-type-badge" data-type={accountType}>
+          {accountType} Mode
+        </div>
       )}
-
-      <div className="portfolioComposition">
-        <h2>Portfolio Composition</h2>
-        {aggregatedHoldings.length === 0 ? (
-          <p>No crypto holdings found in your wallets.</p>
-        ) : (
-          <div className="holdingsList">
-            {aggregatedHoldings.map((holding) => (
-              <div key={holding.symbol} className="holdingItem">
-                <div
-                  className="holdingSummary"
-                  onClick={() => toggleAssetDetails(holding.symbol)}
-                >
-                  <h3>
-                    {holding.name} ({holding.symbol.toUpperCase()})
-                  </h3>
-                  <p>
-                    {holding.amount.toFixed(8)} {holding.symbol.toUpperCase()} - £
-                    {holding.value.toFixed(2)} ({holding.percentOfPortfolio.toFixed(1)}%)
-                  </p>
-                </div>
-
-                {expandedAsset === holding.symbol && (
-                  <div className="holdingDetails">
-                    <h4>Wallet Breakdown</h4>
-                    <ul>
-                      {holding.wallets.map((wallet, index) => (
-                        <li key={index}>
-                          {wallet.name}: {wallet.amount.toFixed(8)} {holding.symbol.toUpperCase()}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
 
       <div className="quickActions">
         <h2>Quick Actions</h2>
