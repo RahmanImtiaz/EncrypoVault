@@ -16,6 +16,21 @@ export function Register({ toggleForm }: RegisterProps) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const { showToast } = useToast();
+  const [showRecoveryPhrase, setShowRecoveryPhrase] = useState(false);
+  const [recoveryPhrase, setRecoveryPhrase] = useState("");
+  const [recoveryPhraseError, setRecoveryPhraseError] = useState("");
+
+  const handleRecoveryPhraseChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setRecoveryPhrase(value);
+    
+    const words = value.trim().split(/\s+/);
+    if (words.length !== 12) {
+      setRecoveryPhraseError("Recovery phrase must contain exactly 12 words");
+    } else {
+      setRecoveryPhraseError("");
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +45,15 @@ export function Register({ toggleForm }: RegisterProps) {
       setError("Passwords do not match");
       showToast("Passwords do not match", "error");
       return;
+    }
+
+    if (showRecoveryPhrase) {
+      const words = recoveryPhrase.trim().split(/\s+/);
+      if (words.length !== 12) {
+        setError("Recovery phrase must contain exactly 12 words");
+        showToast("Recovery phrase must contain exactly 12 words", "error");
+        return;
+      }
     }
 
     try {
@@ -121,6 +145,25 @@ export function Register({ toggleForm }: RegisterProps) {
               <div>EncryptoVault</div>
             </div>
             <form onSubmit={handleSubmit}>
+                {showRecoveryPhrase && (
+                  <div className="recovery-phrase-section">
+                    <label htmlFor="recoveryPhrase" className="login-label">
+                      Recovery Phrase (12 words)
+                    </label>
+                    <textarea
+                      id="recoveryPhrase"
+                      className="login-input recovery-phrase-input"
+                      value={recoveryPhrase}
+                      onChange={handleRecoveryPhraseChange}
+                      required={showRecoveryPhrase} 
+                      rows={3}
+                    />
+                    {recoveryPhraseError && (
+                      <p className="error-message">{recoveryPhraseError}</p>
+                    )}
+                  </div>
+                )}
+              
               <label htmlFor="accountName" className="login-label">
                 Account Name
               </label>
@@ -180,6 +223,18 @@ export function Register({ toggleForm }: RegisterProps) {
                 required
                 aria-label="Confirm Password input"
               />
+
+              <div className="import-toggle">
+                <label className="switch">
+                  <input 
+                    type="checkbox" 
+                    checked={showRecoveryPhrase}
+                    onChange={(e) => setShowRecoveryPhrase(e.target.checked)}
+                  />
+                  <span className="slider round"></span>
+                </label>
+                <span className="toggle-label">Import existing account</span>
+              </div>
 
               {/* Only show error messages for validation errors, not success */}
               {error && !error.includes("success") && <p className="error-message">{error}</p>}
