@@ -252,6 +252,7 @@ class Account:
                 'type': str(wallet.wallet_type),
                 'address': wallet.address,
                 'balance': getattr(wallet, 'balance', 0.0),
+                'fake_balance': getattr(wallet.crypto_handler, 'fake_balance', 0.0),
                 'holdings': {
                     crypto_id: {"amount": data.get("amount", 0)} 
                     for crypto_id, data in wallet.holdings.items()
