@@ -3,6 +3,7 @@ import { PublicKeyCredentialRequestOptionsJSON, startAuthentication } from '@sim
 import "./Login.css";
 import { useToast } from './contexts/ToastContext';
 
+
 interface LoginProps {
   onLogin: () => void;
   toggleForm: () => void;
@@ -15,11 +16,22 @@ export function Login({ onLogin, toggleForm }: LoginProps) {
   const [accounts, setAccounts] = useState<string[]>([]);
   const [failedAttempts, setFailedAttempts] = useState(0); 
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const isOnline = navigator.onLine;
   console.log(failedAttempts);
   if (!localStorage.getItem("theme")) {
     localStorage.setItem("theme", "dark");
   }
   const { showToast } = useToast();
+
+  // display a toast message when the user is offline only once
+  const offlineToastShownRef = React.useRef(false);
+  
+  useEffect(() => {
+    if (!isOnline && !offlineToastShownRef.current) {
+      showToast("You are offline! Please check your internet connection. The current rates may not be accurate", 'error');
+      offlineToastShownRef.current = true;
+    }
+  }, [isOnline, showToast]);
 
   // Check biometric support when component mounts
   useEffect(() => {
@@ -125,9 +137,9 @@ export function Login({ onLogin, toggleForm }: LoginProps) {
           <div className="login-form-wrapper">
             <div className="login-header">
               <img
-                src="https://cdn.builder.io/api/v1/image/assets/a22ceb90578e417ca7fce76dfa9d5dc1/190a36156f40ffdccaf66b74c972f828e1f174d8890275b3e5b712debc635378?placeholderIfAbsent=true"
-                alt="Crypto logo"
-                className="login-logo"
+              src="/logo.png"
+              alt="Crypto logo"
+              className="login-logo"
               />
               <div>EncryptoVault</div>
             </div>
