@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
 import api from '../lib/api';
-//import { PublicKeyCredentialRequestOptionsJSON, startAuthentication } from '@simplewebauthn/browser';
+import { PublicKeyCredentialRequestOptionsJSON, startAuthentication } from '@simplewebauthn/browser';
 import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
 
 interface Holding {
@@ -105,8 +105,9 @@ const SendCrypto = () => {
           return;
         }
       } else {
-        // const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
-        // const webauthnResponse = await startAuthentication({ optionsJSON: authData, useBrowserAutofill: false })
+        const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
+        await startAuthentication({ optionsJSON: authData, useBrowserAutofill: false })
+        //console.log(webauthnResponse)
         const response = await api.verifyBiometricForTransaction(wallet);
 
         if (response.status !== 200) {
@@ -124,7 +125,7 @@ const SendCrypto = () => {
       }
 
       // Send the crypto using the wallet name, amount, and destination address
-      const response = await api.sendCrypto(wallet.name, parseFloat(amountToSend), selectedContact.address);
+      const response = await api.sendCrypto(wallet.name, parseInt(String(parseFloat(amountToSend) * 100000000)), selectedContact.address);
 
       if (!response.success) {
         showToast(response.error || "Failed to send crypto. Please try again.", "error");
