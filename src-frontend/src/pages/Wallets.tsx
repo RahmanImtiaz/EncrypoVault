@@ -3,7 +3,7 @@ import '../styles/Wallets.css';
 import fetchPrice from '../components/fetchPrice';
 import { useToast } from '../contexts/ToastContext';
 import { useNavigate } from 'react-router-dom';
-import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
+// import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
 
 interface Holding {
   amount: number;
@@ -17,6 +17,7 @@ interface Wallet {
   balance: number;
   address: string;
   coin_symbol: string;
+  fake_balance: string
   holdings: {
     [key: string]: Holding;
   };
@@ -145,6 +146,7 @@ const Wallets: React.FC = () => {
           name: walletData.walletName || newWalletName,
           address: walletData.walletAddress || "",
           balance: 0,  // Initialize with zero balance
+          fake_balance: walletData.fake_balance || 0,
           coin_symbol: walletData.walletType || "BTC",
           holdings: {}  // Initialize with empty holdings
         };
@@ -246,9 +248,10 @@ const Wallets: React.FC = () => {
                   {(() => {
                   const priceKey = wallet.coin_symbol === "BTC" ? "BTC-GBP" : "ETH-GBP";
                   const price = priceData?.[priceKey];
+                  const total = Number(wallet.balance) + Number(wallet.fake_balance);
                   
                   if (price !== undefined) {
-                    return `£${(Number(getWalletBalance(wallet))* Number(price)).toFixed(2)}`;
+                    return `£${(total * Number(price)).toFixed(2)}`;
                   } else {
                     return `£${wallet.balance.toFixed(2)}`;
                   }
@@ -293,7 +296,7 @@ const Wallets: React.FC = () => {
                   <div className="wallet-detail-row">
                     <span className="wallet-detail-label">Holdings:</span>
                     <span className="wallet-detail-value">
-                        {wallet.balance} {wallet.coin_symbol}
+                        {(Number(wallet.balance))+ (Number(wallet.fake_balance))} {wallet.coin_symbol} 
                     </span>
                   </div>
                 </div>

@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from '../contexts/ToastContext';
 import fetchPrice from '../components/fetchPrice';
-import { saveTransaction } from '../components/helpers/FakeTransactionRecords';
-import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
+
+// import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
 import api from '../lib/api';
 // import { PublicKeyCredentialRequestOptionsJSON, startAuthentication } from '@simplewebauthn/browser';
 
@@ -22,6 +22,7 @@ interface Wallet {
     balance: number;
     address: string;
     coin_symbol: string;
+    fake_balance: string;
     holdings: {
         [key: string]: Holding;
     };
@@ -49,65 +50,60 @@ export const SellCrypto = () => {
     }, [savedTheme]);
 
 
-    const sellAction = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (!amountToSell.trim() || parseFloat(amountToSell) <= 0) {
-            showToast("Please enter a valid amount greater than 0.00001.", "error");
-            return;
-        }
-
-        
-        if (parseFloat(amountToSell) > getWalletBalance(wallet)) {
-            showToast("Insufficient balance. Please enter a valid amount up to or equal to your balance.", "error");
-            return;
-        }
-
-        showDetailsScreen(true);
-    };
 
     const sellConfirm = async () => {
         try {
           const amount = parseFloat(amountToSell);
-          saveTransaction({
-            walletName: wallet.name,
-            coinSymbol: wallet.coin_symbol,
-            amount,
-            type: 'sell'
-          });
-          
-          //console.log("Crypto sale recorded.");
-          //showToast("Sale recorded successfully!", "success");
-          navigate(-1);
-            const platform = await window.api.getOS()
-            if (platform == "darwin") {
-                // Trigger biometric verification
-                const response = await api.verifyBiometricForTransaction(wallet);
-
-                if (!response.ok) {
-                    const data = await response.json();
-                    showToast(data.error || "Biometric verification failed", "error");
-                    return;
-                }
-            } else {
-                // const authData: PublicKeyCredentialRequestOptionsJSON = await window.api.getWebauthnLoginOpts() as unknown as PublicKeyCredentialRequestOptionsJSON
-                // const webauthnResponse = await startAuthentication({ optionsJSON: authData, useBrowserAutofill: false })
-                const response = await api.verifyBiometricForTransaction(wallet);
-
-                if (response.status !== 200) {
-                    showToast('Invalid Password or biometrics!', 'error');
-                    return;
-                }
+      
+          const platform = await window.api.getOS();
+          if (platform === "darwin") {
+            const response = await api.verifyBiometricForTransaction(wallet);
+            if (!response.ok) {
+              const data = await response.json();
+              showToast(data.error || "Biometric verification failed", "error");
+              return;
             }
+          } else {
+            const response = await api.verifyBiometricForTransaction(wallet);
+            if (response.status !== 200) {
+              showToast('Invalid Password or biometrics!', 'error');
+              return;
+            }
+          }
+      
 
-            console.log("Crypto selling initiated.");
-            showToast("Selling successful!", "success");
+          const result = await api.fakeSell(wallet.name, amount);
+          if (result.success) { 
+            showToast("Sale successful!", "success");
             navigate(-1);
+          } else {
+            showToast(result.error || "Sale failed", "error");
+          }
         } catch (err) {
-          showToast("Failed to record transaction.", "error");
+          showToast("Failed to process sale.", "error");
           console.error(err);
         }
-      }
+      };
+      
+
+      const sellAction = async (e: React.FormEvent) => {
+        e.preventDefault();
+      
+        if (!amountToSell.trim() || parseFloat(amountToSell) <= 0) {
+          showToast("Please enter a valid amount greater than 0.00001.", "error");
+          return;
+        }
+      
+        // Convert fake_balance string to number
+        const availableBalance = parseFloat(wallet.fake_balance);
+        
+        if (parseFloat(amountToSell) > availableBalance) {
+          showToast("Insufficient balance. Please enter a valid amount up to or equal to your balance.", "error");
+          return;
+        }
+      
+        showDetailsScreen(true);
+      };
 
 
     if (detailsScreen) {
@@ -120,7 +116,7 @@ export const SellCrypto = () => {
                     <div>
                         <p>Wallet: {wallet.name}</p>
                         <p>Amount to sell: {amountToSell} {wallet?.coin_symbol}</p>
-                        <p>You will receive: £{typeof Number(rate) === 'number' && amountToSell ? (Number(rate) * parseFloat(amountToSell)).toFixed(2) : '0.00'}</p>
+                        <p>You will receive: £{typeof Number(rate) === 'number' && amountToSell ? ((Number(rate) * parseFloat(amountToSell)).toFixed(2)) : '0.00'}</p>
                     </div>
                     <div className="confirmation-buttons">
                         <button type="button" className="cancel-confirmation" onClick={() => showDetailsScreen(false)}>Cancel</button>
@@ -158,7 +154,7 @@ export const SellCrypto = () => {
                 <label htmlFor="amount" id="sellLabel">Crypto Assets</label>
                 <input type="number" min="0.00001" step="0.000001" onChange={(e) => setAmountToSell(e.target.value)} name="amount" id="buy-amount" placeholder="Enter Amount" className="sellingInput" />
                 <div className="information">
-                    <p>Total Owned: {getWalletBalance(wallet)} {wallet?.coin_symbol}</p>
+                    <p>Total Owned: {Number(wallet.balance) + Number(wallet.fake_balance)} {wallet?.coin_symbol}</p>
                     <p>Rate: 1 {wallet?.coin_symbol} = £{rate}</p>
                 </div>
                 <label htmlFor="receive-amount" id="receive-label">You will Receive</label>
