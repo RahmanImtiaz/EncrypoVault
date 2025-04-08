@@ -125,9 +125,9 @@ export function Login({ onLogin, toggleForm }: LoginProps) {
           <div className="login-form-wrapper">
             <div className="login-header">
               <img
-                src="https://cdn.builder.io/api/v1/image/assets/a22ceb90578e417ca7fce76dfa9d5dc1/190a36156f40ffdccaf66b74c972f828e1f174d8890275b3e5b712debc635378?placeholderIfAbsent=true"
-                alt="Crypto logo"
-                className="login-logo"
+              src="/logo.png"
+              alt="Crypto logo"
+              className="login-logo"
               />
               <div>EncryptoVault</div>
             </div>
