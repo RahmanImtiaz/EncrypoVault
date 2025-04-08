@@ -160,7 +160,8 @@ class BitcoinWalletHandler(HandlerInterface):
         while retries > 0:
             try:
                 with self._db_lock:  # Ensure thread-safe access to the database
-                    return self.wallet.balance(network="testnet") / 100000000
+                    #return self.wallet.balance(network="testnet") / 100000000
+                    return self.last_balance
             except sqlalchemy.exc.PendingRollbackError as e:
                 print(f"PendingRollbackError encountered: {e}")
                 # Rollback the session to recover
@@ -193,6 +194,9 @@ class BitcoinWalletHandler(HandlerInterface):
                 raise
         print("Failed to retrieve balance after multiple retries.")
         raise sqlite3.OperationalError("Database is locked or in an unexpected state, and retries are exhausted.")
+    
+    def get_fake_balance(self) :
+        return self.fake_balance
 
     def toJSON(self):
         return json.dumps({
