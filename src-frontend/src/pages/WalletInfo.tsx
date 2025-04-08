@@ -26,7 +26,7 @@ interface Wallet {
 }
 
 interface Transaction {
-  timestamp: string; 
+  timestamp: string;
   amount: number;
   hash: string;
   sender: string;
@@ -44,34 +44,34 @@ const WalletInfo = () => {
   const [loading, setLoading] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const navigate = useNavigate();
-  const {priceData} = fetchPrice(); 
+  const { priceData } = fetchPrice();
   const savedTheme = localStorage.getItem('theme');
 
   // Function to fetch the latest wallet data
   // In your refreshWalletData function:
-const refreshWalletData = async () => {
-  if (!initialWallet) return;
-  
-  setLoading(true);
-  try {
-    const wallets: Wallet[] = await api.getWallets();
-    const updatedWallet = wallets.find((w: Wallet) => w.name === initialWallet.name);
-    
-    if (updatedWallet) {
-      setWallet(updatedWallet);
-    }
+  const refreshWalletData = async () => {
+    if (!initialWallet) return;
 
-    const allTransactions = await api.getAllTransactions();
-    // Filter transactions for this wallet
-    const walletTransactions = allTransactions.filter(tx => tx.name === initialWallet.name);
-    setTransactions(walletTransactions);
-  } catch (error) {
-    console.error('Error refreshing wallet data:', error);
-    setTransactions([]);
-  } finally {
-    setLoading(false);
-  }
-};
+    setLoading(true);
+    try {
+      const wallets: Wallet[] = await api.getWallets();
+      const updatedWallet = wallets.find((w: Wallet) => w.name === initialWallet.name);
+
+      if (updatedWallet) {
+        setWallet(updatedWallet);
+      }
+
+      const allTransactions = await api.getAllTransactions();
+      // Filter transactions for this wallet
+      const walletTransactions = allTransactions.filter(tx => tx.name === initialWallet.name);
+      setTransactions(walletTransactions);
+    } catch (error) {
+      console.error('Error refreshing wallet data:', error);
+      setTransactions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Refresh on initial mount
   useEffect(() => {
@@ -87,7 +87,7 @@ const refreshWalletData = async () => {
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
+
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
@@ -104,7 +104,7 @@ const refreshWalletData = async () => {
   useEffect(() => {
     if (savedTheme === 'light')
       document.body.classList.add('light-mode');
-    else 
+    else
       document.body.classList.remove('light-mode');
   }, [savedTheme]);
 
@@ -134,12 +134,12 @@ const refreshWalletData = async () => {
             fgColor="#000000"
           />
           <p className="address-text"> Wallet Address: {wallet.address}</p>
-            <button 
-              className="close-button"
-              onClick={() => setShowQR(false)}
-            >
-              ×
-            </button>
+          <button
+            className="close-button"
+            onClick={() => setShowQR(false)}
+          >
+            ×
+          </button>
         </div>
       </div>
     );
@@ -150,8 +150,8 @@ const refreshWalletData = async () => {
       <div className='wallet-name'>
         <button className="previous-page" onClick={() => navigate(-1)}>←</button>
         <h2>{wallet.name} Details</h2>
-        <button 
-          className="refresh-button" 
+        <button
+          className="refresh-button"
           onClick={refreshWalletData}
           disabled={loading}
         >
@@ -163,15 +163,15 @@ const refreshWalletData = async () => {
         <div className="wallet-balance">
           <h3 className='big'>Balance:
             {(() => {
-            const priceKey = wallet.coin_symbol === "BTC" ? "BTC-GBP" : "ETH-GBP";
-            const price = priceData?.[priceKey];
-            const total = Number(wallet.balance) + Number(wallet.fake_balance);
-            
-            if (price !== undefined) {
-              return `£${(total * Number(price)).toFixed(2)}`;
-            } else {
-              return `£${wallet.balance.toFixed(2)}`;
-            }
+              const priceKey = wallet.coin_symbol === "BTC" ? "BTC-GBP" : "ETH-GBP";
+              const price = priceData?.[priceKey];
+              const total = Number(wallet.balance) + Number(wallet.fake_balance);
+
+              if (price !== undefined) {
+                return `£${(total * Number(price)).toFixed(2)}`;
+              } else {
+                return `£${wallet.balance.toFixed(2)}`;
+              }
             })()}
           </h3>
         </div>
@@ -180,12 +180,14 @@ const refreshWalletData = async () => {
         </div>
         <div className='wallet-holdings'>
           <h3>Holdings:</h3>
-            <p className="balance-display"><p>{(Number(wallet.balance))+ (Number(wallet.fake_balance))} {wallet?.coin_symbol}</p></p>
+          <p className="balance-display">
+            {(Number(wallet.balance) + Number(wallet.fake_balance)).toFixed(7)} {wallet?.coin_symbol}
+          </p>
         </div>
         <div className="buttons">
-          <button className="wallet-button" onClick={() => navigate("/buy", { state: { wallet }})}>Buy {wallet.coin_symbol}</button>
-          <button className="wallet-button" onClick={() => navigate("/sell", { state: { wallet }})}>Sell {wallet.coin_symbol}</button>
-          <button className="wallet-button" onClick={() => navigate("/send",{ state: { wallet }} )}>Send {wallet.coin_symbol}</button>
+          <button className="wallet-button" onClick={() => navigate("/buy", { state: { wallet } })}>Buy {wallet.coin_symbol}</button>
+          <button className="wallet-button" onClick={() => navigate("/sell", { state: { wallet } })}>Sell {wallet.coin_symbol}</button>
+          <button className="wallet-button" onClick={() => navigate("/send", { state: { wallet } })}>Send {wallet.coin_symbol}</button>
           <button className="wallet-button" onClick={() => setShowQR(true)}>Receive {wallet.coin_symbol}</button>
         </div>
         <div className='wallet-address'>
@@ -201,8 +203,8 @@ const refreshWalletData = async () => {
         ) : (
           <div className="transactions-list">
             {transactions.map((tx) => (
-              <div 
-                key={tx.hash} 
+              <div
+                key={tx.hash}
                 className={`transaction-item ${tx.sender === wallet.address ? 'out' : 'in'}`}
                 onClick={() => handleTxClick(tx)}
               >
@@ -227,13 +229,13 @@ const refreshWalletData = async () => {
       {showTxModal && selectedTx && (
         <div className="tx-modal-overlay" onClick={() => setShowTxModal(false)}>
           <div className="tx-modal-content" onClick={(e) => e.stopPropagation()}>
-            <button 
+            <button
               className="close-button"
               onClick={() => setShowTxModal(false)}
             >
               ×
             </button>
-            
+
             <h3>Transaction Details</h3>
             <div className="tx-summary">
               <p><strong>TXID:</strong> {selectedTx.hash}</p>

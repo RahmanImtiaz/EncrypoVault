@@ -30,11 +30,11 @@ const Wallets: React.FC = () => {
   const [isCreatingWallet, setIsCreatingWallet] = useState<boolean>(false);
   const [newWalletName, setNewWalletName] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const {priceData} = fetchPrice();
+  const { priceData } = fetchPrice();
   console.log('Price data:', priceData);
-  const [copiedAddresses, setCopiedAddresses] = useState<{[key: string]: boolean}>({});
+  const [copiedAddresses, setCopiedAddresses] = useState<{ [key: string]: boolean }>({});
   const { showToast } = useToast();
-  const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);  
+  const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
   const navigate = useNavigate();
   const savedTheme = localStorage.getItem('theme');
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -42,7 +42,7 @@ const Wallets: React.FC = () => {
   useEffect(() => {
     if (savedTheme === 'light')
       document.body.classList.add('light-mode');
-    else 
+    else
       document.body.classList.remove('light-mode');
   }, [savedTheme]);
 
@@ -63,7 +63,7 @@ const Wallets: React.FC = () => {
       console.log('Selected wallet:', selectedWallet);
     }
   }
-  , [selectedWallet]);
+    , [selectedWallet]);
   useEffect(() => {
     // Filter wallets based on search query
     if (searchQuery.trim() === '') {
@@ -80,11 +80,11 @@ const Wallets: React.FC = () => {
   const copyToClipboard = (text: string, walletIndex: number) => {
     navigator.clipboard.writeText(text).then(() => {
       // Set copied state for this specific wallet
-      setCopiedAddresses(prev => ({...prev, [walletIndex]: true}));
-      
+      setCopiedAddresses(prev => ({ ...prev, [walletIndex]: true }));
+
       // Reset copied state after 2 seconds
       setTimeout(() => {
-        setCopiedAddresses(prev => ({...prev, [walletIndex]: false}));
+        setCopiedAddresses(prev => ({ ...prev, [walletIndex]: false }));
       }, 2000);
     }).catch(err => {
       console.error('Failed to copy address:', err);
@@ -184,9 +184,9 @@ const Wallets: React.FC = () => {
         <h1 className="wallets-title">Your Wallets</h1>
         <div className="wallets-header-buttons">
           <div className="button-group">
-            <button 
-              className="refresh-button" 
-              onClick={refreshWallets} 
+            <button
+              className="refresh-button"
+              onClick={refreshWallets}
               disabled={refreshing}
             >
               {refreshing ? "Refreshing..." : "↻"}
@@ -246,15 +246,15 @@ const Wallets: React.FC = () => {
                 <h3 className="wallet-name">{wallet.name}</h3>
                 <span className="wallet-balance">
                   {(() => {
-                  const priceKey = wallet.coin_symbol === "BTC" ? "BTC-GBP" : "ETH-GBP";
-                  const price = priceData?.[priceKey];
-                  const total = Number(wallet.balance) + Number(wallet.fake_balance);
-                  
-                  if (price !== undefined) {
-                    return `£${(total * Number(price)).toFixed(2)}`;
-                  } else {
-                    return `£${wallet.balance.toFixed(2)}`;
-                  }
+                    const priceKey = wallet.coin_symbol === "BTC" ? "BTC-GBP" : "ETH-GBP";
+                    const price = priceData?.[priceKey];
+                    const total = Number(wallet.balance) + Number(wallet.fake_balance);
+
+                    if (price !== undefined) {
+                      return `£${(total * Number(price)).toFixed(2)}`;
+                    } else {
+                      return `£${wallet.balance.toFixed(2)}`;
+                    }
                   })()}
                 </span>
               </div>
@@ -296,7 +296,7 @@ const Wallets: React.FC = () => {
                   <div className="wallet-detail-row">
                     <span className="wallet-detail-label">Holdings:</span>
                     <span className="wallet-detail-value">
-                        {(Number(wallet.balance))+ (Number(wallet.fake_balance))} {wallet.coin_symbol} 
+                      {(Number(wallet.balance) + Number(wallet.fake_balance)).toFixed(7)} {wallet.coin_symbol}
                     </span>
                   </div>
                 </div>
