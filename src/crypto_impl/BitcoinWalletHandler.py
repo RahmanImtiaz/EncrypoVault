@@ -1,9 +1,11 @@
 import json
-from datetime import datetime
+from datetime import datetime, time
+import sqlite3
 
 import bitcoinlib
 from bitcoinlib.keys import HDKey
 from bitcoinlib.wallets import wallet_create_or_open
+import sqlalchemy
 
 import AccountsFileManager
 import threading
@@ -21,6 +23,7 @@ class BitcoinWalletHandler(HandlerInterface):
 
     def __init__(self, name):
         self._name = name
+        self._db_lock = threading.Lock() 
         acc_manager = AccountsFileManager.AccountsFileManager.get_instance()
         db_uri = f"{acc_manager.current_directory}/{acc_manager.get_loaded_account().get_account_name()}.db"
         db_cache_uri = f"{acc_manager.current_directory}/{acc_manager.get_loaded_account().get_account_name()}.cache.db"
@@ -50,57 +53,62 @@ class BitcoinWalletHandler(HandlerInterface):
        return BitcoinWalletHandler(name)
 
     def update_balance(self):
-        self.wallet.scan()
-        account = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account()
-        transactions = self.wallet.transactions()
+        with self._db_lock:  # Ensure thread-safe access to the database
+            try:
+                self.wallet.scan()
+                account = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account()
+                transactions = self.wallet.transactions()
 
-        # valid_transactions = transactions
-        if transactions is not None:
-            valid_transactions = []
-            for transaction in transactions:
-                is_valid = False
-                for inp in transaction.inputs:
-                    if inp.address == self.get_address():
-                        is_valid = True
+                # valid_transactions = transactions
+                if transactions is not None:
+                    valid_transactions = []
+                    for transaction in transactions:
+                        is_valid = False
+                        for inp in transaction.inputs:
+                            if inp.address == self.get_address():
+                                is_valid = True
 
-                for output in transaction.outputs:
-                    if output.address == self.get_address():
-                        is_valid = True
-                if is_valid:
-                    valid_transactions.append(transaction)
-            print(f"Found {len(valid_transactions)} transactions")
-            for tx in valid_transactions:
-                if account.transactionLog.search(tx_hash=tx.txid) is None:
-                    incoming = tx.inputs[0].address != self.get_address()
-                    print("Incoming:", incoming)
-                    print("Found a transaction that is not in the local log:")
-                    amount = 0
-                    sender = ""
-                    receiver = ""
-                    if incoming:
-                        pass
-                        amount = tx.inputs[0].value
-                        sender = tx.inputs[0].address
-                        receiver = self.get_address()
-                    else:
-                        for output in tx.outputs: # tb1qgdq7j0ntsdzm8t42xmqa0yygh9t7pw4ynuk3td
-                            if output.address != self.get_address():
-                                amount = output.value
-                                receiver = output.address
+                        for output in transaction.outputs:
+                            if output.address == self.get_address():
+                                is_valid = True
+                        if is_valid:
+                            valid_transactions.append(transaction)
+                    print(f"Found {len(valid_transactions)} transactions")
+                    for tx in valid_transactions:
+                        if account.transactionLog.search(tx_hash=tx.txid) is None:
+                            incoming = tx.inputs[0].address != self.get_address()
+                            print("Incoming:", incoming)
+                            print("Found a transaction that is not in the local log:")
+                            amount = 0
+                            sender = ""
+                            receiver = ""
+                            if incoming:
+                                pass
+                                amount = tx.inputs[0].value
+                                sender = tx.inputs[0].address
+                                receiver = self.get_address()
+                            else:
+                                for output in tx.outputs: # tb1qgdq7j0ntsdzm8t42xmqa0yygh9t7pw4ynuk3td
+                                    if output.address != self.get_address():
+                                        amount = output.value
+                                        receiver = output.address
 
 
-                    t = Transaction(
-                        timestamp=tx.date.isoformat(),
-                        amount=amount / 100000000,
-                        tx_hash=tx.txid,
-                        sender=sender,
-                        receiver=receiver,
-                        name=self._name
-                    )
-                    print(f"tx: {t.__str__()}")
+                            t = Transaction(
+                                timestamp=tx.date.isoformat(),
+                                amount=amount / 100000000,
+                                tx_hash=tx.txid,
+                                sender=sender,
+                                receiver=receiver,
+                                name=self._name
+                            )
+                            print(f"tx: {t.__str__()}")
 
-        else:
-            print("No incoming transactions found.")
+                else:
+                    print("No incoming transactions found.")
+            except Exception as e:
+                print(f"Error updating balance: {e}")
+                raise
 
     def update_loop(self):
         self.update_balance()
@@ -144,7 +152,43 @@ class BitcoinWalletHandler(HandlerInterface):
         return self.wallet.get_key().address
 
     def get_balance(self):
-        return self.wallet.balance(network="testnet")/100000000
+        retries = 5  # Number of retries for database locking
+        while retries > 0:
+            try:
+                with self._db_lock:  # Ensure thread-safe access to the database
+                    return self.wallet.balance(network="testnet") / 100000000
+            except sqlalchemy.exc.PendingRollbackError as e:
+                print(f"PendingRollbackError encountered: {e}")
+                # Rollback the session to recover
+                try:
+                    if self.wallet._session.is_active:
+                        print("Rolling back the session...")
+                        self.wallet._session.rollback()
+                    else:
+                        print("Session is inactive. Closing the session.")
+                        self.wallet._session.close()
+
+                    # Recreate the session using the sessionmaker
+                    from sqlalchemy.orm import sessionmaker
+                    Session = sessionmaker(bind=self.wallet._session.bind)
+                    self.wallet._session = Session()
+
+                    print("Session recovered successfully.")
+                except Exception as recovery_error:
+                    print(f"Error recovering session: {recovery_error}")
+                    raise
+            except sqlite3.OperationalError as e:
+                if "database is locked" in str(e):
+                    print("Database is locked. Retrying...")
+                    retries -= 1
+                    time.sleep(1)  # Wait before retrying
+                else:
+                    raise
+            except Exception as e:
+                print(f"Unexpected error in get_balance: {e}")
+                raise
+        print("Failed to retrieve balance after multiple retries.")
+        raise sqlite3.OperationalError("Database is locked or in an unexpected state, and retries are exhausted.")
 
     def toJSON(self):
         return json.dumps({
