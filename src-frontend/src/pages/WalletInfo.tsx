@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { QRCodeComponent } from '../components/generateQR';
 import fetchPrice from '../components/fetchPrice';
 import '../styles/WalletInfo.css';
-import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
+// import { getWalletBalance } from '../components/helpers/FakeTransactionRecords';
 import api from '../lib/api';
 
 interface Holding {
@@ -19,6 +19,7 @@ interface Wallet {
   balance: number;
   address: string;
   coin_symbol: string;
+  fake_balance: string;
   holdings: {
     [key: string]: Holding;
   };
@@ -164,9 +165,10 @@ const refreshWalletData = async () => {
             {(() => {
             const priceKey = wallet.coin_symbol === "BTC" ? "BTC-GBP" : "ETH-GBP";
             const price = priceData?.[priceKey];
+            const total = Number(wallet.balance) + Number(wallet.fake_balance);
             
             if (price !== undefined) {
-              return `£${(Number(getWalletBalance(wallet)) * Number(price)).toFixed(2)}`;
+              return `£${(total * Number(price)).toFixed(2)}`;
             } else {
               return `£${wallet.balance.toFixed(2)}`;
             }
@@ -178,7 +180,7 @@ const refreshWalletData = async () => {
         </div>
         <div className='wallet-holdings'>
           <h3>Holdings:</h3>
-            <p className="balance-display"><p>{getWalletBalance(wallet)} {wallet?.coin_symbol}</p></p>
+            <p className="balance-display"><p>{(Number(wallet.balance))+ (Number(wallet.fake_balance))} {wallet?.coin_symbol}</p></p>
         </div>
         <div className="buttons">
           <button className="wallet-button" onClick={() => navigate("/buy", { state: { wallet }})}>Buy {wallet.coin_symbol}</button>
