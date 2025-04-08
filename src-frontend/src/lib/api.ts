@@ -138,14 +138,17 @@ async function getWallets() {
 async function getAllTransactions(): Promise<Transaction[]> {
     try {
       const response = await fetch("/api/transactions");
+      console.log('Raw response:', response);
+      
       const data = await response.json();
-
-      return data.data
+      console.log('Parsed data:', data);
+      
+      return data;
     } catch (error) {
-      console.error('Error fetching wallets:', error);
+      console.error('Error fetching transactions:', error);
       return [];
     }
-}
+  }
 
 async function sendCrypto(walletName: string, amount: number, destinationAddress: string): Promise<{ success: boolean; txid?: string; error?: string }> {
     try {

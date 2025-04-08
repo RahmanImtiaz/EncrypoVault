@@ -39,12 +39,12 @@ interface Account {
 }
 
 interface Transaction {
-  amount: number,
-  hash: string,
-  name: string,
-  receiver: string,
-  sender: string,
-  timestamp: Date
+  timestamp: string;
+  amount: number;
+  hash: string;
+  sender: string;
+  receiver: string;
+  name: string;
 }
 
 declare global {
