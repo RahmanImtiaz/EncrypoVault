@@ -198,14 +198,24 @@ const Setting: React.FC = () => {
           >
             {isLoading ? "Switching..." : getButtonText()}
           </button>
-
-          <button className = "theme-toggle-button"
-          onClick={handleThemeToggle}>
-             {savedTheme === 'light' ? ' Dark ' : ' Light '} Mode
-          </button>
         </div>
         
         {message && <p className="settings-message">{message}</p>}
+      </div>
+      
+      <div className="settings-section">
+        <h2>Theme</h2>
+        <p className="theme-intro">
+          Choose between light and dark mode for your preferred viewing experience.
+        </p>
+        <div className='settings-buttons'>
+          <button 
+            className="theme-toggle-button"
+            onClick={handleThemeToggle}
+          >
+            {savedTheme === 'light' ? ' Dark ' : ' Light '} Mode
+          </button>
+        </div>
       </div>
       
       <div className="settings-section">
