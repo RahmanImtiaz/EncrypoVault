@@ -12,6 +12,7 @@ import threading
 from Transaction import Transaction
 from crypto_impl.HandlerInterface import HandlerInterface
 from crypto_impl.WalletType import WalletType
+from util import check_internet_connection
 
 
 # from pycoin.symbols.xtn import network
@@ -56,64 +57,69 @@ class BitcoinWalletHandler(HandlerInterface):
        return BitcoinWalletHandler(name, balance=0, fake_balance=0)
 
     def update_balance(self):
-        with self._db_lock:  # Ensure thread-safe access to the database
-            try:
-                self.wallet.scan()
-                account = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account()
-                self._balance = self.wallet.balance()/100000000
-                print("Balance: ", self._balance)
-                transactions = self.wallet.transactions()
+        try:
+            if not check_internet_connection():
+                print("Not connected to the internet! skipping...")
+                return
+            with self._db_lock:  # Ensure thread-safe access to the database
+                try:
+                    self.wallet.scan()
+                    account = AccountsFileManager.AccountsFileManager.get_instance().get_loaded_account()
+                    self._balance = self.wallet.balance() / 100000000
+                    print("Balance: ", self._balance)
+                    transactions = self.wallet.transactions()
 
-                # valid_transactions = transactions
-                if transactions is not None:
-                    valid_transactions = []
-                    for transaction in transactions:
-                        is_valid = False
-                        for inp in transaction.inputs:
-                            if inp.address == self.get_address():
-                                is_valid = True
+                    # valid_transactions = transactions
+                    if transactions is not None:
+                        valid_transactions = []
+                        for transaction in transactions:
+                            is_valid = False
+                            for inp in transaction.inputs:
+                                if inp.address == self.get_address():
+                                    is_valid = True
 
-                        for output in transaction.outputs:
-                            if output.address == self.get_address():
-                                is_valid = True
-                        if is_valid:
-                            valid_transactions.append(transaction)
-                    print(f"Found {len(valid_transactions)} transactions")
-                    for tx in valid_transactions:
-                        if account.transactionLog.search(tx_hash=tx.txid) is None:
-                            incoming = tx.inputs[0].address != self.get_address()
-                            print("Incoming:", incoming)
-                            print("Found a transaction that is not in the local log:")
-                            amount = 0
-                            sender = ""
-                            receiver = ""
-                            if incoming:
-                                pass
-                                amount = tx.inputs[0].value
-                                sender = tx.inputs[0].address
-                                receiver = self.get_address()
-                            else:
-                                for output in tx.outputs: # tb1qgdq7j0ntsdzm8t42xmqa0yygh9t7pw4ynuk3td
-                                    if output.address != self.get_address():
-                                        amount = output.value
-                                        receiver = output.address
+                            for output in transaction.outputs:
+                                if output.address == self.get_address():
+                                    is_valid = True
+                            if is_valid:
+                                valid_transactions.append(transaction)
+                        print(f"Found {len(valid_transactions)} transactions")
+                        for tx in valid_transactions:
+                            if account.transactionLog.search(tx_hash=tx.txid) is None:
+                                incoming = tx.inputs[0].address != self.get_address()
+                                print("Incoming:", incoming)
+                                print("Found a transaction that is not in the local log:")
+                                amount = 0
+                                sender = ""
+                                receiver = ""
+                                if incoming:
+                                    pass
+                                    amount = tx.inputs[0].value
+                                    sender = tx.inputs[0].address
+                                    receiver = self.get_address()
+                                else:
+                                    for output in tx.outputs:  # tb1qgdq7j0ntsdzm8t42xmqa0yygh9t7pw4ynuk3td
+                                        if output.address != self.get_address():
+                                            amount = output.value
+                                            receiver = output.address
 
+                                t = Transaction(
+                                    timestamp=tx.date.isoformat(),
+                                    amount=amount / 100000000,
+                                    tx_hash=tx.txid,
+                                    sender=sender,
+                                    receiver=receiver,
+                                    name=self._name
+                                )
+                                print(f"tx: {t.__str__()}")
 
-                            t = Transaction(
-                                timestamp=tx.date.isoformat(),
-                                amount=amount / 100000000,
-                                tx_hash=tx.txid,
-                                sender=sender,
-                                receiver=receiver,
-                                name=self._name
-                            )
-                            print(f"tx: {t.__str__()}")
-
-                else:
-                    print("No incoming transactions found.")
-            except Exception as e:
-                print(f"Error updating balance: {e}")
-                raise
+                    else:
+                        print("No incoming transactions found.")
+                except Exception as e:
+                    print(f"Error updating balance: {e}")
+                    raise
+        except Exception as e:
+            print(f"Error updating balance: {e}")
 
     def update_loop(self):
         self.update_balance()
@@ -151,6 +157,8 @@ class BitcoinWalletHandler(HandlerInterface):
 
     @staticmethod
     def load_wallet(data: dict):
+        print("Loading wallet...")
+        print(data)
         return BitcoinWalletHandler(data["name"], data.get("balance", 0), data.get("fake_balance", 0))
 
     def get_address(self):

@@ -117,6 +117,9 @@ class Account:
                 if name in self._wallets:
                     continue
 
+                print("Wallet data:")
+                print(wallet_data)
+
                 # Create wallet with saved properties
                 wallet_type_str = wallet_data.get('type', 'BTC')
                 wallet_type = WalletType.from_str(wallet_type_str)
@@ -252,7 +255,7 @@ class Account:
                 'name': wallet.name,
                 'type': str(wallet.wallet_type),
                 'address': wallet.address,
-                'balance': getattr(wallet, 'balance', 0.0),
+                'balance': wallet.crypto_handler.get_balance(),
                 'fake_balance': getattr(wallet.crypto_handler, 'fake_balance', 0.0),
                 'holdings': {
                     crypto_id: {"amount": data.get("amount", 0)} 

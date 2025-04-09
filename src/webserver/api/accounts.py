@@ -21,6 +21,13 @@ class AccountRoutes:
             # TODO: biometrics protect this
             return jsonify(AccountsFileManager.get_instance().get_loaded_account().get_recovery_phrases())
 
+        @acc_bp.route("/save", methods=['POST'])
+        def save_account():
+            acc = AccountsFileManager.get_instance().get_loaded_account()
+            print(acc.toJSON())
+            AccountsFileManager.get_instance().save_account(acc)
+            return {"status": "success"}, 200
+
         @acc_bp.route('/current/switch-type', methods=['POST'])
         def switch_account_type():
             try:
