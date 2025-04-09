@@ -61,8 +61,13 @@ class AuthRoutes:
                 print(f"got register req on windows so used mac {mac_int} to make data.biometrics {data['biometrics']}")
 
             try:
-                AccountsFileManager.get_instance().create_account(data['account_name'], data['account_type'],
-                                                                  data['password'], data.get('biometrics'))
+                AccountsFileManager.get_instance().create_account(
+                    data['account_name'],
+                    data['account_type'],
+                    data['password'],
+                    data.get('biometrics'),
+                    data.get("recovery_phrase", None)
+                )
                 return jsonify({"success": True}), 200
             except Exception as e:
                 return jsonify({"error": str(e)}), 500

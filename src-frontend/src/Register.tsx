@@ -112,7 +112,8 @@ export function Register({ toggleForm }: RegisterProps) {
           accountName, 
           password, 
           accountType, 
-          biometrics.response.clientDataJSON
+          biometrics.response.clientDataJSON,
+          (recoveryPhrase.trim().length === 0 ? null : recoveryPhrase.trim())
         );
         
         console.log(response);

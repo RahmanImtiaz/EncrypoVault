@@ -53,7 +53,7 @@ class AccountsFileManager:
     def get_loaded_account(self) -> Account:
         return self.loaded_account
 
-    def create_account(self, account_name, account_type, password, biometrics=None):
+    def create_account(self, account_name, account_type, password, biometrics=None, recovery_phrase=None):
         if account_name in self.get_accounts():
             raise Exception('Account already exists')
         else:
@@ -72,7 +72,10 @@ class AccountsFileManager:
             # Generate the encryption key
             encryption_key = auth_manager._generate_key(password, biometrics)
 
-            mnemonic = Bip39MnemonicGenerator().FromWordsNumber(12)
+            if recovery_phrase is None:
+                mnemonic = Bip39MnemonicGenerator().FromWordsNumber(12)
+            else:
+                mnemonic = recovery_phrase
 
             seed = Bip39SeedGenerator(mnemonic).Generate()
 

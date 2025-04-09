@@ -21,7 +21,7 @@ async function login(accountName: string, password: string, biometrics: string|n
     })
 }
 
-async function register(accountName: string, password: string, accountType: AccountType, biometrics: string): Promise<Response> {
+async function register(accountName: string, password: string, accountType: AccountType, biometrics: string, recoveryPhrase: string|null): Promise<Response> {
     return fetch("/api/auth/register", {
         method: "POST",
         headers: {
@@ -31,7 +31,8 @@ async function register(accountName: string, password: string, accountType: Acco
             account_name: accountName,
             password,
             account_type: accountType,
-            biometrics
+            biometrics,
+            recovery_phrase: recoveryPhrase
         })
     })
 }
