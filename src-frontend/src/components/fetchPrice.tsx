@@ -40,7 +40,7 @@ const useCryptoPrice = (): useCryptoPriceResult => {
   
       fetchPriceData(); // Initial fetch
   
-      const interval = setInterval(fetchPriceData, 10000); // Poll every 60 seconds
+      const interval = setInterval(fetchPriceData, 30000); // Poll every 60 seconds
   
       return () => {
         if (socket) {
