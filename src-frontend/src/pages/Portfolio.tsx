@@ -362,10 +362,12 @@ const Portfolio: React.FC = () => {
               <div className="transactions-list">
                 {transactions.map((tx) => {
                   const wallet = wallets.find(w => w.name === tx.name);
-                  const isOutgoing = wallet ? tx.sender === wallet.address : false;
+                  let isOutgoing = wallet ? tx.sender === wallet.address : false;
+
                   const isFakeBuy = tx.sender === "exchange";
                   const isFakeSell = tx.receiver === "exchange";
-                  const isConfirmed = true;
+                  const isConfirmed = tx.confirmed === true;
+                  if(!isFakeBuy && !isFakeSell) isOutgoing = true
 
                   return (
                     <div
@@ -382,11 +384,9 @@ const Portfolio: React.FC = () => {
                       <div className="tx-details">
                         <div className="tx-amount">
                           {isOutgoing ? '-' : '+'}{tx.amount} {wallet?.coin_symbol || 'CRYPTO'}
-                          {(isFakeBuy || isFakeSell) && (
                             <span className="tx-type-badge">
-                              {isFakeBuy ? 'BUY' : 'SELL'}
+                              {isFakeBuy ? 'BUY' : isFakeSell ? 'SELL': 'SEND'}
                             </span>
-                          )}
                         </div>
                         <div className="tx-time">
                           {new Date(tx.timestamp).toLocaleString()}
