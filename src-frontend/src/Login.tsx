@@ -28,7 +28,7 @@ export function Login({ onLogin, toggleForm }: LoginProps) {
   
   useEffect(() => {
     if (!isOnline && !offlineToastShownRef.current) {
-      showToast("You are offline! Please check your internet connection. The current rates may not be accurate", 'error');
+      showToast("You are offline! Please check your internet connection. The current rates may not be accurate", 'error', 10000);
       offlineToastShownRef.current = true;
     }
   }, [isOnline, showToast]);
