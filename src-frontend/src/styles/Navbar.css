@@ -115,3 +115,7 @@ body.light-mode .navLink {
 body.light-mode .navLink:hover {
   color: #3498db; 
 }
+
+body.light-mode .navLabel {
+  color: #333; 
+}

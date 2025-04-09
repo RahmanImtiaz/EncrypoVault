@@ -322,6 +322,10 @@ body.light-mode .wallet-recovery-warning strong {
   color: #e65100;
 }
 
+body.light-mode .get-recovery-button {
+  color: white;
+}
+
 .switch-type-button,
 .theme-toggle-button,
 .submit-feedback-btn {

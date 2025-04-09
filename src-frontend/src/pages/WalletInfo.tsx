@@ -174,7 +174,7 @@ const WalletInfo = () => {
           onClick={refreshWalletData}
           disabled={loading}
         >
-          {loading ? "Refreshing..." : "↻"}
+          {loading ? "..." : "↻"}
         </button>
       </div>
 
