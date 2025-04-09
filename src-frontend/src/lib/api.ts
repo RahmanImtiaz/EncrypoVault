@@ -238,6 +238,22 @@ async function logout(): Promise<void> {
     }
 }
 
+async function openPage(url: string): Promise<void> {
+    try {
+        await fetch("/api/utils/open_page", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                url
+            })
+        })
+    } catch (e) {
+        console.error(e)
+    }
+}
+
 export default {
     getAccountNames,
     login,
@@ -256,5 +272,6 @@ export default {
     verifyBiometricForTransaction,
     logout,
     fakeBuy,
-    fakeSell
+    fakeSell,
+    openPage
 }

@@ -1,5 +1,7 @@
 import sys
 
+from PySide6.QtCore import QUrl
+from PySide6.QtGui import QDesktopServices
 from flask import Blueprint, request, jsonify
 
 from AccountsFileManager import AccountsFileManager
@@ -24,5 +26,16 @@ class UtilRoutes:
                 os._exit(0)
             func()
             return jsonify({"message": "Server shutting down..."}), 200
+
+        @utils_bp.route("/open_page", methods=["POST"])
+        def open_page():
+            data = request.get_json()
+            if not data or "url" not in data:
+                return jsonify({"message": "No url provided."}), 400
+            url = data["url"]
+            url = QUrl(url)
+            QDesktopServices.openUrl(url)
+
+            return jsonify({"url": url.toString()}), 200
 
         api_bp.register_blueprint(utils_bp)
