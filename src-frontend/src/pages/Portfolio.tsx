@@ -281,7 +281,8 @@ const Portfolio: React.FC = () => {
                       {(() => {
                         const priceKey = wallet.coin_symbol === "BTC" ? "BTC-GBP" : "ETH-GBP";
                         const price = priceData?.[priceKey];
-                        return `£${(wallet.balance * Number(price || 1)).toFixed(2)}`;
+                        const total = Number(wallet.balance) + Number(wallet.fake_balance);
+                        return `£${(total * Number(price || 1)).toFixed(2)}`;
                       })()}
                     </span>
                   </div>
@@ -348,7 +349,7 @@ const Portfolio: React.FC = () => {
         </div>
       )}
 
-      <div className="transaction-history">
+      <div className="transactionHistory">
         <button className="toggleButton" onClick={toggleTransactionHistory}>
           {showTransactionHistory ? "Hide Transaction History" : "Show Transaction History"}
         </button>
