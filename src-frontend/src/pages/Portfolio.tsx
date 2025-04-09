@@ -314,6 +314,7 @@ const Portfolio: React.FC = () => {
       <div className="balanceContainer">
         <h2 className="balanceHeading">Total Balance</h2>
         <p className="total">£{totalBalance.toFixed(2)}</p>
+        <p className="rate-disclaimer">when offline, rates may not be the most accurate</p>
       </div>
 
       {accountType && (

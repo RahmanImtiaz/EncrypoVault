@@ -539,3 +539,14 @@ body.light-mode .close-wallet-list-button:hover {
 body.light-mode .empty-wallet-list {
   color: #666666;
 }
+
+.rate-disclaimer {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 0;
+  font-style: italic;
+}
+
+body.light-mode .rate-disclaimer {
+  color: rgba(0, 0, 0, 0.5);
+}
