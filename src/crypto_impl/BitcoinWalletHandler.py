@@ -157,7 +157,6 @@ class BitcoinWalletHandler(HandlerInterface):
         return self.wallet.get_key().address
 
     def get_balance(self):
-        self.update_balance()
         return self._balance
     
     def get_fake_balance(self) :
