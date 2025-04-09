@@ -230,6 +230,12 @@ const Setting: React.FC = () => {
             <p className="security-warning">
               <span className="warning-icon">⚠️</span> Write this down and store it securely. Never share it with anyone!
             </p>
+            <p className="wallet-recovery-warning">
+              <strong>Important:</strong> For complete wallet recovery, you must also record all your wallet names. 
+              During account recovery, you'll need to recreate each wallet using the exact same name to access your funds. 
+              This two-factor approach ensures that even if someone obtains your recovery phrase, 
+              they cannot access your funds without knowing your wallet names.
+            </p>
             <div className="recovery-phrase">
               {recoveryPhrase}
             </div>
