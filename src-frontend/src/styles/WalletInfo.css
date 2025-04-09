@@ -331,12 +331,17 @@ body{
   border-left: 3px solid rgba(220, 53, 69, 0.5);
 }
 
+.transaction-item{
+  border-left: 3px solid rgba(220, 53, 69, 0.5);
+}
+
 .tx-type-badge {
   font-size: 0.7rem;
   padding: 2px 6px;
   margin-left: 8px;
   border-radius: 4px;
   font-weight: 500;
+  background: rgba(220, 53, 69, 0.15);
 }
 
 .transaction-item.fake-buy .tx-type-badge {

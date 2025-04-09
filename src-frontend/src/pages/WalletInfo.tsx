@@ -247,11 +247,11 @@ const WalletInfo = () => {
             <div className="tx-details">
               <div className="tx-amount">
                 {isOutgoing || !tx.hash.startsWith('fake-') ? '-' : '+'}{tx.amount} {wallet.coin_symbol}
-                {(isFakeBuy || isFakeSell) && (
-                  <span className="tx-type-badge">
-                    {isFakeBuy ? 'BUY' : 'SELL'}
-                  </span>
-                )}
+
+                <span className="tx-type-badge">
+                  {isFakeBuy ? 'BUY' : isFakeSell ? 'SELL': 'SEND'}
+                </span>
+
               </div>
               <div className="tx-time">
                 {new Date(tx.timestamp).toLocaleString()}
