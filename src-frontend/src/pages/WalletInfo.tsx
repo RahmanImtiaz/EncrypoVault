@@ -244,7 +244,7 @@ const WalletInfo = () => {
             </div>
             <div className="tx-details">
               <div className="tx-amount">
-                {isOutgoing ? '-' : '+'}{tx.amount} {wallet.coin_symbol}
+                {isOutgoing || !tx.hash.startsWith('fake-') ? '-' : '+'}{tx.amount} {wallet.coin_symbol}
                 {(isFakeBuy || isFakeSell) && (
                   <span className="tx-type-badge">
                     {isFakeBuy ? 'BUY' : 'SELL'}
@@ -295,7 +295,8 @@ const WalletInfo = () => {
                 }</p>
               <p><strong>{selectedTx.sender === wallet.address ? 'To:' : 'From:'}</strong> {selectedTx.sender === wallet.address ? selectedTx.receiver : selectedTx.sender}</p>
               {!selectedTx.hash.startsWith('fake-') && (
-                <p><strong>https://blockstream.info/testnet/tx/${selectedTx.hash}</strong></p>
+                <p><strong>For extra information visit the link:
+                   https://blockstream.info/testnet/tx/${selectedTx.hash}</strong></p>
               )}
             </div>
           </div>
