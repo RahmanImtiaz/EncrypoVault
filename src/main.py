@@ -94,7 +94,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("React with PySide6")
+        self.setWindowTitle("EncryptoVault")
         # Create a QWebEngineView widget
         self.webserver = FlaskServer()
         self.browser = QWebEngineView(self)
