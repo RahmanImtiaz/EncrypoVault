@@ -209,9 +209,9 @@ const Setting: React.FC = () => {
       </div>
       
       <div className="settings-section">
-        <h2>Wallet Recovery</h2>
+        <h2>Account Recovery</h2>
         <p className="recovery-intro">
-          Your recovery phrase is the only way to restore your wallet if you lose access to your device.
+          Your recovery phrase is the only way to restore your Account if you lose access to your it.
           Never share it with anyone and keep it in a safe place.
         </p>
         
