@@ -82,6 +82,7 @@ from PySide6.QtWebEngineCore import QWebEngineSettings
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
+from AccountsFileManager import AccountsFileManager
 from webserver.server import FlaskServer
 
 
@@ -120,10 +121,13 @@ class MainWindow(QMainWindow):
 
 
     def open_dev_tools(self):
-        # Connect the dev tools page to the main browser page
-        self.browser.page().setDevToolsPage(self.dev_tools_view.page())
-        # Show the dev tools window
-        self.dev_tools_view.show()
+        acc = AccountsFileManager.get_instance().get_loaded_account()
+        if acc is None or acc.get_account_type().get_type_name() == "Tester":
+            # Connect the dev tools page to the main browser page
+            self.browser.page().setDevToolsPage(self.dev_tools_view.page())
+            # Show the dev tools window
+            self.dev_tools_view.show()
+
 
 
 if __name__ == "__main__":
