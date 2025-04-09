@@ -295,8 +295,8 @@ const WalletInfo = () => {
                 }</p>
               <p><strong>{selectedTx.sender === wallet.address ? 'To:' : 'From:'}</strong> {selectedTx.sender === wallet.address ? selectedTx.receiver : selectedTx.sender}</p>
               {!selectedTx.hash.startsWith('fake-') && (
-                <p><strong>For extra information visit the link:
-                   <button onClick={() => window.api.openPage(`https://blockstream.info/testnet/tx/${selectedTx.hash}`)}>Here</button></strong></p>
+                <p><strong>
+                   <button className="actionButton" onClick={() => window.api.openPage(`https://blockstream.info/testnet/tx/${selectedTx.hash}`)}>For extra information click here:</button></strong></p>
               )}
             </div>
           </div>
