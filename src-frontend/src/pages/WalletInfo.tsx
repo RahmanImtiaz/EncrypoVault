@@ -222,12 +222,14 @@ const WalletInfo = () => {
   ) : (
     <div className="transactions-list">
       {transactions.map((tx) => {
-        const isOutgoing = tx.sender === wallet.address;
+        let isOutgoing = tx.sender === wallet.address;
         console.log(tx.sender)
         console.log(wallet.address)
         const isFakeBuy = tx.sender === "exchange";
         const isFakeSell = tx.receiver === "exchange";
         const isConfirmed = tx.confirmed ?? false; // All fake transactions are confirmed
+
+        if(!isFakeBuy && !isFakeSell) isOutgoing = true
 
         return (
           <div
@@ -296,7 +298,7 @@ const WalletInfo = () => {
               <p><strong>{selectedTx.sender === wallet.address ? 'To:' : 'From:'}</strong> {selectedTx.sender === wallet.address ? selectedTx.receiver : selectedTx.sender}</p>
               {!selectedTx.hash.startsWith('fake-') && (
                 <p><strong>
-                   <button className="actionButton" onClick={() => window.api.openPage(`https://blockstream.info/testnet/tx/${selectedTx.hash}`)}>For extra information click here:</button></strong></p>
+                   <button className="actionButton" onClick={() => window.api.openPage(`https://blockstream.info/testnet/tx/${selectedTx.hash}`)}>View extra information</button></strong></p>
               )}
             </div>
           </div>
