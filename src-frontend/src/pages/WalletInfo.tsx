@@ -223,6 +223,8 @@ const WalletInfo = () => {
     <div className="transactions-list">
       {transactions.map((tx) => {
         const isOutgoing = tx.sender === wallet.address;
+        console.log(tx.sender)
+        console.log(wallet.address)
         const isFakeBuy = tx.sender === "exchange";
         const isFakeSell = tx.receiver === "exchange";
         const isConfirmed = tx.confirmed ?? false; // All fake transactions are confirmed
@@ -231,7 +233,7 @@ const WalletInfo = () => {
           <div
             key={tx.hash}
             className={`transaction-item ${
-              isOutgoing ? 'out' : 'in'
+              isOutgoing  ? 'out' : 'in'
             } ${
               isFakeBuy ? 'fake-buy' : isFakeSell ? 'fake-sell' : ''
             }`}
@@ -285,8 +287,16 @@ const WalletInfo = () => {
               <p><strong>Time:</strong> {new Date(selectedTx.timestamp).toLocaleString()}</p>
               <p><strong>Amount:</strong> {selectedTx.amount} {wallet.coin_symbol}</p>
               <p><strong>Status:</strong> {selectedTx.confirmed? 'confirmed' : 'pending'}</p>
-              <p><strong>Direction:</strong> {selectedTx.sender === wallet.address ? 'Sent' : 'Received'}</p>
+                <p><strong>Direction:</strong> {
+                  selectedTx.sender === wallet.address || 
+                  (selectedTx.hash.startsWith('fake-') && selectedTx.sender === "exchange") || 
+                  (!selectedTx.hash.startsWith('fake-')) ? 
+                  'Sent' : 'Received'
+                }</p>
               <p><strong>{selectedTx.sender === wallet.address ? 'To:' : 'From:'}</strong> {selectedTx.sender === wallet.address ? selectedTx.receiver : selectedTx.sender}</p>
+              {!selectedTx.hash.startsWith('fake-') && (
+                <p><strong>https://blockstream.info/testnet/tx/${selectedTx.hash}</strong></p>
+              )}
             </div>
           </div>
         </div>
