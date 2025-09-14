@@ -189,3 +189,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ---
 
 *Developed by the Group 8*
+## Contributions:
+**Rahman Imtiaz – Major Contributor**
+- **Highest number of commits and lines of code** (86 commits, 8,078++ / 4,054--).  
+- Implemented core **encryption & decryption logic**, backend features for secure data handling, and major frontend features including macOS biometric authentication, wallet generation and settings page. Contributed across both backend and frontend, integrating key functionalities into the overall system.”
+- Contributed heavily to **system architecture, debugging, and optimizations**.  
+- Collaborated with 4 other developers in Git workflow and code reviews. 
+![Contributions](contributions.png)
