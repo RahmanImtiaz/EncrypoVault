@@ -6,6 +6,7 @@ from .contacts import ContactRoutes
 from .crypto import CryptoRoutes
 from .transactions import TransactionsRoutes
 from .utils import UtilRoutes
+from .portfolio import PortfolioRoutes
 
 
 class ApiRoutes:
@@ -17,4 +18,5 @@ class ApiRoutes:
         ContactRoutes(api_bp)
         CryptoRoutes(api_bp, app)
         TransactionsRoutes(api_bp)
+        PortfolioRoutes(api_bp)
         app.register_blueprint(api_bp)
