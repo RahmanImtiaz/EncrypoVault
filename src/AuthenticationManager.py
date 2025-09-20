@@ -90,7 +90,7 @@ class AuthenticationManager:
                     
             from macos_touch_id import authenticate_with_touch_id
             print("Calling Touch ID authentication")
-            biometric_data = authenticate_with_touch_id(reason="EncryptoVault Authentication")
+            biometric_data = authenticate_with_touch_id(reason="Perform EncryptoVault Authentication")
             
             print(f"Touch ID returned: {type(biometric_data)}")
             

@@ -5,7 +5,7 @@ from crypto_impl.WalletType import WalletType
 class EthWalletHandler(HandlerInterface):
 
     def __init__(self, name):
-
+        pass
 
     @staticmethod
     def create_wallet(self):

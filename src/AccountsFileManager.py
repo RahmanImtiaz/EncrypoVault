@@ -171,7 +171,6 @@ class AccountsFileManager:
             print("No accounts available")
             return []
 
-        # In a real implementation, this would show a UI for selection and For now is just returns the first account (if any)
         return available_accounts
 
     @staticmethod

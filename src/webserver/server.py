@@ -30,7 +30,7 @@ class FlaskServer:
         ApiRoutes(self.app)
 
         self.register_portfolio_routes()
-        self.register_contacts_routes()
+        #self.register_contacts_routes()
 
         @self.app.route('/<path:path>')
         @self.app.route("/", defaults={'path': 'index.html'})

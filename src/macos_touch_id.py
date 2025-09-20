@@ -18,7 +18,7 @@ def authenticate_with_touch_id(reason="Authentication required"):
     try:
         from LocalAuthentication import LAContext, LAPolicyDeviceOwnerAuthentication
 
-        context = LAContext.new()
+        context = LAContext.new() # creates New Authentication Context/Session
         auth_result = [None]
         error_info = [None]
 
@@ -48,6 +48,7 @@ def authenticate_with_touch_id(reason="Authentication required"):
         start_time = time.time()
         timeout = 30  # seconds
 
+        # Poll the run loop every 0.1s until we get a result or timeout (30 seconds)
         while time.time() - start_time < timeout and auth_result[0] is None:
             run_loop.runUntilDate_(NSDate.dateWithTimeIntervalSinceNow_(0.1))
 
