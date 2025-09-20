@@ -8,7 +8,6 @@ import asyncio
 from flask import Flask, send_from_directory, request, jsonify
 
 from webserver.api.api import ApiRoutes
-from API import WebviewAPI
 from ExchangeSocketCR import PriceSocket
 
 class FlaskServer:
@@ -20,7 +19,6 @@ class FlaskServer:
     def __init__(self):
         self.app = Flask(__name__)
         self.port = 9209
-        self.api = WebviewAPI()
         self.price_socket = PriceSocket()
         self.start_price_socket()
 
@@ -83,5 +81,3 @@ class FlaskServer:
     def on_close(self):
         self.close_server()
 
-
-    # Create API and window
