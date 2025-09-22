@@ -37,6 +37,22 @@ async function register(accountName: string, password: string, accountType: Acco
     })
 }
 
+async function registerMacOS(accountName: string, password: string, accountType: AccountType, recoveryPhrase: string|null): Promise<Response> {
+    return fetch("/api/auth/register", {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+        account_name: accountName,
+        password: password,
+        account_type: accountType,
+        recovery_phrase: recoveryPhrase,
+        use_touch_id: true  // Signal to use Touch ID instead of WebAuthn
+        }),
+    })
+}
+
 async function verifyBiometricForTransaction(wallet: {name: string}): Promise<Response> {
     const response = await fetch("/api/crypto/verify_biometrics", {
         method: "POST",
@@ -258,6 +274,7 @@ export default {
     getAccountNames,
     login,
     register,
+    registerMacOS,
     getOS,
     getWebauthnLoginOpts,
     getWebauthnRegOpts,

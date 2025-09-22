@@ -18,7 +18,6 @@ class AccountRoutes:
 
         @acc_bp.route('/current/recovery', methods=['GET'])
         def get_account_recovery():
-            # TODO: biometrics protect this
             return jsonify(AccountsFileManager.get_instance().get_loaded_account().get_recovery_phrases())
 
         @acc_bp.route("/save", methods=['POST'])

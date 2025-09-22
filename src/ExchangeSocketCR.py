@@ -3,7 +3,7 @@ import json
 import asyncio
 import aiofiles
 import websockets
-from gevent import threading
+from gevent import threading #not used
 
 
 class PriceSocket:

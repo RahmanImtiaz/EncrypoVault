@@ -74,18 +74,12 @@ export function Register({ toggleForm }: RegisterProps) {
         console.log("Using Touch ID for macOS registration");
         
         // Make a registration request that will trigger Touch ID on the backend
-        const response = await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            account_name: accountName,
-            password: password,
-            account_type: accountType,
-            use_touch_id: true  // Signal to use Touch ID instead of WebAuthn
-          }),
-        });
+        const response = await window.api.registerMacOS(
+          accountName, 
+          password, 
+          accountType, 
+          (recoveryPhrase.trim().length === 0 ? null : recoveryPhrase.trim())
+        );
         
         const data = await response.json();
         
