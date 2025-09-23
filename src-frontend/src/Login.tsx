@@ -71,17 +71,7 @@ export function Login({ onLogin, toggleForm }: LoginProps) {
     const platform = await window.api.getOS()
     try {
       if (platform === 'darwin') {
-        const response = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            account_name: selectedAccount,
-            password: password
-          }),
-        });
-        
+        const response = await window.api.login(selectedAccount, password, null);
         const data = await response.json();
         
         if (!response.ok) {
