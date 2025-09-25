@@ -111,8 +111,8 @@ class Account:
             from crypto_impl.WalletType import WalletType
             from crypto_impl.BitcoinWalletHandler import BitcoinWalletHandler  # Import wallet handler
 
-            serialized_wallets = data["wallets"]
-            for name, wallet_data in serialized_wallets.items():
+            serialised_wallets = data["wallets"]
+            for name, wallet_data in serialised_wallets.items():
                 # Skip if already loaded from portfolio
                 if name in self._wallets:
                     continue
@@ -217,16 +217,6 @@ class Account:
     def set_account_name(self, name):
         """Set account name"""
         self._accountName = name
-
-    # we shouldnt allow any function to overwrite the key or else the user will loose their funds
-    # def set_secret_key(self, key):
-    #     """Set secret key"""
-    #     self._bip_seed = key
-
-    # same as above
-    # def set_encryption_key(self, key):
-    #     """Set the encryption key"""
-    #     self._encryption_key = key
         
     def add_contact(self, name, address):
         """Add a contact"""

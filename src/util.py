@@ -14,7 +14,7 @@ def check_internet_connection() -> bool:
     remote_server = "www.google.com"
     port = 80
     status = False
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #TCP socket
     sock.settimeout(1.5)
     try:
         sock.connect((remote_server, port))
